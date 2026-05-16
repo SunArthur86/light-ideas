@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "title": "Pride and Prejudice",
+    "title_zh": "傲慢与偏见",
+    "author": "Jane Austen",
+    "author_zh": "简·奥斯汀",
+    "country": "英国",
+    "year": 1813,
+    "genre": "世态小说",
+    "why": "英国文学之巅，婚姻与阶级的永恒话题",
+    "filepath": "/workspace/light-ideas/world-classics/books/01_傲慢与偏见.txt"
+  },
+  {
+    "id": 2,
+    "title": "Great Expectations",
+    "title_zh": "远大前程",
+    "author": "Charles Dickens",
+    "author_zh": "查尔斯·狄更斯",
+    "country": "英国",
+    "year": 1861,
+    "genre": "成长小说",
+    "why": "维多利亚时代最好的成长小说",
+    "filepath": "/workspace/light-ideas/world-classics/books/02_远大前程.txt"
+  },
+  {
+    "id": 3,
+    "title": "Jane Eyre",
+    "title_zh": "简·爱",
+    "author": "Charlotte Brontë",
+    "author_zh": "夏洛蒂·勃朗特",
+    "country": "英国",
+    "year": 1847,
+    "genre": "哥特浪漫",
+    "why": "女性独立意识的觉醒宣言",
+    "filepath": "/workspace/light-ideas/world-classics/books/03_简爱.txt"
+  },
+  {
+    "id": 4,
+    "title": "Wuthering Heights",
+    "title_zh": "呼啸山庄",
+    "author": "Emily Brontë",
+    "author_zh": "艾米莉·勃朗特",
+    "country": "英国",
+    "year": 1847,
+    "genre": "哥特小说",
+    "why": "爱情最狂野最黑暗的面貌",
+    "filepath": "/workspace/light-ideas/world-classics/books/04_呼啸山庄.txt"
+  },
+  {
+    "id": 5,
+    "title": "Frankenstein",
+    "title_zh": "弗兰肯斯坦",
+    "author": "Mary Shelley",
+    "author_zh": "玛丽·雪莱",
+    "country": "英国",
+    "year": 1818,
+    "genre": "科幻鼻祖",
+    "why": "人类第一部科幻小说，造物主的恐惧",
+    "filepath": "/workspace/light-ideas/world-classics/books/05_弗兰肯斯坦.txt"
+  },
+  {
+    "id": 6,
+    "title": "Middlemarch",
+    "title_zh": "米德尔马契",
+    "author": "George Eliot",
+    "author_zh": "乔治·艾略特",
+    "country": "英国",
+    "year": 1872,
+    "genre": "社会全景",
+    "why": "弗吉尼亚·伍尔夫称其为'少数几本写给成年人看的英语小说之一'",
+    "filepath": "/workspace/light-ideas/world-classics/books/06_米德尔马契.txt"
+  },
+  {
+    "id": 7,
+    "title": "Tess of the d'Urbervilles",
+    "title_zh": "德伯家的苔丝",
+    "author": "Thomas Hardy",
+    "author_zh": "托马斯·哈代",
+    "country": "英国",
+    "year": 1891,
+    "genre": "悲剧小说",
+    "why": "'纯洁的女人'被社会毁灭的极致悲剧",
+    "filepath": "/workspace/light-ideas/world-classics/books/07_德伯家的苔丝.txt"
+  },
+  {
+    "id": 8,
+    "title": "The Picture of Dorian Gray",
+    "title_zh": "道林·格雷的画像",
+    "author": "Oscar Wilde",
+    "author_zh": "奥斯卡·王尔德",
+    "country": "英国/爱尔兰",
+    "year": 1890,
+    "genre": "哥特哲学",
+    "why": "唯美主义的极致——青春、堕落与灵魂的交易",
+    "filepath": "/workspace/light-ideas/world-classics/books/08_道林格雷的画像.txt"
+  },
+  {
+    "id": 9,
+    "title": "Robinson Crusoe",
+    "title_zh": "鲁滨逊漂流记",
+    "author": "Daniel Defoe",
+    "author_zh": "丹尼尔·笛福",
+    "country": "英国",
+    "year": 1719,
+    "genre": "冒险小说",
+    "why": "英国第一部小说，个人主义精神的源头",
+    "filepath": "/workspace/light-ideas/world-classics/books/09_鲁滨逊漂流记.txt"
+  },
+  {
+    "id": 10,
+    "title": "Gulliver's Travels",
+    "title_zh": "格列佛游记",
+    "author": "Jonathan Swift",
+    "author_zh": "乔纳森·斯威夫特",
+    "country": "英国/爱尔兰",
+    "year": 1726,
+    "genre": "讽刺寓言",
+    "why": "人类最尖锐的自我嘲讽",
+    "filepath": "/workspace/light-ideas/world-classics/books/10_格列佛游记.txt"
+  }
+]

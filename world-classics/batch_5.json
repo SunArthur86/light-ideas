@@ -1,0 +1,122 @@
+[
+  {
+    "id": 41,
+    "title": "The Art of War",
+    "title_zh": "孙子兵法",
+    "author": "Sun Tzu",
+    "author_zh": "孙武",
+    "country": "中国",
+    "year": -500,
+    "genre": "兵法哲学",
+    "why": "影响世界2500年的战略智慧",
+    "filepath": "/workspace/light-ideas/world-classics/books/41_孙子兵法.txt"
+  },
+  {
+    "id": 42,
+    "title": "Tao Te Ching",
+    "title_zh": "道德经",
+    "author": "Lao Tzu",
+    "author_zh": "老子",
+    "country": "中国",
+    "year": -400,
+    "genre": "哲学",
+    "why": "81章5000字，人类最浓缩的智慧",
+    "filepath": "/workspace/light-ideas/world-classics/books/42_道德经.txt"
+  },
+  {
+    "id": 43,
+    "title": "The Dream of the Red Chamber",
+    "title_zh": "红楼梦(英译)",
+    "author": "Cao Xueqin",
+    "author_zh": "曹雪芹",
+    "country": "中国",
+    "year": 1791,
+    "genre": "世情小说",
+    "why": "中国文学的巅峰，百科全书式的杰作",
+    "filepath": "/workspace/light-ideas/world-classics/books/43_红楼梦(英译).txt"
+  },
+  {
+    "id": 44,
+    "title": "Botchan",
+    "title_zh": "哥儿",
+    "author": "Natsume Soseki",
+    "author_zh": "夏目漱石",
+    "country": "日本",
+    "year": 1906,
+    "genre": "讽刺小说",
+    "why": "日本近代文学之父的代表作",
+    "filepath": "/workspace/light-ideas/world-classics/books/44_哥儿.txt"
+  },
+  {
+    "id": 45,
+    "title": "The Tale of Genji",
+    "title_zh": "源氏物语",
+    "author": "Murasaki Shikibu",
+    "author_zh": "紫式部",
+    "country": "日本",
+    "year": 1008,
+    "genre": "宫廷文学",
+    "why": "世界第一部长篇小说，日本美学之巅",
+    "filepath": "/workspace/light-ideas/world-classics/books/45_源氏物语.txt"
+  },
+  {
+    "id": 46,
+    "title": "The Pilgrim's Progress",
+    "title_zh": "天路历程",
+    "author": "John Bunyan",
+    "author_zh": "约翰·班扬",
+    "country": "英国",
+    "year": 1678,
+    "genre": "寓言",
+    "why": "仅次于圣经的英语阅读量，灵魂的旅程",
+    "filepath": "/workspace/light-ideas/world-classics/books/46_天路历程.txt"
+  },
+  {
+    "id": 47,
+    "title": "The Strange Case of Dr. Jekyll and Mr. Hyde",
+    "title_zh": "化身博士",
+    "author": "Robert Louis Stevenson",
+    "author_zh": "史蒂文森",
+    "country": "英国",
+    "year": 1886,
+    "genre": "哥特心理",
+    "why": "人性善恶双面的终极隐喻",
+    "filepath": "/workspace/light-ideas/world-classics/books/47_化身博士.txt"
+  },
+  {
+    "id": 48,
+    "title": "Twenty Thousand Leagues Under the Sea",
+    "title_zh": "海底两万里",
+    "author": "Jules Verne",
+    "author_zh": "儒勒·凡尔纳",
+    "country": "法国",
+    "year": 1870,
+    "genre": "科幻冒险",
+    "why": "科幻小说之父的巅峰之作",
+    "filepath": "/workspace/light-ideas/world-classics/books/48_海底两万里.txt"
+  },
+  {
+    "id": 49,
+    "title": "The Time Machine",
+    "title_zh": "时间机器",
+    "author": "H.G. Wells",
+    "author_zh": "H.G.威尔斯",
+    "country": "英国",
+    "year": 1895,
+    "genre": "科幻小说",
+    "why": "时间旅行题材的开山之作",
+    "filepath": "/workspace/light-ideas/world-classics/books/49_时间机器.txt"
+  },
+  {
+    "id": 50,
+    "title": "Thus Spoke Zarathustra",
+    "title_zh": "查拉图斯特拉如是说",
+    "author": "Friedrich Nietzsche",
+    "author_zh": "尼采",
+    "country": "德国",
+    "year": 1885,
+    "genre": "哲学文学",
+    "why": "'上帝已死'——动摇西方文明根基的巨响",
+    "filepath": "/workspace/light-ideas/world-classics/books/50_查拉图斯特拉如是说.txt"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "id": 31,
+    "title": "Faust",
+    "title_zh": "浮士德",
+    "author": "Johann Wolfgang von Goethe",
+    "author_zh": "歌德",
+    "country": "德国",
+    "year": 1808,
+    "genre": "哲学诗剧",
+    "why": "西方文学与哲学的集大成之作",
+    "filepath": "/workspace/light-ideas/world-classics/books/31_浮士德.txt"
+  },
+  {
+    "id": 32,
+    "title": "The Metamorphosis",
+    "title_zh": "变形记",
+    "author": "Franz Kafka",
+    "author_zh": "弗兰茨·卡夫卡",
+    "country": "奥地利/捷克",
+    "year": 1915,
+    "genre": "存在主义",
+    "why": "'一天早晨，格里高尔·萨姆沙从不安的睡梦中醒来，发现自己变成了一只巨大的甲虫'",
+    "filepath": "/workspace/light-ideas/world-classics/books/32_变形记.txt"
+  },
+  {
+    "id": 33,
+    "title": "Effi Briest",
+    "title_zh": "艾菲·布里斯特",
+    "author": "Theodor Fontane",
+    "author_zh": "台奥多尔·冯塔纳",
+    "country": "德国",
+    "year": 1895,
+    "genre": "现实主义",
+    "why": "德国文学版《包法利夫人》——比福楼拜更克制更致命",
+    "filepath": "/workspace/light-ideas/world-classics/books/33_艾菲布里斯特.txt"
+  },
+  {
+    "id": 34,
+    "title": "The Iliad",
+    "title_zh": "伊利亚特",
+    "author": "Homer",
+    "author_zh": "荷马",
+    "country": "古希腊",
+    "year": -750,
+    "genre": "史诗",
+    "why": "西方文学之源，英雄与命运的永恒对决",
+    "filepath": "/workspace/light-ideas/world-classics/books/34_伊利亚特.txt"
+  },
+  {
+    "id": 35,
+    "title": "The Odyssey",
+    "title_zh": "奥德赛",
+    "author": "Homer",
+    "author_zh": "荷马",
+    "country": "古希腊",
+    "year": -725,
+    "genre": "史诗",
+    "why": "回家——人类最古老也最永恒的主题",
+    "filepath": "/workspace/light-ideas/world-classics/books/35_奥德赛.txt"
+  },
+  {
+    "id": 36,
+    "title": "The Divine Comedy",
+    "title_zh": "神曲",
+    "author": "Dante Alighieri",
+    "author_zh": "但丁",
+    "country": "意大利",
+    "year": 1320,
+    "genre": "寓言史诗",
+    "why": "中世纪文明的精神百科全书",
+    "filepath": "/workspace/light-ideas/world-classics/books/36_神曲.txt"
+  },
+  {
+    "id": 37,
+    "title": "Don Quixote",
+    "title_zh": "堂吉诃德",
+    "author": "Miguel de Cervantes",
+    "author_zh": "塞万提斯",
+    "country": "西班牙",
+    "year": 1605,
+    "genre": "讽刺冒险",
+    "why": "人类第一部现代小说，理想主义的永恒赞歌",
+    "filepath": "/workspace/light-ideas/world-classics/books/37_堂吉诃德.txt"
+  },
+  {
+    "id": 38,
+    "title": "The tragical history of Doctor Faustus",
+    "title_zh": "浮士德博士的悲剧",
+    "author": "Christopher Marlowe",
+    "author_zh": "马洛",
+    "country": "英国",
+    "year": 1604,
+    "genre": "诗剧",
+    "why": "歌德之前的浮士德，伊丽莎白时代最危险的剧本",
+    "filepath": "/workspace/light-ideas/world-classics/books/38_浮士德博士的悲剧.txt"
+  },
+  {
+    "id": 39,
+    "title": "A Doll's House",
+    "title_zh": "玩偶之家",
+    "author": "Henrik Ibsen",
+    "author_zh": "易卜生",
+    "country": "挪威",
+    "year": 1879,
+    "genre": "戏剧",
+    "why": "现代戏剧的开端，女性解放的炸弹",
+    "filepath": "/workspace/light-ideas/world-classics/books/39_玩偶之家.txt"
+  },
+  {
+    "id": 40,
+    "title": "Peer Gynt",
+    "title_zh": "培尔·金特",
+    "author": "Henrik Ibsen",
+    "author_zh": "易卜生",
+    "country": "挪威",
+    "year": 1867,
+    "genre": "诗剧",
+    "why": "挪威版堂吉诃德——逃避者的史诗",
+    "filepath": "/workspace/light-ideas/world-classics/books/40_培尔金特.txt"
+  }
+]

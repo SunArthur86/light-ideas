@@ -1,0 +1,122 @@
+[
+  {
+    "id": 21,
+    "title": "The Brothers Karamazov",
+    "title_zh": "卡拉马佐夫兄弟",
+    "author": "Fyodor Dostoevsky",
+    "author_zh": "陀思妥耶夫斯基",
+    "country": "俄国",
+    "year": 1880,
+    "genre": "哲学小说",
+    "why": "如果上帝不存在，一切都是被允许的吗？",
+    "filepath": "/workspace/light-ideas/world-classics/books/21_卡拉马佐夫兄弟.txt"
+  },
+  {
+    "id": 22,
+    "title": "Fathers and Sons",
+    "title_zh": "父与子",
+    "author": "Ivan Turgenev",
+    "author_zh": "屠格涅夫",
+    "country": "俄国",
+    "year": 1862,
+    "genre": "社会小说",
+    "why": "'虚无主义'一词的文学起源",
+    "filepath": "/workspace/light-ideas/world-classics/books/22_父与子.txt"
+  },
+  {
+    "id": 23,
+    "title": "Dead Souls",
+    "title_zh": "死魂灵",
+    "author": "Nikolai Gogol",
+    "author_zh": "果戈理",
+    "country": "俄国",
+    "year": 1842,
+    "genre": "讽刺小说",
+    "why": "俄国文学的'独白'，官僚社会的荒诞镜像",
+    "filepath": "/workspace/light-ideas/world-classics/books/23_死魂灵.txt"
+  },
+  {
+    "id": 24,
+    "title": "Eugene Onegin",
+    "title_zh": "叶甫盖尼·奥涅金",
+    "author": "Alexander Pushkin",
+    "author_zh": "普希金",
+    "country": "俄国",
+    "year": 1833,
+    "genre": "诗体小说",
+    "why": "俄国文学的奠基之作，'多余人'原型",
+    "filepath": "/workspace/light-ideas/world-classics/books/24_叶甫盖尼奥涅金.txt"
+  },
+  {
+    "id": 25,
+    "title": "Moby Dick",
+    "title_zh": "白鲸",
+    "author": "Herman Melville",
+    "author_zh": "赫尔曼·梅尔维尔",
+    "country": "美国",
+    "year": 1851,
+    "genre": "哲学冒险",
+    "why": "美国文学的珠穆朗玛峰，人与自然的终极对决",
+    "filepath": "/workspace/light-ideas/world-classics/books/25_白鲸.txt"
+  },
+  {
+    "id": 26,
+    "title": "The Adventures of Huckleberry Finn",
+    "title_zh": "哈克贝利·费恩历险记",
+    "author": "Mark Twain",
+    "author_zh": "马克·吐温",
+    "country": "美国",
+    "year": 1884,
+    "genre": "冒险/讽刺",
+    "why": "海明威说'所有现代美国文学都出自这一本'",
+    "filepath": "/workspace/light-ideas/world-classics/books/26_哈克贝利费恩历险记.txt"
+  },
+  {
+    "id": 27,
+    "title": "The Scarlet Letter",
+    "title_zh": "红字",
+    "author": "Nathaniel Hawthorne",
+    "author_zh": "纳撒尼尔·霍桑",
+    "country": "美国",
+    "year": 1850,
+    "genre": "道德寓言",
+    "why": "美国第一部文学巨著，罪与罚的心理迷宫",
+    "filepath": "/workspace/light-ideas/world-classics/books/27_红字.txt"
+  },
+  {
+    "id": 28,
+    "title": "Little Women",
+    "title_zh": "小妇人",
+    "author": "Louisa May Alcott",
+    "author_zh": "路易莎·梅·奥尔科特",
+    "country": "美国",
+    "year": 1868,
+    "genre": "家庭小说",
+    "why": "女性成长与自我实现的永恒经典",
+    "filepath": "/workspace/light-ideas/world-classics/books/28_小妇人.txt"
+  },
+  {
+    "id": 29,
+    "title": "Uncle Tom's Cabin",
+    "title_zh": "汤姆叔叔的小屋",
+    "author": "Harriet Beecher Stowe",
+    "author_zh": "斯托夫人",
+    "country": "美国",
+    "year": 1852,
+    "genre": "废奴小说",
+    "why": "'引发了美国内战的那本书'",
+    "filepath": "/workspace/light-ideas/world-classics/books/29_汤姆叔叔的小屋.txt"
+  },
+  {
+    "id": 30,
+    "title": "The Call of the Wild",
+    "title_zh": "野性的呼唤",
+    "author": "Jack London",
+    "author_zh": "杰克·伦敦",
+    "country": "美国",
+    "year": 1903,
+    "genre": "动物小说",
+    "why": "文明与野性的永恒拉扯",
+    "filepath": "/workspace/light-ideas/world-classics/books/30_野性的呼唤.txt"
+  }
+]

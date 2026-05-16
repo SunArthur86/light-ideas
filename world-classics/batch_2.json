@@ -1,0 +1,122 @@
+[
+  {
+    "id": 11,
+    "title": "Les Misérables",
+    "title_zh": "悲惨世界",
+    "author": "Victor Hugo",
+    "author_zh": "维克多·雨果",
+    "country": "法国",
+    "year": 1862,
+    "genre": "社会史诗",
+    "why": "人性善恶与救赎的宏伟史诗",
+    "filepath": "/workspace/light-ideas/world-classics/books/11_悲惨世界.txt"
+  },
+  {
+    "id": 12,
+    "title": "Madame Bovary",
+    "title_zh": "包法利夫人",
+    "author": "Gustave Flaubert",
+    "author_zh": "居斯塔夫·福楼拜",
+    "country": "法国",
+    "year": 1857,
+    "genre": "现实主义",
+    "why": "现代小说的起点，'包法利主义'成为心理学概念",
+    "filepath": "/workspace/light-ideas/world-classics/books/12_包法利夫人.txt"
+  },
+  {
+    "id": 13,
+    "title": "The Count of Monte Cristo",
+    "title_zh": "基督山伯爵",
+    "author": "Alexandre Dumas",
+    "author_zh": "大仲马",
+    "country": "法国",
+    "year": 1846,
+    "genre": "复仇冒险",
+    "why": "史上最伟大的复仇小说",
+    "filepath": "/workspace/light-ideas/world-classics/books/13_基督山伯爵.txt"
+  },
+  {
+    "id": 14,
+    "title": "The Three Musketeers",
+    "title_zh": "三个火枪手",
+    "author": "Alexandre Dumas",
+    "author_zh": "大仲马",
+    "country": "法国",
+    "year": 1844,
+    "genre": "历史冒险",
+    "why": "友谊与忠诚的终极赞歌",
+    "filepath": "/workspace/light-ideas/world-classics/books/14_三个火枪手.txt"
+  },
+  {
+    "id": 15,
+    "title": "Candide",
+    "title_zh": "老实人",
+    "author": "Voltaire",
+    "author_zh": "伏尔泰",
+    "country": "法国",
+    "year": 1759,
+    "genre": "哲学讽刺",
+    "why": "启蒙时代最锋利的智慧之剑",
+    "filepath": "/workspace/light-ideas/world-classics/books/15_老实人.txt"
+  },
+  {
+    "id": 16,
+    "title": "The Hunchback of Notre-Dame",
+    "title_zh": "巴黎圣母院",
+    "author": "Victor Hugo",
+    "author_zh": "维克多·雨果",
+    "country": "法国",
+    "year": 1831,
+    "genre": "历史浪漫",
+    "why": "美丑颠倒世界中的真正善良",
+    "filepath": "/workspace/light-ideas/world-classics/books/16_巴黎圣母院.txt"
+  },
+  {
+    "id": 17,
+    "title": "The Red and the Black",
+    "title_zh": "红与黑",
+    "author": "Stendhal",
+    "author_zh": "司汤达",
+    "country": "法国",
+    "year": 1830,
+    "genre": "心理现实主义",
+    "why": "野心与爱情的精密计算",
+    "filepath": "/workspace/light-ideas/world-classics/books/17_红与黑.txt"
+  },
+  {
+    "id": 18,
+    "title": "War and Peace",
+    "title_zh": "战争与和平",
+    "author": "Leo Tolstoy",
+    "author_zh": "列夫·托尔斯泰",
+    "country": "俄国",
+    "year": 1869,
+    "genre": "历史史诗",
+    "why": "人类文学史上最宏大的作品",
+    "filepath": "/workspace/light-ideas/world-classics/books/18_战争与和平.txt"
+  },
+  {
+    "id": 19,
+    "title": "Anna Karenina",
+    "title_zh": "安娜·卡列尼娜",
+    "author": "Leo Tolstoy",
+    "author_zh": "列夫·托尔斯泰",
+    "country": "俄国",
+    "year": 1878,
+    "genre": "心理小说",
+    "why": "'幸福的家庭都是相似的，不幸的家庭各有各的不幸'",
+    "filepath": "/workspace/light-ideas/world-classics/books/19_安娜卡列尼娜.txt"
+  },
+  {
+    "id": 20,
+    "title": "Crime and Punishment",
+    "title_zh": "罪与罚",
+    "author": "Fyodor Dostoevsky",
+    "author_zh": "陀思妥耶夫斯基",
+    "country": "俄国",
+    "year": 1866,
+    "genre": "心理犯罪",
+    "why": "人类灵魂深渊的最深探索",
+    "filepath": "/workspace/light-ideas/world-classics/books/20_罪与罚.txt"
+  }
+]
