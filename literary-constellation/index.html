@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌌 文学星图 · Literary Constellation</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060612;color:#e0e0f0;font-family:'Noto Serif SC',serif;overflow:hidden;height:100vh}
+#canvas{position:fixed;top:0;left:0;width:100%;height:100%;cursor:crosshair}
+#header{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;padding:8px 16px;background:linear-gradient(180deg,rgba(6,6,18,0.95),rgba(6,6,18,0.6));backdrop-filter:blur(8px);gap:12px}
+#header h1{font-size:18px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.hbtn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#c0c0d0;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;font-family:inherit}
+.hbtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
+.hbtn.active{background:rgba(167,139,250,0.2);border-color:#a78bfa;color:#a78bfa}
+#sidebar{position:fixed;top:44px;right:0;width:340px;height:calc(100vh - 44px);z-index:10;background:rgba(10,10,30,0.92);backdrop-filter:blur(12px);border-left:1px solid rgba(255,255,255,0.08);transform:translateX(100%);transition:transform .3s ease;overflow-y:auto;padding:20px}
+#sidebar.open{transform:translateX(0)}
+#sidebar h2{font-size:16px;color:#a78bfa;margin-bottom:4px}
+#sidebar .meta{font-size:12px;color:#888;margin-bottom:12px}
+#sidebar .tag{display:inline-block;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:2px 8px;border-radius:10px;font-size:11px;margin:2px;color:#c0c0d0}
+#sidebar .tag.theme{border-color:#a78bfa55;color:#a78bfa}
+#sidebar .tag.arch{border-color:#34d39955;color:#34d399}
+#sidebar .section{margin-top:14px}
+#sidebar .section h3{font-size:13px;color:#60a5fa;margin-bottom:6px}
+#sidebar .link-item{padding:4px 8px;margin:3px 0;background:rgba(255,255,255,0.03);border-radius:4px;font-size:12px;cursor:pointer;transition:background .2s}
+#sidebar .link-item:hover{background:rgba(167,139,250,0.15)}
+#filters{position:fixed;bottom:0;left:0;right:0;z-index:10;background:linear-gradient(0deg,rgba(6,6,18,0.95),rgba(6,6,18,0.6));backdrop-filter:blur(8px);padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#filters .label{font-size:11px;color:#666;margin-right:4px}
+#timeline{width:100%;margin:4px 0 8px;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none}
+#timeline::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#a78bfa;cursor:pointer;box-shadow:0 0 8px #a78bfa}
+#tooltip{position:fixed;z-index:20;background:rgba(10,10,30,0.95);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;pointer-events:none;max-width:260px;font-size:12px;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none}
+#tooltip .tt-title{font-size:14px;font-weight:700;color:#e0e0f0;margin-bottom:2px}
+#tooltip .tt-author{font-size:11px;color:#888}
+#tooltip .tt-tags{margin-top:4px}
+#region-legend{position:fixed;bottom:50px;left:12px;z-index:10;font-size:10px;line-height:1.8}
+#region-legend .ri{display:flex;align-items:center;gap:4px;color:#999}
+#region-legend .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+#stats{position:fixed;bottom:50px;right:12px;z-index:10;font-size:10px;color:#666;text-align:right}
+#search{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#e0e0f0;padding:5px 10px;border-radius:6px;font-size:12px;width:140px;outline:none;font-family:inherit}
+#search::placeholder{color:#555}
+#search:focus{border-color:#a78bfa55}
+@media(max-width:768px){
+  #sidebar{width:100%;top:44px}
+  #header h1{font-size:14px}
+  #region-legend{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="header">
+  <h1>🌌 文学星图</h1>
+  <input id="search" placeholder="🔍 搜索书名/作者..." />
+  <button class="hbtn" onclick="resetView()">重置</button>
+  <button class="hbtn" id="modeBtn" onclick="toggleMode()">主题模式</button>
+  <button class="hbtn" id="archBtn" onclick="toggleArch()">原型模式</button>
+  <button class="hbtn" onclick="toggleLinks()">连线</button>
+</div>
+<div id="sidebar"><div id="sidebar-content"></div></div>
+<div id="tooltip"></div>
+<div id="filters">
+  <span class="label">年代</span>
+  <input type="range" id="timeline" min="-800" max="1930" value="1930" step="10" />
+  <span class="label" id="eraLabel">全部时代</span>
+</div>
+<div id="region-legend"></div>
+<div id="stats"></div>
+
+<script>
+// === DATA ===
+const D={"B":[{"id":1,"t":"Pride and Prejudice","tz":"傲慢与偏见","a":"Jane Austen","az":"简·奥斯汀","c":"英国","y":1813,"g":"世态小说","imp":5,"th":["love","identity","justice"],"ar":["rebel","sage"],"era":"romanticism","col":"#4A90D9"},{"id":2,"t":"Great Expectations","tz":"远大前程","a":"Charles Dickens","az":"查尔斯·狄更斯","c":"英国","y":1861,"g":"成长小说","imp":4,"th":["identity","freedom","justice"],"ar":["wanderer","sage"],"era":"realism","col":"#4A90D9"},{"id":3,"t":"Jane Eyre","tz":"简·爱","a":"Charlotte Brontë","az":"夏洛蒂·勃朗特","c":"英国","y":1847,"g":"哥特浪漫","imp":5,"th":["love","identity","freedom"],"ar":["rebel","tragic_lover"],"era":"romanticism","col":"#4A90D9"},{"id":4,"t":"Wuthering Heights","tz":"呼啸山庄","a":"Emily Brontë","az":"艾米莉·勃朗特","c":"英国","y":1847,"g":"哥特小说","imp":5,"th":["love","death","identity"],"ar":["rebel","madman","tragic_lover"],"era":"romanticism","col":"#4A90D9"},{"id":5,"t":"Frankenstein","tz":"弗兰肯斯坦","a":"Mary Shelley","az":"玛丽·雪莱","c":"英国","y":1818,"g":"科幻鼻祖","imp":5,"th":["identity","death","freedom"],"ar":["rebel","madman","sage"],"era":"romanticism","col":"#4A90D9"},{"id":6,"t":"Middlemarch","tz":"米德尔马契","a":"George Eliot","az":"乔治·艾略特","c":"英国","y":1872,"g":"社会全景","imp":4,"th":["identity","justice","love"],"ar":["sage","martyr"],"era":"realism","col":"#4A90D9"},{"id":7,"t":"Tess of the d'Urbervilles","tz":"德伯家的苔丝","a":"Thomas Hardy","az":"托马斯·哈代","c":"英国","y":1891,"g":"悲剧小说","imp":4,"th":["justice","death","identity"],"ar":["martyr","tragic_lover"],"era":"naturalism","col":"#4A90D9"},{"id":8,"t":"The Picture of Dorian Gray","tz":"道林·格雷的画像","a":"Oscar Wilde","az":"奥斯卡·王尔德","c":"英国/爱尔兰","y":1890,"g":"哥特哲学","imp":4,"th":["identity","death","freedom"],"ar":["rebel","artist","madman"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":9,"t":"Robinson Crusoe","tz":"鲁滨逊漂流记","a":"Daniel Defoe","az":"丹尼尔·笛福","c":"英国","y":1719,"g":"冒险小说","imp":4,"th":["identity","freedom","nature"],"ar":["wanderer","sage"],"era":"enlightenment","col":"#4A90D9"},{"id":10,"t":"Gulliver's Travels","tz":"格列佛游记","a":"Jonathan Swift","az":"乔纳森·斯威夫特","c":"英国/爱尔兰","y":1726,"g":"讽刺寓言","imp":5,"th":["justice","identity","freedom"],"ar":["wanderer","sage","rebel"],"era":"enlightenment","col":"#4A90D9"},{"id":11,"t":"Les Misérables","tz":"悲惨世界","a":"Victor Hugo","az":"维克多·雨果","c":"法国","y":1862,"g":"社会史诗","imp":5,"th":["justice","freedom","love","faith"],"ar":["savior","sage","martyr"],"era":"realism","col":"#9B59B6"},{"id":12,"t":"Madame Bovary","tz":"包法利夫人","a":"Gustave Flaubert","az":"居斯塔夫·福楼拜","c":"法国","y":1857,"g":"现实主义","imp":5,"th":["love","identity","freedom","death"],"ar":["tragic_lover","martyr"],"era":"realism","col":"#9B59B6"},{"id":13,"t":"The Count of Monte Cristo","tz":"基督山伯爵","a":"Alexandre Dumas","az":"大仲马","c":"法国","y":1846,"g":"复仇冒险","imp":4,"th":["justice","freedom","identity"],"ar":["warrior","sage"],"era":"romanticism","col":"#9B59B6"},{"id":14,"t":"The Three Musketeers","tz":"三个火枪手","a":"Alexandre Dumas","az":"大仲马","c":"法国","y":1844,"g":"历史冒险","imp":3,"th":["war","freedom","identity"],"ar":["warrior","rebel"],"era":"romanticism","col":"#9B59B6"},{"id":15,"t":"Candide","tz":"老实人","a":"Voltaire","az":"伏尔泰","c":"法国","y":1759,"g":"哲学讽刺","imp":4,"th":["justice","freedom","faith"],"ar":["wanderer","sage"],"era":"enlightenment","col":"#9B59B6"},{"id":16,"t":"The Hunchback of Notre-Dame","tz":"巴黎圣母院","a":"Victor Hugo","az":"维克多·雨果","c":"法国","y":1831,"g":"历史浪漫","imp":4,"th":["justice","love","faith","death"],"ar":["rebel","martyr","tragic_lover"],"era":"romanticism","col":"#9B59B6"},{"id":17,"t":"The Red and the Black","tz":"红与黑","a":"Stendhal","az":"司汤达","c":"法国","y":1830,"g":"心理现实主义","imp":4,"th":["identity","freedom","justice","love"],"ar":["rebel","traitor"],"era":"realism","col":"#9B59B6"},{"id":18,"t":"War and Peace","tz":"战争与和平","a":"Leo Tolstoy","az":"列夫·托尔斯泰","c":"俄国","y":1869,"g":"历史史诗","imp":5,"th":["war","love","freedom","identity","death"],"ar":["sage","warrior","wanderer"],"era":"realism","col":"#F39C12"},{"id":19,"t":"Anna Karenina","tz":"安娜·卡列尼娜","a":"Leo Tolstoy","az":"列夫·托尔斯泰","c":"俄国","y":1878,"g":"心理小说","imp":5,"th":["love","identity","death","freedom"],"ar":["tragic_lover","rebel","martyr"],"era":"realism","col":"#F39C12"},{"id":20,"t":"Crime and Punishment","tz":"罪与罚","a":"Fyodor Dostoevsky","az":"陀思妥耶夫斯基","c":"俄国","y":1866,"g":"心理犯罪","imp":5,"th":["justice","identity","death","faith"],"ar":["rebel","madman","sage"],"era":"realism","col":"#F39C12"},{"id":21,"t":"The Brothers Karamazov","tz":"卡拉马佐夫兄弟","a":"Fyodor Dostoevsky","az":"陀思妥耶夫斯基","c":"俄国","y":1880,"g":"哲学小说","imp":5,"th":["faith","justice","identity","death"],"ar":["sage","rebel","madman"],"era":"realism","col":"#F39C12"},{"id":22,"t":"Fathers and Sons","tz":"父与子","a":"Ivan Turgenev","az":"屠格涅夫","c":"俄国","y":1862,"g":"社会小说","imp":4,"th":["identity","freedom","justice"],"ar":["rebel","sage"],"era":"realism","col":"#F39C12"},{"id":23,"t":"Dead Souls","tz":"死魂灵","a":"Nikolai Gogol","az":"果戈理","c":"俄国","y":1842,"g":"讽刺小说","imp":4,"th":["identity","justice","death"],"ar":["madman","traitor"],"era":"realism","col":"#F39C12"},{"id":24,"t":"Eugene Onegin","tz":"叶甫盖尼·奥涅金","a":"Alexander Pushkin","az":"普希金","c":"俄国","y":1833,"g":"诗体小说","imp":3,"th":["love","identity","death"],"ar":["rebel","tragic_lover"],"era":"romanticism","col":"#F39C12"},{"id":25,"t":"Moby Dick","tz":"白鲸","a":"Herman Melville","az":"赫尔曼·梅尔维尔","c":"美国","y":1851,"g":"哲学冒险","imp":5,"th":["identity","death","nature","freedom"],"ar":["warrior","madman","sage"],"era":"romanticism","col":"#E74C3C"},{"id":26,"t":"The Adventures of Huckleberry Finn","tz":"哈克贝利·费恩历险记","a":"Mark Twain","az":"马克·吐温","c":"美国","y":1884,"g":"冒险/讽刺","imp":5,"th":["freedom","identity","justice"],"ar":["wanderer","rebel"],"era":"realism","col":"#E74C3C"},{"id":27,"t":"The Scarlet Letter","tz":"红字","a":"Nathaniel Hawthorne","az":"纳撒尼尔·霍桑","c":"美国","y":1850,"g":"道德寓言","imp":4,"th":["justice","identity","faith","love"],"ar":["martyr","sage"],"era":"romanticism","col":"#E74C3C"},{"id":28,"t":"Little Women","tz":"小妇人","a":"Louisa May Alcott","az":"路易莎·梅·奥尔科特","c":"美国","y":1868,"g":"家庭小说","imp":3,"th":["love","identity","freedom"],"ar":["artist","sage"],"era":"realism","col":"#E74C3C"},{"id":29,"t":"Uncle Tom's Cabin","tz":"汤姆叔叔的小屋","a":"Harriet Beecher Stowe","az":"斯托夫人","c":"美国","y":1852,"g":"废奴小说","imp":4,"th":["freedom","justice","faith","death"],"ar":["martyr","savior"],"era":"realism","col":"#E74C3C"},{"id":30,"t":"The Call of the Wild","tz":"野性的呼唤","a":"Jack London","az":"杰克·伦敦","c":"美国","y":1903,"g":"动物小说","imp":4,"th":["nature","identity","freedom","death"],"ar":["warrior","rebel"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":31,"t":"Faust","tz":"浮士德","a":"Johann Wolfgang von Goethe","az":"歌德","c":"德国","y":1808,"g":"哲学诗剧","imp":5,"th":["identity","freedom","death","faith","love"],"ar":["rebel","sage","tragic_lover"],"era":"romanticism","col":"#2ECC71"},{"id":32,"t":"The Metamorphosis","tz":"变形记","a":"Franz Kafka","az":"弗兰茨·卡夫卡","c":"奥地利/捷克","y":1915,"g":"存在主义","imp":5,"th":["identity","death","freedom"],"ar":["martyr","madman"],"era":"modernism","col":"#CDDC39"},{"id":33,"t":"Effi Briest","tz":"艾菲·布里斯特","a":"Theodor Fontane","az":"台奥多尔·冯塔纳","c":"德国","y":1895,"g":"现实主义","imp":3,"th":["love","identity","justice","death"],"ar":["tragic_lover","martyr"],"era":"realism","col":"#2ECC71"},{"id":34,"t":"The Iliad","tz":"伊利亚特","a":"Homer","az":"荷马","c":"古希腊","y":-750,"g":"史诗","imp":5,"th":["war","death","identity","freedom"],"ar":["warrior","rebel","sage"],"era":"ancient","col":"#E67E22"},{"id":35,"t":"The Odyssey","tz":"奥德赛","a":"Homer","az":"荷马","c":"古希腊","y":-725,"g":"史诗","imp":5,"th":["identity","freedom","nature","love"],"ar":["wanderer","warrior","sage"],"era":"ancient","col":"#E67E22"},{"id":36,"t":"The Divine Comedy","tz":"神曲","a":"Dante Alighieri","az":"但丁","c":"意大利","y":1320,"g":"寓言史诗","imp":5,"th":["faith","justice","death","identity"],"ar":["wanderer","sage","rebel"],"era":"medieval","col":"#1ABC9C"},{"id":37,"t":"Don Quixote","tz":"堂吉诃德","a":"Miguel de Cervantes","az":"塞万提斯","c":"西班牙","y":1605,"g":"讽刺冒险","imp":5,"th":["identity","freedom","justice","love"],"ar":["madman","wanderer","sage"],"era":"renaissance","col":"#F1C40F"},{"id":38,"t":"The tragical history of Doctor Faustus","tz":"浮士德博士的悲剧","a":"Christopher Marlowe","az":"马洛","c":"英国","y":1604,"g":"诗剧","imp":4,"th":["identity","death","faith","freedom"],"ar":["rebel","madman","tragic_lover"],"era":"renaissance","col":"#4A90D9"},{"id":39,"t":"A Doll's House","tz":"玩偶之家","a":"Henrik Ibsen","az":"易卜生","c":"挪威","y":1879,"g":"戏剧","imp":5,"th":["freedom","identity","justice","love"],"ar":["rebel","martyr"],"era":"realism","col":"#3498DB"},{"id":40,"t":"Peer Gynt","tz":"培尔·金特","a":"Henrik Ibsen","az":"易卜生","c":"挪威","y":1867,"g":"诗剧","imp":3,"th":["identity","freedom","love"],"ar":["wanderer","madman"],"era":"realism","col":"#3498DB"},{"id":41,"t":"The Art of War","tz":"孙子兵法","a":"Sun Tzu","az":"孙武","c":"中国","y":-500,"g":"兵法哲学","imp":5,"th":["war","justice","freedom"],"ar":["sage","warrior"],"era":"ancient","col":"#FF5722"},{"id":42,"t":"Tao Te Ching","tz":"道德经","a":"Lao Tzu","az":"老子","c":"中国","y":-400,"g":"哲学","imp":5,"th":["nature","freedom","identity","faith"],"ar":["sage"],"era":"ancient","col":"#FF5722"},{"id":43,"t":"The Dream of the Red Chamber","tz":"红楼梦(英译)","a":"Cao Xueqin","az":"曹雪芹","c":"中国","y":1791,"g":"世情小说","imp":5,"th":["love","identity","death","freedom","faith"],"ar":["rebel","tragic_lover","madman"],"era":"enlightenment","col":"#FF5722"},{"id":44,"t":"Botchan","tz":"哥儿","a":"Natsume Soseki","az":"夏目漱石","c":"日本","y":1906,"g":"讽刺小说","imp":3,"th":["identity","justice","freedom"],"ar":["rebel","sage"],"era":"modernism","col":"#E91E63"},{"id":45,"t":"The Tale of Genji","tz":"源氏物语","a":"Murasaki Shikibu","az":"紫式部","c":"日本","y":1008,"g":"宫廷文学","imp":5,"th":["love","identity","nature","death"],"ar":["tragic_lover","artist","wanderer"],"era":"medieval","col":"#E91E63"},{"id":46,"t":"The Pilgrim's Progress","tz":"天路历程","a":"John Bunyan","az":"约翰·班扬","c":"英国","y":1678,"g":"寓言","imp":4,"th":["faith","freedom","identity","death"],"ar":["wanderer","sage","martyr"],"era":"baroque","col":"#4A90D9"},{"id":47,"t":"The Strange Case of Dr. Jekyll and Mr. Hyde","tz":"化身博士","a":"Robert Louis Stevenson","az":"史蒂文森","c":"英国","y":1886,"g":"哥特心理","imp":4,"th":["identity","death","freedom","faith"],"ar":["madman","traitor"],"era":"realism","col":"#4A90D9"},{"id":48,"t":"Twenty Thousand Leagues Under the Sea","tz":"海底两万里","a":"Jules Verne","az":"儒勒·凡尔纳","c":"法国","y":1870,"g":"科幻冒险","imp":4,"th":["freedom","nature","identity"],"ar":["wanderer","sage","rebel"],"era":"realism","col":"#9B59B6"},{"id":49,"t":"The Time Machine","tz":"时间机器","a":"H.G. Wells","az":"H.G.威尔斯","c":"英国","y":1895,"g":"科幻小说","imp":4,"th":["death","identity","freedom","nature"],"ar":["wanderer","sage"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":50,"t":"Thus Spoke Zarathustra","tz":"查拉图斯特拉如是说","a":"Friedrich Nietzsche","az":"尼采","c":"德国","y":1885,"g":"哲学文学","imp":5,"th":["freedom","identity","death","faith"],"ar":["rebel","sage","madman"],"era":"modernism","col":"#2ECC71"},{"id":51,"t":"Emma","tz":"爱玛","a":"Jane Austen","az":"简·奥斯汀","c":"英国","y":1815,"g":"世态小说","imp":4,"th":["love","identity","justice"],"ar":["sage","rebel"],"era":"romanticism","col":"#4A90D9"},{"id":52,"t":"Sense and Sensibility","tz":"理智与情感","a":"Jane Austen","az":"简·奥斯汀","c":"英国","y":1811,"g":"世态小说","imp":4,"th":["love","identity","freedom"],"ar":["martyr","rebel"],"era":"romanticism","col":"#4A90D9"},{"id":53,"t":"A Tale of Two Cities","tz":"双城记","a":"Charles Dickens","az":"查尔斯·狄更斯","c":"英国","y":1859,"g":"历史小说","imp":5,"th":["war","death","freedom","love","justice"],"ar":["martyr","savior","rebel"],"era":"realism","col":"#4A90D9"},{"id":54,"t":"David Copperfield","tz":"大卫·科波菲尔","a":"Charles Dickens","az":"查尔斯·狄更斯","c":"英国","y":1850,"g":"成长小说","imp":4,"th":["identity","freedom","love","death"],"ar":["wanderer","artist"],"era":"realism","col":"#4A90D9"},{"id":55,"t":"Heart of Darkness","tz":"黑暗的心","a":"Joseph Conrad","az":"约瑟夫·康拉德","c":"英国/波兰","y":1899,"g":"中篇小说","imp":5,"th":["identity","death","freedom","justice"],"ar":["madman","sage"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":56,"t":"The Portrait of a Lady","tz":"贵妇画像","a":"Henry James","az":"亨利·詹姆斯","c":"美国/英国","y":1881,"g":"心理小说","imp":4,"th":["freedom","identity","love"],"ar":["martyr","tragic_lover"],"era":"realism","col":"#E74C3C"},{"id":57,"t":"The Turn of the Screw","tz":"螺丝在拧紧","a":"Henry James","az":"亨利·詹姆斯","c":"美国/英国","y":1898,"g":"哥特心理","imp":4,"th":["death","identity","faith"],"ar":["madman","martyr"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":58,"t":"Paradise Lost","tz":"失乐园","a":"John Milton","az":"约翰·弥尔顿","c":"英国","y":1667,"g":"史诗","imp":5,"th":["freedom","identity","faith","death","justice"],"ar":["rebel","sage","tragic_lover"],"era":"baroque","col":"#4A90D9"},{"id":59,"t":"Alice's Adventures in Wonderland","tz":"爱丽丝漫游奇境记","a":"Lewis Carroll","az":"刘易斯·卡罗尔","c":"英国","y":1865,"g":"幻想文学","imp":5,"th":["identity","freedom","nature","justice"],"ar":["wanderer","rebel"],"era":"realism","col":"#4A90D9"},{"id":60,"t":"Through the Looking-Glass","tz":"爱丽丝镜中奇遇","a":"Lewis Carroll","az":"刘易斯·卡罗尔","c":"英国","y":1871,"g":"幻想文学","imp":4,"th":["identity","freedom","nature"],"ar":["wanderer","sage"],"era":"realism","col":"#4A90D9"},{"id":61,"t":"The Canterbury Tales","tz":"坎特伯雷故事集","a":"Geoffrey Chaucer","az":"杰弗里·乔叟","c":"英国","y":1400,"g":"故事集","imp":5,"th":["love","justice","identity","faith","death"],"ar":["sage","rebel","tragic_lover","artist","warrior"],"era":"medieval","col":"#4A90D9"},{"id":62,"t":"Beowulf","tz":"贝奥武夫","a":"Anonymous","az":"匿名","c":"英国/盎格鲁-撒克逊","y":1000,"g":"史诗","imp":4,"th":["war","death","identity","nature"],"ar":["warrior","sage"],"era":"medieval","col":"#4A90D9"},{"id":63,"t":"The Awakening","tz":"觉醒","a":"Kate Chopin","az":"凯特·肖邦","c":"美国","y":1899,"g":"女性小说","imp":4,"th":["freedom","identity","love","death"],"ar":["rebel","tragic_lover"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":64,"t":"My Ántonia","tz":"我的安东妮亚","a":"Willa Cather","az":"薇拉·凯瑟","c":"美国","y":1918,"g":"移民小说","imp":3,"th":["nature","identity","freedom","love"],"ar":["wanderer","sage"],"era":"realism","col":"#E74C3C"},{"id":65,"t":"The Age of Innocence","tz":"纯真年代","a":"Edith Wharton","az":"伊迪丝·华顿","c":"美国","y":1920,"g":"社会小说","imp":4,"th":["love","identity","freedom","justice"],"ar":["martyr","tragic_lover"],"era":"realism","col":"#E74C3C"},{"id":66,"t":"Ethan Frome","tz":"伊坦·弗洛美","a":"Edith Wharton","az":"伊迪丝·华顿","c":"美国","y":1911,"g":"中篇小说","imp":3,"th":["love","death","identity","freedom"],"ar":["martyr","tragic_lover"],"era":"realism","col":"#E74C3C"},{"id":67,"t":"Walden","tz":"瓦尔登湖","a":"Henry David Thoreau","az":"梭罗","c":"美国","y":1854,"g":"散文/哲学","imp":5,"th":["nature","freedom","identity"],"ar":["sage","wanderer"],"era":"romanticism","col":"#E74C3C"},{"id":68,"t":"Narrative of the Life of Frederick Douglass","tz":"弗雷德里克·道格拉斯自述","a":"Frederick Douglass","az":"弗雷德里克·道格拉斯","c":"美国","y":1845,"g":"自传","imp":5,"th":["freedom","justice","identity"],"ar":["sage","rebel","savior"],"era":"romanticism","col":"#E74C3C"},{"id":69,"t":"The Souls of Black Folk","tz":"黑人的灵魂","a":"W.E.B. Du Bois","az":"杜波依斯","c":"美国","y":1903,"g":"散文/社会学","imp":4,"th":["identity","freedom","justice"],"ar":["sage","rebel"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":70,"t":"Leaves of Grass","tz":"草叶集","a":"Walt Whitman","az":"惠特曼","c":"美国","y":1855,"g":"诗歌","imp":5,"th":["freedom","identity","nature","love","death"],"ar":["rebel","artist","sage"],"era":"romanticism","col":"#E74C3C"},{"id":71,"t":"The Red Badge of Courage","tz":"红色英勇勋章","a":"Stephen Crane","az":"斯蒂芬·克莱恩","c":"美国","y":1895,"g":"战争小说","imp":4,"th":["war","death","identity","freedom"],"ar":["warrior","rebel"],"era":"realism","col":"#E74C3C"},{"id":72,"t":"The Wonderful Wizard of Oz","tz":"绿野仙踪","a":"L. Frank Baum","az":"鲍姆","c":"美国","y":1900,"g":"儿童文学","imp":4,"th":["identity","freedom","love"],"ar":["wanderer","sage"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":73,"t":"Germinal","tz":"萌芽","a":"Émile Zola","az":"左拉","c":"法国","y":1885,"g":"自然主义","imp":4,"th":["justice","freedom","death","war"],"ar":["rebel","martyr","warrior"],"era":"naturalism","col":"#9B59B6"},{"id":74,"t":"Sentimental Education","tz":"情感教育","a":"Gustave Flaubert","az":"福楼拜","c":"法国","y":1869,"g":"现实主义","imp":4,"th":["love","identity","freedom"],"ar":["wanderer","tragic_lover"],"era":"realism","col":"#9B59B6"},{"id":75,"t":"The Charterhouse of Parma","tz":"帕尔马修道院","a":"Stendhal","az":"司汤达","c":"法国","y":1839,"g":"心理小说","imp":3,"th":["love","identity","freedom","death"],"ar":["rebel","tragic_lover"],"era":"romanticism","col":"#9B59B6"},{"id":76,"t":"The Phantom of the Opera","tz":"歌剧魅影","a":"Gaston Leroux","az":"勒鲁","c":"法国","y":1910,"g":"哥特小说","imp":3,"th":["love","identity","death"],"ar":["madman","tragic_lover"],"era":"fin_de_siecle","col":"#9B59B6"},{"id":77,"t":"Cyrano de Bergerac","tz":"西哈诺","a":"Edmond Rostand","az":"罗斯丹","c":"法国","y":1897,"g":"诗剧","imp":4,"th":["love","identity","death"],"ar":["artist","tragic_lover","sage"],"era":"fin_de_siecle","col":"#9B59B6"},{"id":78,"t":"The Idiot","tz":"白痴","a":"Fyodor Dostoevsky","az":"陀思妥耶夫斯基","c":"俄国","y":1869,"g":"心理小说","imp":4,"th":["identity","love","death","faith"],"ar":["sage","martyr","tragic_lover"],"era":"realism","col":"#F39C12"},{"id":79,"t":"Resurrection","tz":"复活","a":"Leo Tolstoy","az":"托尔斯泰","c":"俄国","y":1899,"g":"社会小说","imp":4,"th":["justice","freedom","faith","death"],"ar":["savior","martyr"],"era":"realism","col":"#F39C12"},{"id":80,"t":"Oblomov","tz":"奥勃洛莫夫","a":"Ivan Goncharov","az":"冈察洛夫","c":"俄国","y":1859,"g":"现实主义","imp":4,"th":["identity","freedom","death"],"ar":["wanderer","sage"],"era":"realism","col":"#F39C12"},{"id":81,"t":"The Good Soldier Švejk","tz":"好兵帅克","a":"Jaroslav Hašek","az":"哈谢克","c":"捷克","y":1923,"g":"讽刺小说","imp":4,"th":["war","identity","freedom","justice"],"ar":["rebel","madman"],"era":"modernism","col":"#FF9800"},{"id":82,"t":"The War of the Worlds","tz":"世界大战","a":"H.G. Wells","az":"H.G.威尔斯","c":"英国","y":1898,"g":"科幻小说","imp":4,"th":["death","identity","war","freedom"],"ar":["warrior","sage"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":83,"t":"The Invisible Man","tz":"隐形人","a":"H.G. Wells","az":"H.G.威尔斯","c":"英国","y":1897,"g":"科幻小说","imp":3,"th":["identity","freedom","death"],"ar":["madman","rebel"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":84,"t":"Around the World in 80 Days","tz":"八十天环游地球","a":"Jules Verne","az":"凡尔纳","c":"法国","y":1873,"g":"冒险小说","imp":4,"th":["freedom","identity","nature"],"ar":["sage","warrior","wanderer"],"era":"realism","col":"#9B59B6"},{"id":85,"t":"Journey to the Center of the Earth","tz":"地心游记","a":"Jules Verne","az":"凡尔纳","c":"法国","y":1864,"g":"科幻冒险","imp":3,"th":["nature","identity","freedom"],"ar":["sage","wanderer"],"era":"realism","col":"#9B59B6"},{"id":86,"t":"Treasure Island","tz":"金银岛","a":"Robert Louis Stevenson","az":"史蒂文森","c":"英国","y":1883,"g":"冒险小说","imp":4,"th":["freedom","identity","death","justice"],"ar":["warrior","rebel","wanderer"],"era":"realism","col":"#4A90D9"},{"id":87,"t":"King Solomon's Mines","tz":"所罗门王的宝藏","a":"H. Rider Haggard","az":"哈格德","c":"英国","y":1885,"g":"冒险小说","imp":3,"th":["freedom","identity","nature","death"],"ar":["warrior","wanderer"],"era":"realism","col":"#4A90D9"},{"id":88,"t":"The Aeneid","tz":"埃涅阿斯纪","a":"Virgil","az":"维吉尔","c":"古罗马","y":-19,"g":"史诗","imp":5,"th":["war","identity","freedom","death","love"],"ar":["warrior","wanderer","martyr"],"era":"ancient","col":"#D35400"},{"id":89,"t":"The Republic","tz":"理想国","a":"Plato","az":"柏拉图","c":"古希腊","y":-375,"g":"哲学对话","imp":5,"th":["justice","freedom","identity","faith"],"ar":["sage","rebel"],"era":"ancient","col":"#E67E22"},{"id":90,"t":"Meditations","tz":"沉思录","a":"Marcus Aurelius","az":"马可·奥勒留","c":"古罗马","y":180,"g":"哲学日记","imp":5,"th":["freedom","identity","death","faith"],"ar":["sage","warrior"],"era":"ancient","col":"#D35400"},{"id":91,"t":"The Prince","tz":"君主论","a":"Niccolò Machiavelli","az":"马基雅维利","c":"意大利","y":1532,"g":"政治学","imp":5,"th":["justice","freedom","identity","war"],"ar":["traitor","sage"],"era":"renaissance","col":"#1ABC9C"},{"id":92,"t":"Confessions","tz":"忏悔录","a":"Saint Augustine","az":"奥古斯丁","c":"罗马帝国","y":400,"g":"自传/神学","imp":5,"th":["faith","identity","freedom","death"],"ar":["rebel","sage","tragic_lover"],"era":"ancient","col":"#D35400"},{"id":93,"t":"The Rubáiyát of Omar Khayyám","tz":"鲁拜集","a":"Omar Khayyám","az":"海亚姆","c":"波斯","y":1120,"g":"诗歌","imp":4,"th":["freedom","death","love","nature"],"ar":["sage","wanderer"],"era":"medieval","col":"#795548"},{"id":94,"t":"The Wind in the Willows","tz":"柳林风声","a":"Kenneth Grahame","az":"格雷厄姆","c":"英国","y":1908,"g":"儿童文学","imp":4,"th":["nature","freedom","identity","love"],"ar":["wanderer","sage"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":95,"t":"Peter Pan","tz":"彼得·潘","a":"J.M. Barrie","az":"巴里","c":"英国","y":1904,"g":"儿童文学","imp":4,"th":["identity","freedom","death","love"],"ar":["rebel","tragic_lover"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":96,"t":"The Secret Garden","tz":"秘密花园","a":"Frances Hodgson Burnett","az":"伯内特","c":"英国/美国","y":1911,"g":"儿童文学","imp":3,"th":["nature","identity","freedom","death"],"ar":["sage","savior"],"era":"fin_de_siecle","col":"#4A90D9"},{"id":97,"t":"Grimms' Fairy Tales","tz":"格林童话","a":"Brothers Grimm","az":"格林兄弟","c":"德国","y":1812,"g":"童话集","imp":5,"th":["love","death","identity","justice","faith"],"ar":["rebel","martyr","sage","tragic_lover","warrior"],"era":"romanticism","col":"#2ECC71"},{"id":98,"t":"One Thousand and One Nights","tz":"一千零一夜","a":"Anonymous","az":"匿名","c":"阿拉伯/波斯","y":800,"g":"故事集","imp":5,"th":["love","death","freedom","identity","justice"],"ar":["sage","artist","wanderer","rebel"],"era":"medieval","col":"#795548"},{"id":99,"t":"Up from Slavery","tz":"从奴隶崛起","a":"Booker T. Washington","az":"华盛顿","c":"美国","y":1901,"g":"自传","imp":4,"th":["freedom","identity","justice"],"ar":["sage","savior"],"era":"fin_de_siecle","col":"#E74C3C"},{"id":100,"t":"The Scarlet Pimpernel","tz":"红花侠","a":"Baroness Orczy","az":"奥希兹","c":"英国/匈牙利","y":1905,"g":"冒险小说","imp":3,"th":["freedom","justice","identity","war"],"ar":["rebel","warrior","sage"],"era":"fin_de_siecle","col":"#4A90D9"}],"L":[[34,88,"influence","荷马史诗→维吉尔：伊利亚特的特洛伊战争→埃涅阿斯的逃亡建国"],[35,88,"influence","奥德赛的归乡→埃涅阿斯纪的流浪"],[34,25,"influence","阿喀琉斯的英雄→亚哈船长的执念"],[35,9,"influence","奥德修斯的孤岛→鲁滨逊的荒岛"],[35,84,"influence","奥德修斯的旅程→福格的环游地球"],[89,91,"response","柏拉图的理想国→马基雅维利的反讽回应"],[90,50,"influence","斯多葛主义→尼采的超人（不同的自我超越）"],[42,90,"parallel","老子的无为→奥勒留的接受（东西方斯多葛）"],[41,91,"parallel","孙子兵法的实用主义→君主论的现实主义"],[92,36,"influence","奥古斯丁的基督教旅程→但丁的神圣旅程"],[34,62,"influence","伊利亚特的英雄传统→贝奥武夫的日耳曼英雄"],[58,47,"influence","弥尔顿的堕落天使→化身博士的双重人格"],[88,36,"influence","维吉尔的帝国史诗→但丁的基督教史诗"],[37,86,"influence","堂吉诃德的冒险→金银岛的海盗冒险"],[37,26,"influence","堂吉诃德的幻想→哈克贝利的冒险"],[37,81,"influence","堂吉诃德的荒诞→好兵帅克的装傻"],[58,5,"influence","失乐园的造物主→弗兰肯斯坦的科学家"],[58,31,"influence","弥尔顿的撒旦→歌德的浮士德（反叛者原型）"],[38,31,"response","马洛的浮士德→歌德的浮士德（同一传说的两个版本）"],[61,98,"parallel","坎特伯雷故事集↔一千零一夜：框架故事的东西方传统"],[15,11,"response","伏尔泰的乐观批判→雨果的人道主义"],[9,67,"influence","鲁滨逊的独居→梭罗的瓦尔登湖"],[10,37,"response","格列佛的讽刺→堂吉诃德的讽刺延续"],[46,37,"response","天路历程的宗教寓言→堂吉诃德的世俗化"],[1,51,"influence","傲慢与偏见→爱玛（同作者，更成熟）"],[1,52,"influence","傲慢与偏见→理智与情感（姐妹篇）"],[5,83,"influence","弗兰肯斯坦的科学伦理→隐形人的科学滥用"],[5,47,"influence","弗兰肯斯坦的造物→化身博士的变形"],[3,4,"parallel","简·爱↔呼啸山庄：姐妹的不同浪漫"],[4,76,"influence","呼啸山庄的黑暗激情→歌剧魅影的畸形恋人"],[47,83,"parallel","化身博士↔隐形人：身份的分裂与消失"],[2,54,"influence","远大前程→大卫·科波菲尔（成长叙事）"],[53,11,"parallel","双城记↔悲惨世界：革命与人道"],[53,100,"influence","双城记的大革命→红花侠的救人冒险"],[54,3,"influence","大卫·科波菲尔的孤儿→简·爱的孤儿"],[12,74,"influence","包法利夫人→情感教育（同作者）"],[12,63,"influence","包法利夫人→觉醒（女性欲望的跨大西洋回响）"],[12,56,"influence","包法利夫人→贵妇画像（美国版）"],[17,75,"influence","红与黑→帕尔马修道院（同作者）"],[13,86,"influence","基督山伯爵→金银岛（寻宝冒险传统）"],[14,13,"influence","三个火枪手→基督山伯爵（同作者）"],[16,11,"influence","巴黎圣母院→悲惨世界（同作者）"],[15,81,"influence","老实人的天真→好兵帅克的装傻"],[73,29,"parallel","萌芽↔汤姆叔叔的小屋：底层苦难的控诉"],[18,19,"influence","战争与和平→安娜·卡列尼娜（同作者）"],[19,79,"influence","安娜→复活（同作者，赎罪的追问）"],[20,21,"influence","罪与罚→卡拉马佐夫兄弟（同作者）"],[20,78,"influence","罪与罚→白痴（善与恶的实验）"],[22,80,"parallel","父与子↔奥勃洛莫夫：俄国知识分子的两种病"],[23,81,"influence","死魂灵的讽刺→好兵帅克的荒诞"],[24,3,"parallel","叶甫盖尼·奥涅金↔简·爱：被拒绝的浪漫"],[25,30,"influence","白鲸→野性的呼唤（自然中的力量）"],[26,81,"influence","哈克的逃亡→好兵帅克的逃亡"],[27,66,"influence","红字→伊坦·弗洛美（新英格兰的压抑）"],[28,96,"parallel","小妇人↔秘密花园：成长与治愈"],[29,68,"parallel","汤姆叔叔的小屋↔道格拉斯自述：虚构vs真实的废奴之声"],[68,99,"influence","道格拉斯→华盛顿：黑人自助的两个世代"],[69,68,"response","黑人的灵魂回应道格拉斯"],[67,70,"parallel","瓦尔登湖↔草叶集：美国个人主义两面"],[70,59,"influence","惠特曼的自由→爱丽丝的逻辑自由"],[63,12,"response","觉醒回应包法利夫人"],[71,34,"response","红色英勇勋章回应伊利亚特：英雄主义的解构"],[5,8,"influence","弗兰肯斯坦→道林·格雷（科学的后果）"],[8,77,"parallel","道林·格雷↔西哈诺：外表与灵魂"],[4,57,"influence","呼啸山庄→螺丝在拧紧（哥特心理）"],[59,60,"influence","爱丽丝漫游奇境→镜中奇遇（姊妹篇）"],[59,72,"parallel","爱丽丝↔绿野仙踪：英美童话对照"],[94,95,"parallel","柳林风声↔彼得·潘：永恒童年的两种幻想"],[97,59,"influence","格林童话的荒诞→爱丽丝的逻辑荒诞"],[97,72,"influence","格林童话→绿野仙踪（童话传统）"],[48,85,"influence","海底两万里→地心游记（凡尔纳两种方向）"],[48,82,"influence","凡尔纳→威尔斯：科幻从乐观到恐惧"],[49,82,"influence","时间机器→世界大战（同作者）"],[82,83,"influence","世界大战→隐形人（同作者）"],[48,84,"influence","海底两万里→八十天环游地球（凡尔纳）"],[9,86,"influence","鲁滨逊→金银岛（荒岛→寻宝）"],[86,87,"influence","金银岛→所罗门王的宝藏（寻宝冒险）"],[9,48,"influence","鲁滨逊→海底两万里（海洋冒险）"],[89,42,"parallel","理想国↔道德经：东西方政治智慧"],[89,36,"influence","理想国→神曲（正义的秩序）"],[50,32,"influence","查拉图斯特拉→变形记（存在主义的延续）"],[92,50,"influence","奥古斯丁→尼采：从忏悔到超越"],[42,93,"parallel","道德经↔鲁拜集：东方智慧的诗意"],[90,67,"influence","沉思录→瓦尔登湖（自我修行）"],[39,19,"influence","玩偶之家→安娜·卡列尼娜（女性出走的不同结局）"],[39,63,"influence","玩偶之家→觉醒（女性觉醒的延续）"],[3,56,"influence","简·爱→贵妇画像（女性独立的两个世代）"],[12,19,"parallel","包法利夫人↔安娜：通奸的两种审判"],[43,19,"parallel","红楼梦↔安娜：东方↔西方的悲剧爱情"],[43,45,"parallel","红楼梦↔源氏物语：东方宫廷爱情的巅峰"],[41,91,"parallel","孙子兵法↔君主论：战略智慧的东西方"],[42,67,"parallel","道德经↔瓦尔登湖：简朴生活的哲学"],[25,55,"parallel","白鲸↔黑暗的心：海上旅程的哲学深度"],[11,79,"parallel","悲惨世界↔复活：赎罪的漫长旅程"],[6,65,"parallel","米德尔马契↔纯真年代：社会全景画"],[10,55,"response","格列佛的讽刺→黑暗的心的殖民批判"],[59,37,"response","爱丽丝的荒诞→堂吉诃德的荒诞延续"],[45,59,"parallel","源氏物语↔爱丽丝：两种'奇境'"],[32,80,"parallel","变形记↔奥勃洛莫夫：存在性瘫痪"],[31,8,"response","浮士德的灵魂交易→道林·格雷的灵魂交易"],[58,31,"influence","失乐园→浮士德：堕落与交易"],[46,94,"influence","天路历程→柳林风声：旅程寓言"],[97,43,"parallel","格林童话↔红楼梦：民间文学↔宫廷文学"],[98,61,"influence","一千零一夜→坎特伯雷故事集"],[7,66,"parallel","苔丝↔伊坦·弗洛美：命运碾压无辜者"],[29,73,"parallel","汤姆叔叔的小屋↔萌芽：底层苦难"],[40,80,"parallel","培尔·金特↔奥勃洛莫夫：不愿面对现实的人"],[36,58,"influence","神曲→失乐园：基督教史诗的传统"],[36,46,"influence","神曲→天路历程：灵魂旅程"],[37,10,"response","堂吉诃德回应格列佛游记"],[1,6,"influence","奥斯汀→乔治·艾略特：英国乡村社会小说"],[1,65,"influence","奥斯汀→华顿：社交圈中的女性"],[3,7,"influence","简·爱的坚韧→苔丝的悲剧（不同的命运）"],[5,32,"influence","弗兰肯斯坦的异化→卡夫卡的变形记"],[8,32,"influence","道林·格雷的堕落→格里高尔的变形"],[9,25,"influence","鲁滨逊的孤战→亚哈的孤战"],[10,15,"influence","格列佛的讽刺→伏尔泰的老实人"],[11,53,"parallel","悲惨世界↔双城记：法国革命的两面"],[13,53,"influence","基督山伯爵→双城记（冒险↔革命）"],[16,76,"parallel","巴黎圣母院↔歌剧魅影：畸形者的爱情"],[17,20,"parallel","红与黑↔罪与罚：年轻人犯罪的心理学"],[18,53,"influence","战争与和平→双城记：历史小说的宏大叙事"],[20,32,"influence","罪与罚的心理深渊→变形记的存在恐惧"],[21,78,"influence","卡拉马佐夫→白痴：善在世界的命运"],[26,59,"influence","哈克的口语叙事→爱丽丝的口语智慧"],[30,62,"parallel","野性的呼唤↔贝奥武夫：原始力量"],[34,71,"response","伊利亚特→红色英勇勋章：英雄主义的解构"],[35,48,"influence","奥德赛→海底两万里：海洋探索"],[41,13,"parallel","孙子兵法↔基督山伯爵：策略的极致"],[43,12,"parallel","红楼梦↔包法利夫人：幻灭的两种文化"],[43,45,"influence","红楼梦可能是源氏物语的中国回响"],[45,59,"influence","源氏物语→爱丽丝：两种奇境"],[46,96,"influence","天路历程→秘密花园：旅程=治愈"],[48,82,"influence","凡尔纳→威尔斯：科幻从乐观到恐惧"],[49,50,"influence","时间机器→查拉图斯特拉：时间的哲学"],[53,82,"influence","双城记的入侵恐惧→世界大战的外星入侵"],[58,8,"influence","失乐园的堕落→道林·格雷的堕落"],[61,97,"parallel","坎特伯雷↔格林童话：民间故事两种整理"],[62,25,"influence","贝奥武夫→白鲸：与怪物的终极对决"],[65,66,"influence","纯真年代→伊坦·弗洛美（同作者）"],[67,94,"influence","瓦尔登湖→柳林风声：自然生活的田园"],[68,69,"influence","道格拉斯→杜波依斯：黑人思想的延续"],[72,95,"parallel","绿野仙踪↔彼得·潘：童年的两种永恒"],[77,76,"parallel","西哈诺↔歌剧魅影：丑陋天才的爱"],[84,49,"parallel","八十天→时间机器：时间冒险"],[88,34,"response","埃涅阿斯纪回应伊利亚特：战胜者的视角"],[90,89,"response","沉思录回应理想国：哲学王的真实实践"],[98,97,"parallel","一千零一夜↔格林童话：东西方民间故事"],[70,26,"influence","惠特曼的自由→哈克的自由精神"]]};
+const B=D.B,L=D.L;
+const THEMES={"war":"⚔️战争","love":"💕爱情","justice":"⚖️正义","freedom":"🗽自由","death":"💀死亡","identity":"🪞身份","faith":"✝️信仰","nature":"🌿自然"};
+const ARCHS={"rebel":"🔥反叛者","wanderer":"🌍流浪者","martyr":"💔殉道者","sage":"🧙智者","tragic_lover":"😢悲剧恋人","madman":"🃏疯子","artist":"🎨艺术家","warrior":"⚔️战士","traitor":"🗡️背叛者","savior":"✨救世主"};
+const ERAS=[
+  {id:"ancient",name:"古典时代",y0:-800,y1:500},
+  {id:"medieval",name:"中世纪",y0:500,y1:1400},
+  {id:"renaissance",name:"文艺复兴",y0:1400,y1:1650},
+  {id:"baroque",name:"巴洛克",y0:1650,y1:1750},
+  {id:"enlightenment",name:"启蒙时代",y0:1750,y1:1820},
+  {id:"romanticism",name:"浪漫主义",y0:1820,y1:1860},
+  {id:"realism",name:"现实主义",y0:1860,y1:1890},
+  {id:"naturalism",name:"自然主义",y0:1890,y1:1900},
+  {id:"fin_de_siecle",name:"世纪末",y0:1890,y1:1910},
+  {id:"modernism",name:"现代主义",y0:1910,y1:1930},
+];
+
+// === STATE ===
+let mode='star'; // star|theme|arch
+let showLinks=true;
+let selectedId=null;
+let hoveredId=null;
+let maxYear=1930;
+let searchQ='';
+let nodes=[];
+let edges=L.map(l=>({s:l[0],t:l[1],type:l[2],note:l[3]}));
+let W,H,cx,cy;
+
+// === CANVAS ===
+const cvs=document.getElementById('canvas');
+const ctx=cvs.getContext('2d');
+
+function resize(){
+  W=window.innerWidth;H=window.innerHeight;
+  cvs.width=W*devicePixelRatio;cvs.height=H*devicePixelRatio;
+  cvs.style.width=W+'px';cvs.style.height=H+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  cx=W/2;cy=H/2;
+  initNodes();
+}
+
+// === LAYOUT ===
+function initNodes(){
+  // 按时代螺旋布局 — 越早越靠近中心
+  const eraCount={};
+  const eraIdx={};
+  nodes=B.map(b=>{
+    if(!eraCount[b.era]) eraCount[b.era]=0;
+    const idx=eraCount[b.era]++;
+    const ei=ERAS.findIndex(e=>e.id===b.era);
+    const angle=(ei/ERAS.length)*Math.PI*2 + idx*0.3;
+    const baseR=120+ei*28;
+    const r=baseR+(idx%3)*25;
+    return {
+      ...b,x:cx+Math.cos(angle)*r,y:cy+Math.sin(angle)*r,
+      vx:0,vy:0,fixed:false
+    };
+  });
+  // Run force simulation
+  for(let iter=0;iter<120;iter++) forceStep(iter);
+}
+
+function forceStep(iter){
+  const alpha=1-iter/120;
+  // Repulsion between all nodes
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      let dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
+      let d2=dx*dx+dy*dy; if(d2<1) d2=1;
+      const f=800*alpha/d2;
+      const dd=Math.sqrt(d2);
+      nodes[i].vx-=dx/dd*f; nodes[i].vy-=dy/dd*f;
+      nodes[j].vx+=dx/dd*f; nodes[j].vy+=dy/dd*f;
+    }
+  }
+  // Attraction along links
+  edges.forEach(e=>{
+    const a=nodes[e.s-1],b=nodes[e.t-1];
+    if(!a||!b)return;
+    let dx=b.x-a.x,dy=b.y-a.y;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    const f=(d-80)*0.02*alpha;
+    a.vx+=dx/d*f; a.vy+=dy/d*f;
+    b.vx-=dx/d*f; b.vy-=dy/d*f;
+  });
+  // Center gravity
+  nodes.forEach(n=>{
+    n.vx+=(cx-n.x)*0.005*alpha;
+    n.vy+=(cy-n.y)*0.005*alpha;
+  });
+  // Apply
+  nodes.forEach(n=>{
+    if(n.fixed)return;
+    n.vx*=0.6;n.vy*=0.6;
+    n.x+=n.vx;n.y+=n.vy;
+    // Keep in bounds
+    n.x=Math.max(50,Math.min(W-50,n.x));
+    n.y=Math.max(60,Math.min(H-60,n.y));
+  });
+}
+
+// === FILTERING ===
+function filtered(){
+  return nodes.filter(n=>{
+    if(n.y>maxYear) return false;
+    if(searchQ){
+      const q=searchQ.toLowerCase();
+      if(!(n.tz.includes(q)||n.az.includes(q)||n.t.toLowerCase().includes(q)||n.a.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+}
+
+// === RENDER ===
+let animFrame;
+function render(){
+  ctx.clearRect(0,0,W,H);
+
+  // Background stars
+  if(!render._stars){
+    render._stars=[];
+    for(let i=0;i<200;i++) render._stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.3,a:Math.random()*0.5+0.2});
+  }
+  render._stars.forEach(s=>{
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${s.a*(0.5+0.5*Math.sin(Date.now()*0.001+s.x))})`;
+    ctx.fill();
+  });
+
+  const vis=filtered();
+  const visIds=new Set(vis.map(n=>n.id));
+
+  // Draw links
+  if(showLinks){
+    edges.forEach(e=>{
+      if(!visIds.has(e.s)||!visIds.has(e.t))return;
+      const a=nodes[e.s-1],b=nodes[e.t-1];
+      const highlight=selectedId&&(e.s===selectedId||e.t===selectedId);
+      const hoverHL=hoveredId&&(e.s===hoveredId||e.t===hoveredId);
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+      if(highlight||hoverHL){
+        ctx.strokeStyle=e.type==='influence'?'rgba(167,139,250,0.5)':e.type==='response'?'rgba(251,191,36,0.5)':e.type==='parallel'?'rgba(52,211,153,0.4)':'rgba(255,255,255,0.3)';
+        ctx.lineWidth=1.5;
+      } else {
+        ctx.strokeStyle='rgba(255,255,255,0.04)';
+        ctx.lineWidth=0.5;
+      }
+      ctx.stroke();
+    });
+  }
+
+  // Draw nodes
+  vis.forEach(n=>{
+    const isSelected=n.id===selectedId;
+    const isHovered=n.id===hoveredId;
+    const baseR=3+n.imp*1.8;
+    const r=isSelected?baseR*1.6:isHovered?baseR*1.3:baseR;
+    const alpha=isSelected||isHovered?1:(selectedId?0.3:0.8);
+
+    // Glow
+    if(isSelected||isHovered){
+      const grad=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*3);
+      grad.addColorStop(0,n.col+'66');
+      grad.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(n.x,n.y,r*3,0,Math.PI*2);
+      ctx.fillStyle=grad;ctx.fill();
+    }
+
+    // Star dot
+    ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=n.col;
+    ctx.fill();
+
+    // Label for important or hovered/selected
+    if(n.imp>=4||isSelected||isHovered){
+      ctx.font=`${isSelected||isHovered?'12':'10'}px "Noto Serif SC",serif`;
+      ctx.fillStyle=isSelected||isHovered?'#fff':'#aaa';
+      ctx.globalAlpha=isSelected||isHovered?1:0.6;
+      ctx.textAlign='center';
+      ctx.fillText(n.tz,n.x,n.y-r-4);
+    }
+    ctx.globalAlpha=1;
+  });
+
+  // Mode overlay
+  if(mode==='theme') drawModeOverlay('th',THEMES,'theme');
+  if(mode==='arch') drawModeOverlay('ar',ARCHS,'arch');
+
+  animFrame=requestAnimationFrame(render);
+}
+
+function drawModeOverlay(tagKey,map,cls){
+  const vis=filtered();
+  const groups={};
+  vis.forEach(n=>{
+    (n[tagKey]||[]).forEach(k=>{
+      if(!groups[k])groups[k]=[];
+      groups[k].push(n);
+    });
+  });
+  // Draw convex hulls (simplified: circles)
+  Object.entries(groups).forEach(([k,ns])=>{
+    if(ns.length<2)return;
+    let sx=0,sy=0;
+    ns.forEach(n=>{sx+=n.x;sy+=n.y;});
+    const mx=sx/ns.length,my=sy/ns.length;
+    let maxD=0;
+    ns.forEach(n=>{const d=Math.hypot(n.x-mx,n.y-my);if(d>maxD)maxD=d;});
+    ctx.beginPath();ctx.arc(mx,my,maxD+20,0,Math.PI*2);
+    ctx.fillStyle=ns[0].col+'0a';
+    ctx.strokeStyle=ns[0].col+'33';
+    ctx.lineWidth=1;
+    ctx.fill();ctx.stroke();
+    ctx.font='10px "Noto Serif SC"';
+    ctx.fillStyle=ns[0].col+'99';
+    ctx.textAlign='center';
+    ctx.fillText(map[k]||k,mx,my-maxD-8);
+  });
+}
+
+// === INTERACTION ===
+cvs.addEventListener('mousemove',e=>{
+  const mx=e.clientX,my=e.clientY;
+  const vis=filtered();
+  let found=null;
+  vis.forEach(n=>{
+    const d=Math.hypot(n.x-mx,n.y-my);
+    if(d<12+n.imp*2) found=n;
+  });
+  hoveredId=found?found.id:null;
+  cvs.style.cursor=found?'pointer':'crosshair';
+
+  const tt=document.getElementById('tooltip');
+  if(found){
+    tt.style.display='block';
+    tt.style.left=Math.min(mx+15,W-270)+'px';
+    tt.style.top=Math.min(my+15,H-80)+'px';
+    tt.innerHTML=`<div class="tt-title">${found.tz}</div><div class="tt-author">${found.az} · ${found.c} · ${found.y>0?found.y:'前'+Math.abs(found.y)}</div><div class="tt-tags">${found.th.map(t=>`<span class="tag theme">${THEMES[t]||t}</span>`).join('')}${found.ar.map(a=>`<span class="tag arch">${ARCHS[a]||a}</span>`).join('')}</div>`;
+  } else {
+    tt.style.display='none';
+  }
+});
+
+cvs.addEventListener('click',e=>{
+  if(hoveredId){
+    selectBook(hoveredId);
+  } else {
+    selectedId=null;
+    document.getElementById('sidebar').classList.remove('open');
+  }
+});
+
+function selectBook(id){
+  selectedId=id;
+  const b=B.find(x=>x.id===id);
+  if(!b)return;
+  const sb=document.getElementById('sidebar');
+  sb.classList.add('open');
+  const relatedLinks=edges.filter(e=>e.s===id||e.t===id);
+  // incoming
+  const incoming=relatedLinks.filter(e=>e.t===id).map(e=>({book:B.find(x=>x.id===e.s),type:e.type,note:e.note}));
+  // outgoing
+  const outgoing=relatedLinks.filter(e=>e.s===id).map(e=>({book:B.find(x=>x.id===e.t),type:e.type,note:e.note}));
+
+  let html=`<h2>${b.tz}</h2>
+    <div class="meta">${b.az} · ${b.c} · ${b.y>0?b.y:'前'+Math.abs(b.y)} · ${b.g}</div>
+    <div>${b.th.map(t=>`<span class="tag theme">${THEMES[t]}</span>`).join('')}${b.ar.map(a=>`<span class="tag arch">${ARCHS[a]}</span>`).join('')}</div>`;
+
+  if(incoming.length){
+    html+=`<div class="section"><h3>📥 受影响于</h3>`;
+    incoming.forEach(r=>{
+      html+=`<div class="link-item" onclick="selectBook(${r.book.id})">← <b>${r.book.tz}</b> <span style="color:#888">${r.type}: ${r.note.slice(0,30)}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+  if(outgoing.length){
+    html+=`<div class="section"><h3>📤 影响了</h3>`;
+    outgoing.forEach(r=>{
+      html+=`<div class="link-item" onclick="selectBook(${r.book.id})">→ <b>${r.book.tz}</b> <span style="color:#888">${r.type}: ${r.note.slice(0,30)}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // Same archetype books
+  const sameArch=B.filter(x=>x.id!==id&&x.ar.some(a=>b.ar.includes(a))).slice(0,8);
+  if(sameArch.length){
+    html+=`<div class="section"><h3>🎭 同原型</h3>`;
+    sameArch.forEach(s=>{
+      html+=`<div class="link-item" onclick="selectBook(${s.id})">${s.tz} <span style="color:#888">${s.c}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  document.getElementById('sidebar-content').innerHTML=html;
+}
+
+// === CONTROLS ===
+function resetView(){
+  selectedId=null;hoveredId=null;maxYear=1930;searchQ='';
+  document.getElementById('timeline').value=1930;
+  document.getElementById('search').value='';
+  document.getElementById('eraLabel').textContent='全部时代';
+  document.getElementById('sidebar').classList.remove('open');
+  mode='star';
+  document.getElementById('modeBtn').classList.remove('active');
+  document.getElementById('archBtn').classList.remove('active');
+}
+
+function toggleMode(){
+  const btn=document.getElementById('modeBtn');
+  if(mode==='theme'){mode='star';btn.classList.remove('active');}
+  else{mode='theme';btn.classList.add('active');document.getElementById('archBtn').classList.remove('active');}
+}
+
+function toggleArch(){
+  const btn=document.getElementById('archBtn');
+  if(mode==='arch'){mode='star';btn.classList.remove('active');}
+  else{mode='arch';btn.classList.add('active');document.getElementById('modeBtn').classList.remove('active');}
+}
+
+function toggleLinks(){showLinks=!showLinks;}
+
+document.getElementById('timeline').addEventListener('input',e=>{
+  maxYear=+e.target.value;
+  const era=ERAS.find(er=>maxYear>=er.y0&&maxYear<=er.y1);
+  document.getElementById('eraLabel').textContent=maxYear>=1925?'全部时代':(era?era.name:maxYear+'年');
+});
+
+document.getElementById('search').addEventListener('input',e=>{
+  searchQ=e.target.value;
+});
+
+// === LEGEND ===
+function buildLegend(){
+  const regions=[...new Set(B.map(b=>b.c))].sort();
+  const el=document.getElementById('region-legend');
+  el.innerHTML=regions.map(r=>`<div class="ri"><div class="dot" style="background:${REGION_COLORS[r]||'#95A5A6'}"></div>${r}</div>`).join('');
+}
+
+function updateStats(){
+  const vis=filtered();
+  document.getElementById('stats').innerHTML=`可见: ${vis.length}/100本<br>关系: ${edges.filter(e=>vis.find(v=>v.id===e.s)&&vis.find(v=>v.id===e.t)).length}条`;
+}
+
+// === INIT ===
+window.addEventListener('resize',resize);
+resize();
+buildLegend();
+render();
+setInterval(updateStats,500);
+</script>
+</body>
