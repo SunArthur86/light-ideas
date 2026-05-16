@@ -7,322 +7,475 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#fff;--text:#171717;--text2:#4d4d4d;--text3:#808080;
-  --surface:#fafafa;--border:#ebebeb;
-  --red:#c0392b;--green:#27ae60;--blue:#2980b9;--gold:#d4a017;--purple:#8e44ad;
-  --ocean:#f0f4f8;--land:#e2e8f0;--land-stroke:#c8cdd3;
-  --shadow:rgba(0,0,0,.08) 0 0 0 1px,rgba(0,0,0,.04) 0 2px 2px;
-}
-[data-theme="dark"]{
-  --bg:#0a0a0a;--text:#ededed;--text2:#a0a0a0;--text3:#666;
-  --surface:#141414;--border:#2a2a2a;
-  --ocean:#0d1117;--land:#1a1f2e;--land-stroke:#2a3040;
-}
-html{font-size:16px}
-body{font-family:'Geist',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;transition:background .3s,color .3s}
+:root{--bg:#0a0a0a;--surface:#141414;--border:#222;--text:#ededed;--text2:#999;--text3:#555;--hlm:#c0392b;--sgy:#27ae60;--shz:#2980b9;--xyj:#d4a017;--smy:#9b59b6}
+.light{--bg:#fafafa;--surface:#fff;--border:#e0e0e0;--text:#111;--text2:#666;--text3:#aaa}
+html{font-size:15px}
+body{font-family:'Geist',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 320px;height:100vh}
+.map-wrap{position:relative;overflow:hidden;background:var(--bg)}
+.map-wrap svg{width:100%;height:100%}
+.sidebar{border-left:1px solid var(--border);overflow-y:auto;background:var(--surface);display:flex;flex-direction:column}
+.hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:10}
+.hdr h1{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;letter-spacing:-.3px}
+.hdr .sub{font-size:11px;color:var(--text3);font-family:'Geist Mono',monospace}
+.theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;color:var(--text2);font-size:14px}
+.filters{padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:9999px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid transparent;background:var(--bg);color:var(--text2);user-select:none;transition:.15s}
+.chip:hover{border-color:var(--border)}.chip.on{color:#fff}
+.chip .d{width:6px;height:6px;border-radius:50%}
+.ch-all.on{background:var(--text);color:var(--bg)}
+.ch-hlm .d{background:var(--hlm)}.ch-hlm.on{background:var(--hlm)}
+.ch-sgy .d{background:var(--sgy)}.ch-sgy.on{background:var(--sgy)}
+.ch-shz .d{background:var(--shz)}.ch-shz.on{background:var(--shz)}
+.ch-xyj .d{background:var(--xyj)}.ch-xyj.on{background:var(--xyj)}
+.ch-smy .d{background:var(--smy)}.ch-smy.on{background:var(--smy)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.stat{background:var(--bg);border-radius:8px;padding:8px 10px;text-align:center}
+.stat .v{font-size:18px;font-weight:600;font-family:'Geist Mono',monospace}
+.stat .l{font-size:10px;color:var(--text3)}
+.tab-row{display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;text-align:center;padding:8px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:.15s}
+.tab.on{color:var(--text);border-bottom-color:var(--text)}
+.tab:hover{color:var(--text2)}
+.loc-list{flex:1;overflow-y:auto;padding:4px 0}
+.loc-item{padding:8px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.1s;font-size:13px}
+.loc-item:hover{background:var(--bg)}
+.loc-item.active{background:var(--bg);border-left:3px solid var(--text2)}
+.loc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.loc-nm{flex:1;font-weight:500}
+.loc-nv{font-size:10px;color:var(--text3);font-family:'Geist Mono',monospace}
+.detail{border-top:1px solid var(--border);padding:14px 16px;display:none}
+.detail.show{display:block}
+.detail h3{font-family:'Noto Serif SC',serif;font-size:16px;margin-bottom:4px}
+.detail .d-nv{font-size:11px;font-family:'Geist Mono',monospace;padding:2px 8px;border-radius:9999px;color:#fff;display:inline-block;margin-bottom:6px}
+.detail .d-desc{font-size:13px;color:var(--text2);margin-bottom:8px}
+.detail .d-section{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 4px}
+.detail .d-tag{display:inline-block;font-size:11px;background:var(--bg);border-radius:4px;padding:2px 8px;margin:2px 4px 2px 0;color:var(--text2)}
+.detail .d-cross{font-size:12px;color:var(--smy);margin-top:4px;font-style:italic}
+.route-legend{padding:8px 16px;border-top:1px solid var(--border);display:none}
+.route-legend.show{display:block}
+.route-legend h4{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.rl-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);padding:2px 0}
+.rl-line{width:24px;height:3px;border-radius:2px}
 
-.header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
-.header h1{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;letter-spacing:-.5px}
-.header .sub{font-size:13px;color:var(--text3);font-family:'Geist Mono',monospace;margin-left:12px}
-.theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text)}
+/* Map marker styles via SVG */
+.map-marker{cursor:pointer;transition:transform .15s}
+.map-marker:hover{transform:scale(1.3)}
+.map-label{font-size:9px;fill:var(--text2);pointer-events:none;font-family:'Geist Mono',monospace}
+.light .map-label{fill:#666}
+.province{fill:var(--surface);stroke:var(--border);stroke-width:.5;opacity:.3}
+.route-line{fill:none;stroke-width:2;stroke-dasharray:6 4;opacity:.7}
+.cross-line{fill:none;stroke-width:1.5;stroke-dasharray:4 4;opacity:.5}
+@keyframes dash{to{stroke-dashoffset:-20}}
+.route-line,.cross-line{animation:dash 2s linear infinite}
 
-.filters{display:flex;gap:8px;padding:14px 24px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
-.fl{font-size:11px;color:var(--text3);font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-right:4px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:9999px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1.5px solid transparent;background:var(--surface);color:var(--text2);user-select:none}
-.chip:hover{border-color:var(--border)}
-.chip .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.chip.on{color:#fff}
-.c-all.on{background:var(--text);color:var(--bg)}
-.c-hlm .dot{background:var(--red)}.c-hlm.on{background:var(--red)}
-.c-sgy .dot{background:var(--green)}.c-sgy.on{background:var(--green)}
-.c-shz .dot{background:var(--blue)}.c-shz.on{background:var(--blue)}
-.c-xyj .dot{background:var(--gold)}.c-xyj.on{background:var(--gold)}
-.c-cross .dot{background:var(--purple)}.c-cross.on{background:var(--purple)}
+/* Relationship panel */
+.rel-panel{padding:10px 16px;border-top:1px solid var(--border);display:none}
+.rel-panel.show{display:block}
+.rel-panel h4{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.rel-char{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px}
+.rel-char .rc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.rel-char .rc-nm{font-weight:500;flex:1}
+.rel-char .rc-nv{font-size:10px;color:var(--text3)}
 
-.main{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 105px)}
-.map-box{position:relative;overflow:hidden;background:var(--ocean)}
-.map-box svg{width:100%;height:100%}
-
-.sidebar{border-left:1px solid var(--border);background:var(--bg);overflow-y:auto}
-.sb-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
-.sb-sec h3{font-size:11px;font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
-.stat .n{font-size:22px;font-weight:600;letter-spacing:-1px}
-.stat .l{font-size:10px;color:var(--text3);font-family:'Geist Mono',monospace;margin-top:2px}
-
-.loc-list{display:flex;flex-direction:column;gap:4px}
-.loc-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .15s}
-.loc-item:hover,.loc-item.on{background:var(--surface);box-shadow:var(--shadow)}
-.loc-item .md{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.loc-item .inf{flex:1}
-.loc-item .nm{font-size:14px;font-weight:500}
-.loc-item .tg{font-size:11px;color:var(--text3);font-family:'Geist Mono',monospace}
-.loc-item .ds{font-size:13px;color:var(--text2);margin-top:3px;line-height:1.4}
-
-.dp h2{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;margin-bottom:4px}
-.dp .badge{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:500;color:#fff;margin-bottom:10px}
-.dp .ev{padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);line-height:1.5}
-.dp .ev:last-child{border-bottom:none}
-.dp .ev strong{color:var(--text)}
-.dp .xr{margin-top:12px;padding:10px;border-radius:8px;background:var(--surface);border:1px solid var(--border)}
-.dp .xr h4{font-size:11px;font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:6px}
-.dp .xr p{font-size:13px;color:var(--text2);line-height:1.5}
-
-.province{fill:var(--land);stroke:var(--land-stroke);stroke-width:.5;transition:fill .2s}
-.mk{cursor:pointer;transition:transform .15s}
-.mk:hover{transform:scale(1.5)}
-.mk circle{stroke:#fff;stroke-width:1.5;filter:drop-shadow(0 1px 3px rgba(0,0,0,.3))}
-.mk text{font-family:'Geist',sans-serif;font-size:9px;fill:var(--text);pointer-events:none}
-.cross-link{stroke:var(--purple);stroke-width:1.5;stroke-dasharray:6 4;fill:none;opacity:.6;animation:dash 20s linear infinite}
-.cross-link-glow{stroke:var(--purple);stroke-width:4;fill:none;opacity:.12;filter:blur(3px)}
-@keyframes dash{to{stroke-dashoffset:-200}}
-
-.tooltip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;box-shadow:var(--shadow);font-size:13px;z-index:200;opacity:0;transition:opacity .15s;max-width:220px}
-.tooltip.vis{opacity:1}
-.tooltip .tn{font-weight:600;margin-bottom:2px}
-.tooltip .tt{font-size:11px;color:var(--text3);font-family:'Geist Mono',monospace}
-
-@media(max-width:900px){
-  .main{grid-template-columns:1fr;height:auto}
-  .map-box{height:55vh}
-  .sidebar{border-left:none;border-top:1px solid var(--border)}
-  .header .sub{display:none}
-}
-@media(max-width:600px){
-  .filters{padding:10px 16px;gap:6px}
-  .header{padding:10px 16px}
-  .header h1{font-size:16px}
-}
+@media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:50vh 1fr}.sidebar{border-left:none;border-top:1px solid var(--border)}}
 </style>
 </head>
 <body>
-
-<header class="header">
-  <div style="display:flex;align-items:baseline;gap:0">
-    <h1>四梦归一 · 四大名著地理可视化</h1>
-    <span class="sub">Four Classics Atlas</span>
-  </div>
-  <button class="theme-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
-</header>
-
-<nav class="filters">
-  <span class="fl">筛选</span>
-  <div class="chip c-all on" data-f="all" onclick="setFilter('all')">全部</div>
-  <div class="chip c-hlm" data-f="hlm" onclick="setFilter('hlm')"><span class="dot"></span>红楼梦</div>
-  <div class="chip c-sgy" data-f="sgy" onclick="setFilter('sgy')"><span class="dot"></span>三国演义</div>
-  <div class="chip c-shz" data-f="shz" onclick="setFilter('shz')"><span class="dot"></span>水浒传</div>
-  <div class="chip c-xyj" data-f="xyj" onclick="setFilter('xyj')"><span class="dot"></span>西游记</div>
-  <div class="chip c-cross" data-f="cross" onclick="setFilter('cross')"><span class="dot"></span>四梦归一</div>
-</nav>
-
-<div class="main">
-  <div class="map-box" id="mapBox">
-    <svg id="svg" viewBox="0 0 800 650" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <!-- China outline simplified -->
-      <path class="province" d="M100,90 L180,55 L280,40 L380,32 L480,38 L560,52 L630,75 L690,110 L720,170 L735,240 L725,310 L705,370 L670,420 L625,460 L570,490 L510,510 L445,520 L380,515 L320,500 L260,470 L210,430 L175,370 L155,300 L145,230 L140,165 L135,115 Z"/>
-      <!-- Yangtze hint -->
-      <path d="M260,280 Q320,300 380,310 Q440,320 500,300 Q550,280 580,250" fill="none" stroke="var(--land-stroke)" stroke-width=".8" opacity=".5"/>
-      <!-- Yellow River hint -->
-      <path d="M200,220 Q260,240 320,230 Q380,220 440,200 Q500,180 540,170" fill="none" stroke="var(--land-stroke)" stroke-width=".8" opacity=".5"/>
-      <g id="crossLinks" opacity="0">
-        <!-- 荣国府↔花果山 -->
-        <path class="cross-link-glow" d="M365,155 Q450,100 530,260"/>
-        <path class="cross-link" d="M365,155 Q450,100 530,260"/>
-        <!-- 荣国府↔梁山 -->
-        <path class="cross-link-glow" d="M365,155 Q370,200 400,235"/>
-        <path class="cross-link" d="M365,155 Q370,200 400,235"/>
-        <!-- 荣国府↔五丈原 -->
-        <path class="cross-link-glow" d="M365,155 Q340,210 330,260"/>
-        <path class="cross-link" d="M365,155 Q340,210 330,260"/>
-        <!-- 梁山↔五丈原 -->
-        <path class="cross-link-glow" d="M400,235 Q365,245 330,260"/>
-        <path class="cross-link" d="M400,235 Q365,245 330,260"/>
-        <!-- 花果山↔五行山 -->
-        <path class="cross-link-glow" d="M530,260 Q510,310 490,340"/>
-        <path class="cross-link" d="M530,260 Q510,310 490,340"/>
-      </g>
-      <g id="markers"></g>
-    </svg>
-    <div class="tooltip" id="tip"><div class="tn"></div><div class="tt"></div></div>
-  </div>
-
-  <aside class="sidebar" id="sidebar"></aside>
+<div class="app">
+<div class="map-wrap">
+<svg id="map" viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg">
+<!-- Province outlines -->
+<g id="provinces"></g>
+<!-- Route lines -->
+<g id="routes"></g>
+<!-- Cross-novel connections -->
+<g id="cross-connections"></g>
+<!-- Location markers -->
+<g id="markers"></g>
+<!-- Location labels -->
+<g id="labels"></g>
+</svg>
 </div>
-
+<div class="sidebar">
+<div class="hdr">
+  <div><h1>四大名著地理可视化</h1><div class="sub">Four Classics Atlas</div></div>
+  <button class="theme-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
+</div>
+<div class="filters" id="filters"></div>
+<div class="stats" id="stats"></div>
+<div class="tab-row">
+  <div class="tab on" data-t="list" onclick="setTab(this)">地点</div>
+  <div class="tab" data-t="routes" onclick="setTab(this)">路线</div>
+  <div class="tab" data-t="chars" onclick="setTab(this)">人物</div>
+</div>
+<div class="loc-list" id="locList"></div>
+<div class="detail" id="detail"></div>
+<div class="route-legend" id="routeLegend"></div>
+<div class="rel-panel" id="relPanel"></div>
+</div>
+</div>
 <script>
-const N={
-  hlm:{n:'红楼梦',c:'#c0392b',f:'《红楼梦》'},
-  sgy:{n:'三国演义',c:'#27ae60',f:'《三国演义》'},
-  shz:{n:'水浒传',c:'#2980b9',f:'《水浒传》'},
-  xyj:{n:'西游记',c:'#d4a017',f:'《西游记》'}
-};
+/* === DATA === */
+const N={hlm:{n:'红楼梦',c:'#c0392b'},sgy:{n:'三国演义',c:'#27ae60'},shz:{n:'水浒传',c:'#2980b9'},xyj:{n:'西游记',c:'#d4a017'}};
 
 const L=[
-  // 红楼梦
-  {id:'rongguofu',nm:'荣国府',nv:'hlm',x:365,y:155,desc:'贾府主宅，宝玉与黛玉、宝钗的居所',ev:['宝玉梦游太虚幻境','黛玉焚稿断痴情','凤姐协理荣国府'],ch:['贾宝玉','林黛玉','王熙凤','贾母'],xr:'界门出现于后花园，水帘洞一度"移植"至此'},
-  {id:'daguan',nm:'大观园',nv:'hlm',x:378,y:145,desc:'元春省亲所建园林，众姐妹居所',ev:['黛玉葬花','宝钗扑蝶','抄检大观园'],ch:['贾宝玉','林黛玉','薛宝钗'],xr:'花瓣化蝶穿入虚空，金蝶引出界痕'},
-  {id:'xiaoxiang',nm:'潇湘馆',nv:'hlm',x:385,y:148,desc:'林黛玉住所，竹林环绕',ev:['黛玉葬花吟诗','焚稿断痴情'],ch:['林黛玉'],xr:'诗稿灰烬穿越太虚与出师表合卷'},
-  {id:'yihong',nm:'怡红院',nv:'hlm',x:372,y:152,desc:'贾宝玉住所',ev:['宝玉摔玉','怡红院夜宴'],ch:['贾宝玉','袭人','晴雯'],xr:'桃树随宝玉"移植"至花果山'},
-  {id:'beijing',nm:'北京（都中）',nv:'hlm',x:380,y:130,desc:'贾府所在京城',ev:['元春封妃','贾府抄家'],ch:['贾政','元春'],xr:''},
-  {id:'nanjing',nm:'南京（金陵）',nv:'hlm',x:405,y:242,desc:'甄士隐故乡，金陵十二钗原籍',ev:['甄士隐梦幻识通灵'],ch:['甄士隐'],xr:''},
-  {id:'dahuang',nm:'大荒山',nv:'hlm',x:195,y:55,desc:'无稽崖青埂峰，通灵宝玉出处',ev:['空空道人抄录石头记'],ch:['空空道人'],xr:'空空道人从此读裂纹中的故事——即全书'},
-  {id:'taixu',nm:'太虚幻境',nv:'hlm',x:305,y:215,desc:'警幻仙子所居，命运簿册所在',ev:['宝玉梦游太虚','铜镜映出花果山'],ch:['警幻仙子','贾宝玉'],xr:'铜镜首次映出灵石之界——界痕开端'},
-
-  // 三国演义
-  {id:'xudu',nm:'许都',nv:'sgy',x:348,y:215,desc:'曹操挟天子以令诸侯的都城',ev:['曹操专权','华佗欲开颅取石'],ch:['曹操','曹丕','华佗'],xr:'曹操颅中智石碎片——太虚因果钥匙之一'},
-  {id:'chibi',nm:'赤壁',nv:'sgy',x:370,y:315,desc:'孙刘联军大败曹操之地',ev:['诸葛亮借东风','火烧赤壁'],ch:['诸葛亮','周瑜','曹操'],xr:'借风时无意打开太虚微缝'},
-  {id:'wuzhang',nm:'五丈原',nv:'sgy',x:330,y:260,desc:'诸葛亮星陨之地',ev:['六出祁山','将星陨落','遗书天罡八阵'],ch:['诸葛亮','姜维','司马懿'],xr:'孔明临终感知三界，遗命传梁山'},
-  {id:'baidi',nm:'白帝城',nv:'sgy',x:305,y:305,desc:'刘备托孤之城',ev:['刘备托孤诸葛亮'],ch:['刘备','诸葛亮'],xr:'刘备英灵托梦宋江——"别做第二个我"'},
-  {id:'luoyang',nm:'洛阳',nv:'sgy',x:358,y:195,desc:'曹魏都城',ev:['曹丕称帝','凤姐亲赴取智石'],ch:['曹丕'],xr:'凤姐将计就计说服曹丕交出智石'},
-  {id:'jingzhou',nm:'荆州',nv:'sgy',x:338,y:282,desc:'兵家必争之地',ev:['关羽镇守荆州','吕蒙白衣渡江'],ch:['关羽','吕蒙'],xr:''},
-  {id:'maicheng',nm:'麦城',nv:'sgy',x:325,y:295,desc:'关羽败亡之地',ev:['关羽走麦城','英灵不散'],ch:['关羽'],xr:'关公英灵借偃月刀存续——穿越至梁山'},
-  {id:'yiling',nm:'夷陵',nv:'sgy',x:345,y:325,desc:'刘备伐吴惨败之地',ev:['夷陵之战','陆逊火烧连营'],ch:['刘备','陆逊'],xr:'刘备以此"苦肉计"告诫宋江'},
-  {id:'changan-s',nm:'长安',nv:'sgy',x:322,y:210,desc:'西汉故都',ev:['董卓之乱'],ch:['董卓','吕布'],xr:''},
-  {id:'nanzheng',nm:'汉中',nv:'sgy',x:310,y:265,desc:'蜀汉北伐基地',ev:['诸葛亮北伐'],ch:['诸葛亮','魏延'],xr:''},
-
-  // 水浒传
-  {id:'liangshan',nm:'梁山泊',nv:'shz',x:400,y:235,desc:'一百零八将聚义之地',ev:['天降青石"太虚将裂"','公孙胜天罡八阵','武松骑虎穿界门'],ch:['宋江','鲁智深','武松','公孙胜','林冲'],xr:'义石出土处，界门在后山'},
-  {id:'jingyang',nm:'景阳冈',nv:'shz',x:415,y:250,desc:'武松打虎之地',ev:['武松打虎','虎妖实为黄袍怪巡山虎'],ch:['武松'],xr:'所打之虎是黄袍怪的巡山虎——因果链'},
-  {id:'dongjing',nm:'东京（汴梁）',nv:'shz',x:375,y:210,desc:'北宋都城',ev:['林冲被逼上梁山','高俅弄权'],ch:['林冲','高俅'],xr:''},
-  {id:'yanggu',nm:'阳谷县',nv:'shz',x:408,y:242,desc:'武松杀嫂之地',ev:['武松杀潘金莲西门庆'],ch:['武松'],xr:''},
-  {id:'jiangzhou',nm:'江州（九江）',nv:'shz',x:410,y:295,desc:'宋江题反诗之地',ev:['宋江浔阳楼题反诗','梁山劫法场'],ch:['宋江','李逵'],xr:''},
-  {id:'zhujiazhuang',nm:'祝家庄',nv:'shz',x:395,y:248,desc:'梁山三次攻打之地',ev:['三打祝家庄'],ch:['宋江','孙立'],xr:''},
-
-  // 西游记
-  {id:'huaguo',nm:'花果山',nv:'xyj',x:530,y:260,desc:'孙悟空出生之地，水帘洞所在',ev:['仙石生石猴','大闹天宫地脉震动','宝玉出家至此'],ch:['孙悟空'],xr:'灵石之界核心——仙石碎裂露出铜镜'},
-  {id:'wuxing',nm:'五行山',nv:'xyj',x:490,y:340,desc:'如来镇压悟空之地',ev:['悟空被压五百年','异梦见宝玉','万界归一后山裂'],ch:['孙悟空'],xr:'悟空与宝玉在梦中初次感应——石头兄弟'},
-  {id:'lingtai',nm:'灵台方寸山',nv:'xyj',x:360,y:120,desc:'菩提祖师道场',ev:['悟空学艺','七十二变'],ch:['孙悟空','菩提祖师'],xr:''},
-  {id:'tianting',nm:'天庭',nv:'xyj',x:450,y:80,desc:'玉帝所居凌霄宝殿',ev:['悟空大闹天宫','太上老君八卦炉'],ch:['孙悟空','玉帝','太上老君'],xr:'大闹天宫地脉震——因果传导至荣国府祖坟'},
-  {id:'changan-x',nm:'长安（出发）',nv:'xyj',x:318,y:208,desc:'唐僧取经出发地',ev:['唐僧领旨西行','水陆大会'],ch:['唐僧'],xr:''},
-  {id:'lingshan',nm:'灵山',nv:'xyj',x:180,y:400,desc:'如来佛祖所在，取经终点',ev:['唐僧取经到达','取得真经'],ch:['唐僧','孙悟空'],xr:''},
-  {id:'boyue',nm:'波月洞',nv:'xyj',x:455,y:330,desc:'黄袍怪（奎木狼）洞府',ev:['唐僧被掳','四将出征波月洞','帛书合卷出土'],ch:['黄袍怪','唐僧'],xr:'出师表与葬花吟合卷出土于此'},
-  {id:'flame',nm:'火焰山',nv:'xyj',x:230,y:340,desc:'铁扇公主芭蕉洞所在',ev:['三借芭蕉扇','悟空借扇灭火'],ch:['孙悟空','铁扇公主','牛魔王'],xr:''},
-  {id:'tongtian',nm:'通天河',nv:'xyj',x:290,y:300,desc:'取经第八十一难之地',ev:['老龟翻经'],ch:['唐僧','孙悟空'],xr:''},
+// 红楼梦
+{id:'rongguofu',nm:'荣国府',nv:'hlm',x:365,y:155,desc:'贾府主宅，宝玉与黛玉、宝钗的居所',ev:['宝玉梦游太虚幻境','黛玉焚稿断痴情','凤姐协理荣国府'],ch:['贾宝玉','林黛玉','王熙凤','贾母'],xr:'界门出现于后花园，水帘洞一度"移植"至此'},
+{id:'daguan',nm:'大观园',nv:'hlm',x:378,y:140,desc:'元春省亲所建园林',ev:['黛玉葬花','宝钗扑蝶','抄检大观园'],ch:['贾宝玉','林黛玉','薛宝钗','探春'],xr:'花瓣化蝶穿入虚空'},
+{id:'beijing',nm:'北京（都中）',nv:'hlm',x:390,y:120,desc:'贾府所在京城',ev:['元春省亲','宝玉中举'],ch:['贾宝玉','贾政'],xr:'四界共鸣天现倒影'},
+{id:'nanjing',nm:'南京（金陵）',nv:'hlm',x:395,y:205,desc:'甄府所在，贾府祖籍',ev:['甄士隐梦幻识通灵'],ch:['甄士隐','甄宝玉'],xr:'南京与洛阳界痕共振'},
+{id:'dahuangshan',nm:'大荒山',nv:'hlm',x:280,y:60,desc:'青埂峰下，通灵宝玉诞生之地',ev:['石头记缘起'],ch:['空空道人'],xr:'空空道人发现新裂纹，四梦归一故事起点'},
+{id:'taixu',nm:'太虚幻境',nv:'hlm',x:260,y:90,desc:'警幻仙子所居，宝玉梦游之地',ev:['宝玉梦游太虚','十二钗判词'],ch:['贾宝玉','警幻仙子'],xr:'太虚成为四界中转站'},
+// 三国
+{id:'xudu',nm:'许都',nv:'sgy',x:355,y:195,desc:'曹操挟天子以令诸侯之都',ev:['曹操执政','华佗之死'],ch:['曹操','汉献帝'],xr:'曹操颅中智石碎片引起头痛'},
+{id:'chibi',nm:'赤壁',nv:'sgy',x:345,y:270,desc:'孙刘联军大败曹操之地',ev:['赤壁之战','孔明借风'],ch:['诸葛亮','周瑜','曹操'],xr:'孔明借风实为开太虚微缝'},
+{id:'wuzhangyuan',nm:'五丈原',nv:'sgy',x:305,y:210,desc:'诸葛亮病逝之地',ev:['诸葛亮陨落','遗命传公孙胜'],ch:['诸葛亮'],xr:'将星陨落时，孔明灵魂感知三界'},
+{id:'baidicheng',nm:'白帝城',nv:'sgy',x:330,y:260,desc:'刘备托孤之地',ev:['刘备托孤'],ch:['刘备','诸葛亮'],xr:'宋江梦中多次到访白帝城'},
+{id:'luoyang',nm:'洛阳',nv:'sgy',x:340,y:185,desc:'东汉故都',ev:['董卓之乱','曹操定都'],ch:['曹操','董卓'],xr:'凤姐赴洛阳与曹操英灵对弈'},
+{id:'jingzhou',nm:'荆州',nv:'sgy',x:335,y:245,desc:'兵家必争之地',ev:['关羽守荆州','吕蒙白衣渡江'],ch:['关羽'],xr:'关羽英灵穿界至梁山'},
+{id:'maicheng',nm:'麦城',nv:'sgy',x:320,y:250,desc:'关羽败亡之地',ev:['关羽被擒','英灵不散'],ch:['关羽'],xr:'青龙偃月刀灵力包裹关羽灵魂'},
+{id:'yiling',nm:'夷陵',nv:'sgy',x:345,y:258,desc:'刘备伐吴惨败之地',ev:['夷陵之战'],ch:['刘备','陆逊'],xr:''},
+{id:'changansgy',nm:'长安',nv:'sgy',x:310,y:180,desc:'西汉故都，董卓焚毁',ev:['董卓乱政'],ch:['董卓','吕布'],xr:''},
+{id:'hanzhong',nm:'汉中',nv:'sgy',x:300,y:230,desc:'蜀汉北伐基地',ev:['六出祁山'],ch:['诸葛亮','姜维'],xr:''},
+// 水浒
+{id:'liangshan',nm:'梁山泊',nv:'shz',x:365,y:215,desc:'一百零八将聚义之地',ev:['智取生辰纲','大聚义'],ch:['宋江','武松','鲁智深','吴用'],xr:'界门出现在后山，四将出征'},
+{id:'jingyanggang',nm:'景阳冈',nv:'shz',x:375,y:240,desc:'武松打虎之地',ev:['武松打虎'],ch:['武松'],xr:'虎妖实为黄袍怪巡山虎'},
+{id:'dongjing',nm:'东京（汴梁）',nv:'shz',x:380,y:200,desc:'北宋都城',ev:['宋江招安'],ch:['宋江','高俅'],xr:''},
+{id:'yanggu',nm:'阳谷县',nv:'shz',x:370,y:235,desc:'武松故乡',ev:['武松杀嫂'],ch:['武松'],xr:''},
+{id:'jiangzhou',nm:'江州（九江）',nv:'shz',x:370,y:275,desc:'宋江题反诗之地',ev:['浔阳楼题反诗'],ch:['宋江'],xr:''},
+{id:'zhujiazhuang',nm:'祝家庄',nv:'shz',x:360,y:230,desc:'三打祝家庄',ev:['三打祝家庄'],ch:['宋江','林冲'],xr:''},
+// 西游记
+{id:'huaguoshan',nm:'花果山',nv:'xyj',x:450,y:195,desc:'悟空诞生之地',ev:['石猴出世','大闹天宫'],ch:['孙悟空'],xr:'仙石碎裂露出铜镜，宝玉亲至'},
+{id:'wuxingshan',nm:'五行山',nv:'xyj',x:340,y:190,desc:'如来镇压悟空之地',ev:['悟空被困五百年'],ch:['孙悟空'],xr:'石猴异梦梦见宝玉葬花'},
+{id:'lingtai',nm:'灵台方寸山',nv:'xyj',x:380,y:100,desc:'菩提祖师道场',ev:['悟空学艺'],ch:['孙悟空','菩提祖师'],xr:''},
+{id:'tianting',nm:'天庭',nv:'xyj',x:420,y:60,desc:'玉帝所居',ev:['大闹天宫'],ch:['孙悟空','二郎神'],xr:'大闹天宫引发地脉震动'},
+{id:'changanxyj',nm:'长安（出发）',nv:'xyj',x:310,y:185,desc:'唐僧取经出发地',ev:['唐僧出发'],ch:['唐僧'],xr:''},
+{id:'lingshan',nm:'灵山',nv:'xyj',x:180,y:280,desc:'如来佛祖所居',ev:['取经终点','得道成佛'],ch:['唐僧','孙悟空'],xr:''},
+{id:'boyuedong',nm:'波月洞',nv:'xyj',x:250,y:170,desc:'黄袍怪（奎木狼）洞府',ev:['四将出征波月洞'],ch:['黄袍怪'],xr:'武松关羽鲁智深八戒四将出征'},
+{id:'huoyanshan',nm:'火焰山',nv:'xyj',x:230,y:210,desc:'芭蕉扇灭火之地',ev:['三借芭蕉扇'],ch:['孙悟空','铁扇公主'],xr:''},
+{id:'tongtianhe',nm:'通天河',nv:'xyj',x:250,y:240,desc:'唐僧八十一难之一',ev:['通天河遇险'],ch:['唐僧'],xr:''}
 ];
 
-let filter='all';
-let active=null;
+// 跨界连接（四梦归一）
+const C=[
+{f:'daguan',t:'huaguoshan',d:'花瓣化蝶穿入花果山'},
+{f:'taixu',t:'wuxingshan',d:'太虚与五行山界痕相连'},
+{f:'wuzhangyuan',t:'liangshan',d:'孔明遗命传至公孙胜'},
+{f:'baidicheng',t:'liangshan',d:'宋江梦中多次到访'},
+{f:'chibi',t:'huaguoshan',d:'赤壁火借花果风'},
+{f:'tianting',t:'rongguofu',d:'大闹天宫地脉震至荣国府'},
+{f:'maicheng',t:'liangshan',d:'关羽英灵穿界至梁山'},
+{f:'luoyang',t:'rongguofu',d:'凤姐与曹操对弈'},
+{f:'jingzhou',t:'huaguoshan',d:'青龙偃月刀灵力共振'},
+{f:'dongjing',t:'xudu',d:'两朝都城界痕呼应'},
+{f:'dahuangshan',t:'huaguoshan',d:'两块石头的本源'},
+{f:'nanjing',t:'luoyang',d:'南北两都界痕共振'},
+{f:'taixu',t:'lingshan',d:'太虚与灵山互通'},
+{f:'liangshan',t:'huaguoshan',d:'界门双向通行'},
+{f:'rongguofu',t:'liangshan',d:'刘姥姥穿界'},
+{f:'wuzhangyuan',t:'lingtai',d:'孔明与菩提祖师灵识共振'},
+{f:'boyuedong',t:'liangshan',d:'四将出征路线'},
+{f:'huoyanshan',t:'chibi',d:'两场大火的因果'},
+{f:'tongtianhe',t:'chibi',d:'水与火的界痕'}
+];
 
+// 路线数据
+const R=[
+{id:'qujing',nm:'取经路',c:'#d4a017',pts:['changanxyj','wuxingshan','huaguoshan','tongtianhe','huoyanshan','boyuedong','lingshan'],desc:'唐僧师徒西行取经路线'},
+{id:'beifa',nm:'北伐路',c:'#27ae60',pts:['hanzhong','wuzhangyuan','chibi','jingzhou','maicheng','yiling','baidicheng'],desc:'蜀汉北伐与荆州争夺'},
+{id:'zhaoan',nm:'招安路',c:'#2980b9',pts:['liangshan','jingyanggang','zhujiazhuang','jiangzhou','dongjing'],desc:'梁山好汉从聚义到招安'},
+{id:'jiafu',nm:'贾府兴衰',c:'#c0392b',pts:['dahuangshan','taixu','nanjing','beijing','rongguofu','daguan'],desc:'贾府从兴盛到败落'}
+];
+
+// 人物关系
+const CHARS=[
+// 红楼
+{n:'贾宝玉',nv:'hlm',locs:['rongguofu','daguan','taixu'],rel:['林黛玉','薛宝钗','王熙凤','孙悟空']},
+{n:'林黛玉',nv:'hlm',locs:['rongguofu','daguan'],rel:['贾宝玉','贾母']},
+{n:'王熙凤',nv:'hlm',locs:['rongguofu','luoyang'],rel:['贾宝玉','曹操']},
+{n:'薛宝钗',nv:'hlm',locs:['daguan','rongguofu'],rel:['贾宝玉','林黛玉']},
+{n:'贾母',nv:'hlm',locs:['rongguofu'],rel:['贾宝玉','林黛玉']},
+{n:'刘姥姥',nv:'hlm',locs:['rongguofu','liangshan'],rel:['贾母','王熙凤']},
+// 三国
+{n:'诸葛亮',nv:'sgy',locs:['wuzhangyuan','chibi','hanzhong','baidicheng'],rel:['刘备','周瑜','公孙胜']},
+{n:'曹操',nv:'sgy',locs:['xudu','luoyang','chibi'],rel:['王熙凤','关羽']},
+{n:'关羽',nv:'sgy',locs:['jingzhou','maicheng','liangshan'],rel:['刘备','张飞','曹操']},
+{n:'刘备',nv:'sgy',locs:['baidicheng','yiling'],rel:['诸葛亮','关羽','宋江']},
+{n:'周瑜',nv:'sgy',locs:['chibi'],rel:['诸葛亮','曹操']},
+// 水浒
+{n:'宋江',nv:'shz',locs:['liangshan','dongjing','jiangzhou','baidicheng'],rel:['吴用','刘备','公孙胜']},
+{n:'武松',nv:'shz',locs:['liangshan','jingyanggang','yanggu','boyuedong'],rel:['鲁智深','关羽']},
+{n:'鲁智深',nv:'shz',locs:['liangshan','boyuedong'],rel:['武松','猪八戒']},
+{n:'公孙胜',nv:'shz',locs:['liangshan','wuzhangyuan'],rel:['宋江','诸葛亮']},
+{n:'吴用',nv:'shz',locs:['liangshan','zhujiazhuang'],rel:['宋江']},
+// 西游
+{n:'孙悟空',nv:'xyj',locs:['huaguoshan','wuxingshan','lingtai','tianting','huoyanshan','lingshan'],rel:['唐僧','贾宝玉','猪八戒']},
+{n:'唐僧',nv:'xyj',locs:['changanxyj','lingshan','tongtianhe'],rel:['孙悟空','猪八戒','沙僧']},
+{n:'猪八戒',nv:'xyj',locs:['huaguoshan','boyuedong'],rel:['孙悟空','鲁智深']},
+{n:'黄袍怪',nv:'xyj',locs:['boyuedong'],rel:['猪八戒','武松']},
+{n:'铁扇公主',nv:'xyj',locs:['huoyanshan'],rel:['孙悟空']}
+];
+
+// 中国简化省份轮廓（极简版）
+const PROVINCES=[
+{pts:'440,140 470,135 490,150 485,175 460,180 440,170',nm:'东北'},
+{pts:'390,130 430,125 445,140 440,170 415,175 395,160',nm:'华北'},
+{pts:'350,160 390,155 400,175 395,200 365,205 350,185',nm:'中原'},
+{pts:'310,170 345,165 355,185 345,215 320,210 310,190',nm:'西北'},
+{pts:'345,220 375,215 385,235 380,260 355,265 340,250',nm:'江南'},
+{pts:'320,240 350,235 360,260 340,285 315,275 310,255',nm:'湖广'},
+{pts:'275,225 315,220 325,245 315,275 285,270 270,250',nm:'巴蜀'},
+{pts:'245,245 280,240 285,270 265,300 240,290 235,265',nm:'西南'},
+{pts:'360,270 395,265 410,280 400,310 370,305 355,285',nm:'东南'},
+{pts:'430,160 465,155 475,175 460,195 435,190 425,175',nm:'东海'},
+{pts:'195,235 250,230 260,260 240,295 200,285 190,255',nm:'西域'},
+{pts:'380,190 420,185 440,200 435,220 400,225 385,210',nm:'齐鲁'}
+];
+
+/* === STATE === */
+let filter='all', tab='list', selLoc=null, activeRoutes=new Set();
+
+/* === HELPERS === */
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const locById=id=>L.find(l=>l.id===id);
+
+/* === INIT === */
 function init(){
-  renderMarkers();
-  renderSidebar();
+  renderFilters();
+  renderProvinces();
+  renderAll();
+  renderStats();
+  renderTabs();
 }
 
+function renderFilters(){
+  const f=$('#filters');
+  f.innerHTML=`
+    <div class="chip ch-all on" data-f="all" onclick="setFilter(this)">全部</div>
+    <div class="chip ch-hlm" data-f="hlm" onclick="setFilter(this)"><span class="d"></span>红楼梦</div>
+    <div class="chip ch-sgy" data-f="sgy" onclick="setFilter(this)"><span class="d"></span>三国</div>
+    <div class="chip ch-shz" data-f="shz" onclick="setFilter(this)"><span class="d"></span>水浒</div>
+    <div class="chip ch-xyj" data-f="xyj" onclick="setFilter(this)"><span class="d"></span>西游</div>
+    <div class="chip ch-smy" data-f="smy" onclick="setFilter(this)"><span class="d"></span>四梦归一</div>
+  `;
+}
+
+function setFilter(el){
+  $$('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  filter=el.dataset.f;
+  renderAll();renderStats();renderLocList();
+}
+
+function setTab(el){
+  $$('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  tab=el.dataset.t;
+  renderTabContent();
+}
+
+function filtered(){
+  if(filter==='all') return L;
+  if(filter==='smy') return L; // show all but highlight connections
+  return L.filter(l=>l.nv===filter);
+}
+
+/* === PROVINCES === */
+function renderProvinces(){
+  const g=$('#provinces');
+  g.innerHTML=PROVINCES.map(p=>`<polygon points="${p.pts}" class="province"/>`).join('');
+}
+
+/* === MARKERS === */
 function renderMarkers(){
-  const g=document.getElementById('markers');
-  g.innerHTML='';
-  const show=new Set();
-  L.forEach(l=>{
-    const vis=filter==='all'||filter==='cross'||l.nv===filter;
-    if(vis||(filter==='cross'&&l.xr)) show.add(l.id);
-  });
-  L.forEach(l=>{
-    const vis=show.has(l.id);
-    if(!vis) return;
+  const mg=$('#markers');
+  const lg=$('#labels');
+  const list=filtered();
+  const ids=new Set(list.map(l=>l.id));
+  
+  mg.innerHTML=list.map(l=>{
     const c=N[l.nv].c;
-    const mk=document.createElementNS('http://www.w3.org/2000/svg','g');
-    mk.classList.add('mk');
-    mk.setAttribute('data-id',l.id);
-    mk.setAttribute('transform',`translate(${l.x},${l.y})`);
-    mk.innerHTML=`<circle r="5" fill="${c}"/><text x="8" y="4">${l.nm}</text>`;
-    mk.addEventListener('mouseenter',e=>showTip(e,l));
-    mk.addEventListener('mouseleave',hideTip);
-    mk.addEventListener('click',()=>selectLoc(l.id));
-    g.appendChild(mk);
-  });
-  // Cross links
-  const cl=document.getElementById('crossLinks');
-  cl.setAttribute('opacity',(filter==='all'||filter==='cross')?'1':'0');
+    return `<g class="map-marker" onclick="selectLoc('${l.id}')" data-id="${l.id}">
+      <circle cx="${l.x}" cy="${l.y}" r="6" fill="${c}" opacity=".9"/>
+      <circle cx="${l.x}" cy="${l.y}" r="3" fill="#fff" opacity=".8"/>
+    </g>`;
+  }).join('');
+  
+  lg.innerHTML=list.map(l=>{
+    return `<text class="map-label" x="${l.x}" y="${l.y-10}" text-anchor="middle">${l.nm}</text>`;
+  }).join('');
 }
 
-function renderSidebar(){
-  const sb=document.getElementById('sidebar');
-  const vis=L.filter(l=>filter==='all'||filter==='cross'||l.nv===filter||(filter==='cross'&&l.xr));
-  let html=`<div class="sb-sec"><h3>统计</h3><div class="stats">
-    <div class="stat"><div class="n">${vis.length}</div><div class="l">显示地点</div></div>
-    <div class="stat"><div class="n">4</div><div class="l">名著</div></div>
-    <div class="stat"><div class="n">${L.filter(l=>l.xr).length}</div><div class="l">跨界连接</div></div>
-    <div class="stat"><div class="n">${new Set(L.flatMap(l=>l.ch)).size}</div><div class="l">关键人物</div></div>
-  </div></div>`;
-  html+=`<div class="sb-sec"><h3>地点列表</h3><div class="loc-list">`;
-  vis.forEach(l=>{
-    html+=`<div class="loc-item${active===l.id?' on':''}" onclick="selectLoc('${l.id}')">
-      <div class="md" style="background:${N[l.nv].c}"></div>
-      <div class="inf"><div class="nm">${l.nm}</div><div class="tg">${N[l.nv].n}${l.xr?' · 🔗':''}</div></div>
-    </div>`;
+/* === ROUTES === */
+function renderRoutes(){
+  const g=$('#routes');
+  let html='';
+  R.forEach(r=>{
+    const pts=r.pts.map(id=>{const l=locById(id);return l?`${l.x},${l.y}`:''}).filter(Boolean).join(' ');
+    const show=activeRoutes.has(r.id);
+    html+=`<polyline points="${pts}" class="route-line" stroke="${r.c}" style="display:${show?'block':'none'}"/>`;
   });
-  html+=`</div></div>`;
-  if(active){
-    const l=L.find(x=>x.id===active);
-    if(l){
-      html+=`<div class="sb-sec"><h3>详情</h3><div class="dp">
-        <h2>${l.nm}</h2>
-        <div class="badge" style="background:${N[l.nv].c}">${N[l.nv].f}</div>
-        <p style="font-size:14px;color:var(--text2);margin-bottom:8px">${l.desc}</p>
-        <div style="font-size:12px;color:var(--text3);font-family:'Geist Mono',monospace;margin-bottom:4px">关键人物：${l.ch.join('、')}</div>`;
-      if(l.ev.length){
-        html+=`<div style="margin-top:8px">`;
-        l.ev.forEach(e=>html+=`<div class="ev">${e}</div>`);
-        html+=`</div>`;
-      }
-      if(l.xr){
-        html+=`<div class="xr"><h4>🔗 四梦归一</h4><p>${l.xr}</p></div>`;
-      }
-      html+=`</div></div>`;
-    }
-  }
-  sb.innerHTML=html;
+  g.innerHTML=html;
 }
 
-function setFilter(f){
-  filter=f;
-  document.querySelectorAll('.chip').forEach(c=>{
-    c.classList.toggle('on',c.dataset.f===f);
-  });
-  active=null;
+/* === CROSS CONNECTIONS === */
+function renderCross(){
+  const g=$('#cross-connections');
+  if(filter!=='smy'&&filter!=='all'){g.innerHTML='';return;}
+  const list=filtered();
+  const ids=new Set(list.map(l=>l.id));
+  
+  g.innerHTML=C.filter(c=>ids.has(c.f)&&ids.has(c.t)).map(c=>{
+    const f=locById(c.f),t=locById(c.t);
+    if(!f||!t) return '';
+    const mx=(f.x+t.x)/2, my=(f.y+t.y)/2-15;
+    return `<path d="M${f.x},${f.y} Q${mx},${my} ${t.x},${t.y}" class="cross-line" stroke="#9b59b6"/>`;
+  }).join('');
+}
+
+/* === RENDER ALL === */
+function renderAll(){
   renderMarkers();
-  renderSidebar();
+  renderCross();
+  renderRoutes();
+  renderLocList();
 }
 
+/* === STATS === */
+function renderStats(){
+  const list=filtered();
+  const novels=new Set(list.map(l=>l.nv));
+  const chars=new Set(list.flatMap(l=>l.ch));
+  $('#stats').innerHTML=`
+    <div class="stat"><div class="v">${list.length}</div><div class="l">显示地点</div></div>
+    <div class="stat"><div class="v">${novels.size}</div><div class="l">名著</div></div>
+    <div class="stat"><div class="v">${C.length}</div><div class="l">跨界连接</div></div>
+    <div class="stat"><div class="v">${chars.size}</div><div class="l">关键人物</div></div>
+  `;
+}
+
+/* === TABS === */
+function renderTabs(){renderTabContent();}
+function renderTabContent(){
+  const rl=$('#routeLegend');
+  const rp=$('#relPanel');
+  rl.classList.remove('show');
+  rp.classList.remove('show');
+  
+  if(tab==='list'){renderLocList();}
+  else if(tab==='routes'){renderRouteLegend();}
+  else if(tab==='chars'){renderCharsPanel();}
+}
+
+/* === LOC LIST === */
+function renderLocList(){
+  const el=$('#locList');
+  const list=filtered();
+  el.innerHTML=list.map(l=>`
+    <div class="loc-item${selLoc===l.id?' active':''}" onclick="selectLoc('${l.id}')">
+      <div class="loc-dot" style="background:${N[l.nv].c}"></div>
+      <span class="loc-nm">${l.nm}</span>
+      <span class="loc-nv">${N[l.nv].n}</span>
+    </div>
+  `).join('');
+}
+
+/* === SELECT LOCATION === */
 function selectLoc(id){
-  active=active===id?null:id;
-  renderSidebar();
-  // Highlight marker
-  document.querySelectorAll('.mk').forEach(m=>{
-    m.style.opacity=(!active||m.dataset.id===active)?'1':'0.3';
+  selLoc=id;
+  const l=locById(id);
+  if(!l) return;
+  renderLocList();
+  
+  const d=$('#detail');
+  d.classList.add('show');
+  d.innerHTML=`
+    <h3>${l.nm}</h3>
+    <div class="d-nv" style="background:${N[l.nv].c}">${N[l.nv].n}</div>
+    <div class="d-desc">${l.desc}</div>
+    <div class="d-section">关键事件</div>
+    ${l.ev.map(e=>`<span class="d-tag">${e}</span>`).join('')}
+    <div class="d-section">相关人物</div>
+    ${l.ch.map(c=>`<span class="d-tag">${c}</span>`).join('')}
+    ${l.xr?`<div class="d-section">四梦归一</div><div class="d-cross">${l.xr}</div>`:''}
+  `;
+  
+  // Highlight on map
+  $$('.map-marker').forEach(m=>{
+    const mid=m.dataset.id;
+    m.style.opacity=mid===id?'1':'.3';
+    m.style.transform=mid===id?'scale(1.5)':'';
   });
 }
 
-function showTip(e,l){
-  const t=document.getElementById('tip');
-  t.querySelector('.tn').textContent=l.nm;
-  t.querySelector('.tt').textContent=N[l.nv].n;
-  const r=document.getElementById('mapBox').getBoundingClientRect();
-  t.style.left=(e.clientX-r.left+12)+'px';
-  t.style.top=(e.clientY-r.top-10)+'px';
-  t.classList.add('vis');
+/* === ROUTE LEGEND === */
+function renderRouteLegend(){
+  const el=$('#routeLegend');
+  el.classList.add('show');
+  el.innerHTML=`
+    <h4>路线动画</h4>
+    ${R.map(r=>`
+      <div class="rl-item" style="cursor:pointer" onclick="toggleRoute('${r.id}',this)">
+        <div class="rl-line" style="background:${r.c}${activeRoutes.has(r.id)?'':';opacity:.3'}"></div>
+        <span>${r.nm}</span>
+        <span style="color:var(--text3);margin-left:auto;font-size:10px">${r.pts.length}站</span>
+      </div>
+      <div style="font-size:10px;color:var(--text3);padding:0 0 4px 30px">${r.desc}</div>
+    `).join('')}
+  `;
+  $('#locList').innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">点击上方路线切换显示<br/>紫色虚线为跨界连接</div>';
 }
-function hideTip(){document.getElementById('tip').classList.remove('vis')}
 
-function toggleTheme(){
-  const d=document.documentElement;
-  const next=d.dataset.theme==='dark'?'':'dark';
-  d.dataset.theme=next;
-  localStorage.setItem('theme',next);
+function toggleRoute(id){
+  if(activeRoutes.has(id)) activeRoutes.delete(id);
+  else activeRoutes.add(id);
+  renderRoutes();
+  renderRouteLegend();
 }
 
-// Init theme
-(function(){
-  const saved=localStorage.getItem('theme');
-  if(saved) document.documentElement.dataset.theme=saved;
-  else if(window.matchMedia('(prefers-color-scheme:dark)').matches)
-    document.documentElement.dataset.theme='dark';
-})();
+/* === CHARS PANEL === */
+function renderCharsPanel(){
+  const el=$('#relPanel');
+  el.classList.add('show');
+  el.innerHTML=`<h4>人物关系网络</h4>`+
+    CHARS.map(c=>`
+      <div class="rel-char" onclick="highlightChar('${c.n}')">
+        <div class="rc-dot" style="background:${N[c.nv].c}"></div>
+        <span class="rc-nm">${c.n}</span>
+        <span class="rc-nv">${N[c.nv].n}</span>
+      </div>
+    `).join('');
+  $('#locList').innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">点击人物查看其关联地点<br/>和相关人物关系</div>';
+}
+
+function highlightChar(name){
+  const c=CHARS.find(x=>x.n===name);
+  if(!c) return;
+  
+  // Highlight locations
+  $$('.map-marker').forEach(m=>{
+    const show=c.locs.includes(m.dataset.id);
+    m.style.opacity=show?'1':'.15';
+    m.style.transform=show?'scale(1.4)':'';
+  });
+  
+  // Show detail
+  const d=$('#detail');
+  d.classList.add('show');
+  d.innerHTML=`
+    <h3>${c.n}</h3>
+    <div class="d-nv" style="background:${N[c.nv].c}">${N[c.nv].n}</div>
+    <div class="d-section">关联地点</div>
+    ${c.locs.map(id=>{const l=locById(id);return l?`<span class="d-tag">${l.nm}</span>`:''}).join('')}
+    <div class="d-section">关系人物</div>
+    ${c.rel.map(r=>`<span class="d-tag">${r}</span>`).join('')}
+  `;
+}
+
+/* === THEME === */
+function toggleTheme(){document.body.classList.toggle('light');}
 
 init();
 </script>
