@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>💡 Light Ideas · 创意孵化器</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060608;--surface:#0e0e12;--surface2:#16161c;--text:#e0e0e0;--text2:#999;--text3:#555;--border:#1e1e24}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hero{text-align:center;padding:60px 20px 30px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(155,89,182,.08),transparent 70%)}
+.hero h1{font-size:42px;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,#e0e0e0,#9b59b6,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative}
+.hero .sub{font-size:14px;color:var(--text3);margin-top:8px;position:relative}
+.hero .stats{font-size:11px;color:var(--text3);margin-top:12px;position:relative;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.hero .stats b{color:var(--text2)}
+.projects{max-width:1100px;margin:0 auto;padding:0 20px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
+.card:hover{border-color:#333;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.card .icon{font-size:36px;margin-bottom:12px;display:block}
+.card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.card .tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;color:#fff;margin-bottom:8px}
+.card .desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.card .links{display:flex;flex-wrap:wrap;gap:6px}
+.card .links a{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);text-decoration:none;transition:all .2s}
+.card .links a:hover{border-color:var(--text3);color:var(--text)}
+.card .meta{font-size:10px;color:var(--text3);margin-top:12px;display:flex;gap:12px;flex-wrap:wrap}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card.novel::after{background:linear-gradient(90deg,#9b59b6,#8e44ad)}
+.card.game::after{background:linear-gradient(90deg,#e74c3c,#f39c12)}
+.card.map::after{background:linear-gradient(90deg,#27ae60,#2ecc71)}
+@media(max-width:600px){.hero h1{font-size:28px}.projects{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>💡 Light Ideas</h1>
+<div class="sub">创意孵化器 · 四大名著宇宙</div>
+<div class="stats">
+<span>📚 <b>72</b> 回小说</span>
+<span>🎴 <b>192</b> 张卡牌</span>
+<span>🗺️ <b>39</b> 个地点</span>
+<span>🛤️ <b>13</b> 条路线</span>
+<span>⚡ <b>21</b> 位人物</span>
+</div>
+</div>
+<div class="projects">
+
+<div class="card novel">
+<span class="icon">📖</span>
+<h2>四梦归一</h2>
+<span class="tag" style="background:#9b59b6">长篇小说</span>
+<div class="desc">四大名著融合之作。通灵宝玉碎裂，四界裂痕初现，孙悟空、诸葛亮、武松、贾宝玉联手对抗跨界之敌。12卷72回，从界痕初现到万界归一。</div>
+<div class="links">
+<a href="four-classics-novel/chapters/chapter-01.md">📖 第1回</a>
+<a href="four-classics-novel/">📂 全部章节</a>
+</div>
+<div class="meta"><span>12卷 · 72回 · 约30万字</span><span>状态: ✅ 已完成</span></div>
+</div>
+
+<div class="card game">
+<span class="icon">🎴</span>
+<h2>字阵 · 四大名著卡牌对战</h2>
+<span class="tag" style="background:#e74c3c">卡牌游戏策划</span>
+<div class="desc">192角色卡牌对战游戏。六维属性、三十六计、孙子兵法13兵法阵、西点10军规、24法宝、五行生克、6种地形、赛季排位。四部名著角色跨界对决！</div>
+<div class="links">
+<a href="character-tactics/cards.html">🎴 卡牌图鉴</a>
+<a href="character-tactics/gacha.html">🎰 抽卡模拟</a>
+<a href="character-tactics/print-cards.html">🖨️ 打印卡牌</a>
+<a href="character-tactics/README.md">📋 规则文档</a>
+<a href="character-tactics/stratagems.md">📜 三十六计</a>
+<a href="character-tactics/sun-tzu.md">⚔️ 孙子兵法</a>
+<a href="character-tactics/west-point.md">🎖️ 西点军规</a>
+</div>
+<div class="meta"><span>192角色 · 37计策 · 13兵法阵 · 10军规</span><span>状态: ✅ 策划完成</span></div>
+</div>
+
+<div class="card map">
+<span class="icon">🗺️</span>
+<h2>四大名著地理可视化</h2>
+<span class="tag" style="background:#27ae60">交互地图</span>
+<div class="desc">基于 Leaflet.js 真实世界地图，标注39个名著地点（含印度灵山），13条文学/自驾/徒步/骑行路线，19条四梦归一跨界连线，21位人物关系网络。</div>
+<div class="links">
+<a href="four-classics-atlas/index.html">🗺️ 打开地图</a>
+<a href="four-classics-atlas/README.md">📋 说明文档</a>
+</div>
+<div class="meta"><span>39地点 · 13路线 · 21人物 · 17时间线</span><span>状态: ✅ 已完成</span></div>
+</div>
+
+</div>
+<div style="text-align:center;padding:20px;font-size:10px;color:var(--text3)">
+Light Ideas · 创意孵化器 · 四大名著宇宙 © 2026
+</div>
+</body>
+</html>
