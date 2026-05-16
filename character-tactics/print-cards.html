@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>字阵·打印卡牌</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--text:#e0e0e0;--text2:#999;--text3:#555;--border:#222;--gold:#f1c40f;--purple:#9b59b6;--bronze:#cd7f32}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);padding:16px}
+.hdr{text-align:center;margin-bottom:12px}
+.hdr h1{font-size:20px;font-weight:900}
+.ctrl{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.ctrl button{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit}
+.ctrl button:hover,.ctrl button.on{border-color:var(--text3);color:var(--text)}
+.ctrl .print-btn{background:linear-gradient(135deg,var(--gold),#e67e22);color:#000;border:none;font-weight:700}
+.page{display:grid;grid-template-columns:repeat(3,63mm);grid-template-rows:repeat(3,88mm);gap:2mm;justify-content:center;margin-bottom:10px}
+.card{border:1px solid #333;border-radius:6px;padding:4mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.card.r-传{border-color:var(--gold);background:linear-gradient(135deg,#1a0a00,#2a1500)}
+.card.r-精{border-color:var(--purple);background:linear-gradient(135deg,#0a0a1a,#15152a)}
+.card.r-普{border-color:#444;background:var(--surface)}
+.card .novel-tag{font-size:2.5mm;padding:0.5mm 2mm;border-radius:2mm;color:#fff;position:absolute;top:2mm;right:2mm}
+.card .name{font-size:4mm;font-weight:900;margin-top:3mm}
+.card.r-传 .name{color:var(--gold)}
+.card.r-精 .name{color:var(--purple)}
+.card .rarity{font-size:2mm;color:var(--text3)}
+.card svg{width:20mm;height:20mm;margin:1mm 0}
+.card .role{font-size:2.2mm;color:var(--text2);text-align:center}
+.card .footer{font-size:1.8mm;color:var(--text3);margin-top:auto;padding-top:1mm;border-top:1px solid #333;width:100%;text-align:center}
+@media print{
+  body{background:#fff;color:#000}
+  .hdr,.ctrl{display:none}
+  .page{page-break-after:always}
+  .card{border-color:#ccc;background:#fff !important;color:#000}
+  .card .name{color:#000 !important}
+  .card .role,.card .rarity,.card .footer{color:#555}
+}
+</style>
+</head>
+<body>
+<div class="hdr"><h1>🎴 字阵·打印卡牌</h1></div>
+<div class="ctrl" id="ctrl"></div>
+<div id="pages"></div>
+<script>
+const NV={hlm:{n:'红楼梦',c:'#c0392b'},sgy:{n:'三国演义',c:'#27ae60'},shz:{n:'水浒传',c:'#2980b9'},xyj:{n:'西游记',c:'#d4a017'}};
+const D=[{"n":"贾宝玉","r":"传","nv":"hlm","s":[2,6,7,4,8,5],"d":"灵核·因果链接者"},{"n":"林黛玉","r":"精","nv":"hlm","s":[1,8,3,3,9,4],"d":"灵法·焚稿反击"},{"n":"王熙凤","r":"传","nv":"hlm","s":[3,9,2,5,5,7],"d":"计策·四界棋手"},{"n":"薛宝钗","r":"精","nv":"hlm","s":[2,7,6,6,3,5],"d":"辅助·冷香丸"},{"n":"贾母","r":"普","nv":"hlm","s":[1,5,8,7,2,2],"d":"辅助·家族庇护"},{"n":"刘姥姥","r":"普","nv":"hlm","s":[2,3,5,4,3,6],"d":"干扰·乱入奇兵"},{"n":"袭人","r":"普","nv":"hlm","s":[3,4,7,8,2,4],"d":"守护·忠心护主"},{"n":"晴雯","r":"普","nv":"hlm","s":[5,4,3,4,6,7],"d":"突袭·撕扇烈性"},{"n":"元春","r":"精","nv":"hlm","s":[2,6,6,7,5,3],"d":"增益·贵妃恩泽"},{"n":"探春","r":"精","nv":"hlm","s":[4,7,5,6,3,6],"d":"全能·改革图强"},{"n":"史湘云","r":"普","nv":"hlm","s":[4,5,5,4,5,7],"d":"灵活·醉眠芍药"},{"n":"妙玉","r":"精","nv":"hlm","s":[3,7,3,3,8,4],"d":"遁世·槛外人"},{"n":"秦可卿","r":"精","nv":"hlm","s":[2,8,5,4,7,5],"d":"灵媒·太虚引路人"},{"n":"鸳鸯","r":"精","nv":"hlm","s":[3,6,7,9,3,4],"d":"守护·抗命护主"},{"n":"平儿","r":"精","nv":"hlm","s":[3,7,8,7,2,5],"d":"调停·息事宁人"},{"n":"紫鹃","r":"普","nv":"hlm","s":[2,5,7,8,3,4],"d":"守护·忠心护黛"},{"n":"香菱","r":"普","nv":"hlm","s":[2,6,5,5,4,4],"d":"学徒·苦吟诗人"},{"n":"贾政","r":"普","nv":"hlm","s":[4,5,3,7,2,2],"d":"威压·严父道学"},{"n":"贾琏","r":"普","nv":"hlm","s":[4,4,2,4,2,6],"d":"游走·纨绔穿梭"},{"n":"薛蟠","r":"普","nv":"hlm","s":[6,1,1,2,1,4],"d":"蛮力·呆霸王"},{"n":"邢夫人","r":"普","nv":"hlm","s":[2,4,3,5,2,3],"d":"暗算·继母心机"},{"n":"尤三姐","r":"精","nv":"hlm","s":[7,4,3,6,4,7],"d":"绝命·柳湘莲之恋"},{"n":"惜春","r":"普","nv":"hlm","s":[2,5,4,3,6,3],"d":"遁世·出家为尼"},{"n":"甄士隐","r":"精","nv":"hlm","s":[2,7,6,4,8,3],"d":"觉醒·梦幻识通灵"},{"n":"关羽","r":"传","nv":"sgy","s":[10,5,4,10,3,6],"d":"武圣·义之化身"},{"n":"诸葛亮","r":"传","nv":"sgy","s":[3,10,6,8,7,4],"d":"军师·天罡八阵"},{"n":"曹操","r":"传","nv":"sgy","s":[7,9,3,4,5,7],"d":"霸主·四界棋局"},{"n":"刘备","r":"精","nv":"sgy","s":[5,6,8,9,3,5],"d":"领袖·桃园结义"},{"n":"赵云","r":"精","nv":"sgy","s":[9,4,5,8,2,9],"d":"突击·七进七出"},{"n":"周瑜","r":"精","nv":"sgy","s":[7,9,3,5,4,7],"d":"火攻·赤壁烈焰"},{"n":"张飞","r":"普","nv":"sgy","s":[9,2,2,7,1,6],"d":"猛攻·当阳怒吼"},{"n":"黄忠","r":"普","nv":"sgy","s":[8,3,3,7,2,3],"d":"远程·百步穿杨"},{"n":"司马懿","r":"精","nv":"sgy","s":[4,9,2,3,6,5],"d":"反制·鹰视狼顾"},{"n":"吕布","r":"精","nv":"sgy","s":[10,2,1,1,2,8],"d":"狂暴·天下无双"},{"n":"孙尚香","r":"普","nv":"sgy","s":[7,4,3,5,3,8],"d":"突袭·弓腰姬"},{"n":"姜维","r":"普","nv":"sgy","s":[6,7,3,8,3,5],"d":"继承·九伐中原"},{"n":"孙权","r":"精","nv":"sgy","s":[5,8,5,6,3,4],"d":"平衡·守成之主"},{"n":"庞统","r":"精","nv":"sgy","s":[3,9,3,5,7,4],"d":"奇谋·凤雏连环"},{"n":"马超","r":"精","nv":"sgy","s":[9,3,2,4,2,8],"d":"突击·锦马超"},{"n":"典韦","r":"普","nv":"sgy","s":[10,1,2,8,1,5],"d":"死守·古之恶来"},{"n":"许褚","r":"普","nv":"sgy","s":[9,2,2,8,1,4],"d":"肉盾·虎痴"},{"n":"徐庶","r":"精","nv":"sgy","s":[4,8,6,8,4,3],"d":"悲谋·走马荐诸葛"},{"n":"陆逊","r":"精","nv":"sgy","s":[5,9,4,7,3,5],"d":"火攻·火烧连营"},{"n":"魏延","r":"普","nv":"sgy","s":[8,4,2,4,2,7],"d":"反骨·子午谷奇谋"},{"n":"甘宁","r":"普","nv":"sgy","s":[8,3,2,5,2,8],"d":"突袭·锦帆贼"},{"n":"太史慈","r":"普","nv":"sgy","s":[8,4,3,7,2,7],"d":"决斗·神箭无双"},{"n":"张辽","r":"精","nv":"sgy","s":[8,6,3,8,2,7],"d":"威慑·逍遥津"},{"n":"董卓","r":"普","nv":"sgy","s":[7,3,1,1,1,3],"d":"暴政·祸乱天下"},{"n":"宋江","r":"传","nv":"shz","s":[4,7,6,10,4,5],"d":"领袖·义旗招唤"},{"n":"武松","r":"传","nv":"shz","s":[9,4,3,8,2,7],"d":"猛攻·景阳打虎"},{"n":"鲁智深","r":"精","nv":"shz","s":[9,3,5,9,4,5],"d":"狂僧·倒拔垂柳"},{"n":"林冲","r":"精","nv":"shz","s":[8,5,4,7,3,7],"d":"枪术·八十万禁军"},{"n":"公孙胜","r":"传","nv":"shz","s":[3,8,4,6,10,4],"d":"道术·天罡五雷"},{"n":"吴用","r":"精","nv":"shz","s":[2,9,5,7,4,5],"d":"军师·智多星"},{"n":"李逵","r":"普","nv":"shz","s":[9,1,1,6,1,6],"d":"狂暴·黑旋风"},{"n":"花荣","r":"普","nv":"shz","s":[7,4,3,7,2,8],"d":"远程·小李广"},{"n":"时迁","r":"普","nv":"shz","s":[3,5,2,4,2,10],"d":"潜入·鼓上蚤"},{"n":"燕青","r":"普","nv":"shz","s":[6,6,5,7,3,9],"d":"全能·浪子"},{"n":"秦明","r":"普","nv":"shz","s":[8,2,2,7,2,5],"d":"猛攻·霹雳火"},{"n":"扈三娘","r":"普","nv":"shz","s":[7,3,2,5,3,8],"d":"突袭·一丈青"},{"n":"卢俊义","r":"传","nv":"shz","s":[10,5,3,6,3,7],"d":"武绝·玉麒麟"},{"n":"杨志","r":"精","nv":"shz","s":[8,4,3,6,2,6],"d":"绝技·青面兽"},{"n":"戴宗","r":"精","nv":"shz","s":[4,5,3,7,3,10],"d":"神速·神行太保"},{"n":"张顺","r":"精","nv":"shz","s":[7,3,3,7,2,8],"d":"水战·浪里白条"},{"n":"史进","r":"普","nv":"shz","s":[7,3,3,5,2,7],"d":"少年·九纹龙"},{"n":"柴进","r":"精","nv":"shz","s":[4,6,7,7,3,4],"d":"贵族·小旋风"},{"n":"关胜","r":"精","nv":"shz","s":[9,4,3,7,2,6],"d":"传承·大刀"},{"n":"呼延灼","r":"普","nv":"shz","s":[8,4,2,6,2,5],"d":"铁骑·双鞭"},{"n":"解珍","r":"普","nv":"shz","s":[7,2,2,6,1,6],"d":"猎手·两头蛇"},{"n":"孙二娘","r":"普","nv":"shz","s":[6,4,2,5,2,6],"d":"暗算·母夜叉"},{"n":"白胜","r":"普","nv":"shz","s":[3,3,2,3,2,7],"d":"蛊惑·白日鼠"},{"n":"安道全","r":"普","nv":"shz","s":[1,6,9,5,3,2],"d":"医术·神医"},{"n":"孙悟空","r":"传","nv":"xyj","s":[9,6,3,4,9,10],"d":"全能·齐天大圣"},{"n":"唐僧","r":"传","nv":"xyj","s":[1,7,10,9,6,3],"d":"治愈·金蝉子"},{"n":"猪八戒","r":"精","nv":"xyj","s":[7,3,4,5,5,4],"d":"坦克·天蓬元帅"},{"n":"沙悟净","r":"普","nv":"xyj","s":[6,3,5,8,3,5],"d":"守护·卷帘大将"},{"n":"白龙马","r":"普","nv":"xyj","s":[5,3,4,7,4,9],"d":"坐骑·龙族变身"},{"n":"牛魔王","r":"精","nv":"xyj","s":[9,3,2,3,6,5],"d":"巨兽·平天大圣"},{"n":"红孩儿","r":"普","nv":"xyj","s":[6,4,2,3,8,7],"d":"火法·三昧真火"},{"n":"铁扇公主","r":"精","nv":"xyj","s":[5,6,3,4,8,5],"d":"控制·芭蕉扇风"},{"n":"二郎神","r":"精","nv":"xyj","s":[8,6,3,7,5,8],"d":"猎神·天眼通"},{"n":"哪吒","r":"精","nv":"xyj","s":[8,4,3,6,6,9],"d":"突击·三头六臂"},{"n":"太上老君","r":"精","nv":"xyj","s":[2,8,5,5,9,3],"d":"炼器·八卦炉火"},{"n":"观音菩萨","r":"传","nv":"xyj","s":[2,8,10,8,10,3],"d":"治愈·慈航普度"},{"n":"如来佛祖","r":"传","nv":"xyj","s":[3,10,8,7,10,2],"d":"至高·万佛之祖"},{"n":"菩提祖师","r":"传","nv":"xyj","s":[4,10,6,5,10,3],"d":"传道·悟空之师"},{"n":"六耳猕猴","r":"精","nv":"xyj","s":[9,7,2,2,8,9],"d":"镜像·真假美猴王"},{"n":"白骨精","r":"精","nv":"xyj","s":[3,8,1,2,7,7],"d":"幻术·三打白骨精"},{"n":"镇元大仙","r":"精","nv":"xyj","s":[6,8,5,6,8,3],"d":"地仙·人参果树"},{"n":"玉帝","r":"精","nv":"xyj","s":[3,7,4,6,5,3],"d":"天威·三界之主"},{"n":"蜘蛛精","r":"普","nv":"xyj","s":[4,5,2,3,5,7],"d":"暗算·盘丝洞"},{"n":"黄眉大王","r":"精","nv":"xyj","s":[7,6,2,3,7,5],"d":"伪装·小雷音寺"},{"n":"青牛精","r":"普","nv":"xyj","s":[8,3,2,4,4,5],"d":"蛮力·独角兕大王"},{"n":"灵感大王","r":"普","nv":"xyj","s":[6,4,2,3,4,6],"d":"冰冻·通天河"},{"n":"蝎子精","r":"精","nv":"xyj","s":[7,5,2,3,6,7],"d":"毒刺·琵琶洞"},{"n":"嫦娥","r":"普","nv":"xyj","s":[2,6,5,4,7,5],"d":"月华·广寒仙子"}];
+
+let filterNV='all',filterR='all';
+
+function init(){
+  const ctrl=document.getElementById('ctrl');
+  ctrl.innerHTML=`
+    <button class="on" data-nv="all" onclick="setNV(this)">全部</button>
+    <button data-nv="hlm" onclick="setNV(this)">红楼梦</button>
+    <button data-nv="sgy" onclick="setNV(this)">三国</button>
+    <button data-nv="shz" onclick="setNV(this)">水浒</button>
+    <button data-nv="xyj" onclick="setNV(this)">西游</button>
+    <span style="width:8px"></span>
+    <button class="on" data-r="all" onclick="setR(this)">全稀有度</button>
+    <button data-r="传" onclick="setR(this)">传说</button>
+    <button data-r="精" onclick="setR(this)">精英</button>
+    <button data-r="普" onclick="setR(this)">普通</button>
+    <span style="width:8px"></span>
+    <button class="print-btn" onclick="window.print()">🖨️ 打印</button>`;
+  render();
+}
+
+function setNV(el){document.querySelectorAll('[data-nv]').forEach(b=>b.classList.remove('on'));el.classList.add('on');filterNV=el.dataset.nv;render()}
+function setR(el){document.querySelectorAll('[data-r]').forEach(b=>b.classList.remove('on'));el.classList.add('on');filterR=el.dataset.r;render()}
+
+function radarSVG(s,color){
+  const labels=['武','智','体','速','意','技'];
+  const max=10,cx=30,cy=30,r=22;
+  const pts=s.map((v,i)=>{
+    const a=-Math.PI/2+i*Math.PI*2/6;
+    const d=v/max*r;
+    return `${cx+d*Math.cos(a)},${cy+d*Math.sin(a)}`;
+  });
+  const grid=[1,2,3,4,5].map(l=>{
+    const p=[];for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI*2/6;const d=l/5*r;p.push(`${cx+d*Math.cos(a)},${cy+d*Math.sin(a)}`)}
+    return `<polygon points="${p.join(' ')}" fill="none" stroke="#333" stroke-width=".3"/>`;
+  });
+  const axes=[0,1,2,3,4,5].map(i=>{const a=-Math.PI/2+i*Math.PI*2/6;return`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="#333" stroke-width=".3"/>`});
+  const lbl=[0,1,2,3,4,5].map(i=>{const a=-Math.PI/2+i*Math.PI*2/6;const d=r+5;return`<text x="${cx+d*Math.cos(a)}" y="${cy+d*Math.sin(a)}" text-anchor="middle" dominant-baseline="middle" fill="${color}" font-size="3">${labels[i]}${s[i]}</text>`});
+  return `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">${grid.join('')}${axes.join('')}<polygon points="${pts.join(' ')}" fill="${color}22" stroke="${color}" stroke-width=".8"/>${lbl.join('')}</svg>`;
+}
+
+function render(){
+  let list=D.filter(c=>{
+    if(filterNV!=='all'&&c.nv!==filterNV)return false;
+    if(filterR!=='all'&&c.r!==filterR)return false;
+    return true;
+  });
+  const pages=document.getElementById('pages');
+  let html='';
+  for(let i=0;i<list.length;i+=9){
+    const batch=list.slice(i,i+9);
+    html+=`<div class="page">${batch.map(c=>{
+      const nv=NV[c.nv];
+      const rn=c.r==='传'?'传说':c.r==='精'?'精英':'普通';
+      return `<div class="card r-${c.r}">
+        <div class="novel-tag" style="background:${nv.c}">${nv.n}</div>
+        <div class="name">${c.n}</div>
+        <div class="rarity">${'★'.repeat(c.r==='传'?5:c.r==='精'?3:1)} ${rn}</div>
+        ${radarSVG(c.s,nv.c)}
+        <div class="role">${c.d}</div>
+        <div class="footer">字阵·四大名著卡牌对战</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+  pages.innerHTML=html;
+}
+init();
+</script>
+</body>
+</html>

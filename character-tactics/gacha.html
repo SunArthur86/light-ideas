@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>字阵·抽卡模拟器</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;--text:#e0e0e0;--text2:#999;--text3:#555;--border:#222;--gold:#f1c40f;--purple:#9b59b6;--bronze:#cd7f32}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+.hdr{text-align:center;padding:20px 16px 10px;width:100%}
+.hdr h1{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{font-size:11px;color:var(--text3);margin-top:2px}
+.bar{display:flex;gap:16px;align-items:center;padding:8px 20px;background:var(--surface);border-radius:10px;margin:8px 0;flex-wrap:wrap;justify-content:center}
+.bar .coin{font-size:14px;font-weight:700;color:var(--gold)}
+.bar .pity{font-size:11px;color:var(--text2)}
+.bar .prog{font-size:11px;color:var(--text2)}
+.bar .prog b{color:var(--text)}
+.gacha-area{display:flex;gap:12px;margin:16px 0;flex-wrap:wrap;justify-content:center}
+.btn{padding:12px 28px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:active{transform:scale(.96)}
+.btn-single{background:linear-gradient(135deg,#2c3e50,#34495e);color:var(--text)}
+.btn-single:hover{background:linear-gradient(135deg,#34495e,#3d566e)}
+.btn-ten{background:linear-gradient(135deg,var(--gold),#e67e22);color:#000}
+.btn-ten:hover{box-shadow:0 0 20px rgba(241,196,15,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.result-area{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;max-width:700px;width:100%;min-height:0}
+@media(max-width:600px){.result-area{grid-template-columns:repeat(3,1fr)}}
+.card-wrap{perspective:600px;aspect-ratio:5/7;opacity:0;transform:scale(.5);transition:all .4s}
+.card-wrap.show{opacity:1;transform:scale(1)}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
+.card-wrap.flipped .card-inner{transform:rotateY(180deg)}
+.card-front,.card-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.card-back{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #333}
+.card-back::after{content:'字';font-size:28px;font-weight:900;color:var(--text3);opacity:.3}
+.card-front{transform:rotateY(180deg);padding:6px;text-align:center}
+.card-front.r-传{background:linear-gradient(135deg,#1a0a00,#2a1500);border:2px solid var(--gold);box-shadow:0 0 12px rgba(241,196,15,.3)}
+.card-front.r-精{background:linear-gradient(135deg,#0a0a1a,#15152a);border:2px solid var(--purple);box-shadow:0 0 8px rgba(155,89,182,.2)}
+.card-front.r-普{background:var(--surface2);border:1px solid #333}
+.card-front .nm{font-size:13px;font-weight:700;margin-top:4px}
+.card-front .novel{font-size:9px;padding:1px 6px;border-radius:8px;color:#fff;margin:2px 0}
+.card-front .role{font-size:8px;color:var(--text3);margin-top:2px}
+.card-front .stars{font-size:8px;margin-top:3px}
+.card-front .new-badge{position:absolute;top:4px;right:4px;background:var(--gold);color:#000;font-size:8px;font-weight:700;padding:1px 4px;border-radius:4px}
+.card-front .own-badge{position:absolute;top:4px;right:4px;background:var(--text3);color:var(--text);font-size:7px;padding:1px 4px;border-radius:4px}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:100}
+.burst.active{animation:burst .6s ease-out}
+@keyframes burst{0%{background:radial-gradient(circle,rgba(241,196,15,.4),transparent 60%)}100%{background:transparent}}
+.history{width:100%;max-width:700px;padding:10px 20px}
+.history h3{font-size:12px;color:var(--text3);margin-bottom:6px}
+.history .h-item{display:inline-block;font-size:10px;padding:2px 6px;margin:1px;border-radius:4px}
+.history .h-item.r-传{background:#2a1500;color:var(--gold)}
+.history .h-item.r-精{background:#15152a;color:var(--purple)}
+.history .h-item.r-普{background:var(--surface);color:var(--text2)}
+.collection-toggle{text-align:center;padding:10px}
+.collection-toggle button{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:6px 16px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit}
+.collection-toggle button:hover{border-color:var(--text3)}
+.coll-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;padding:10px 20px;max-width:700px;width:100%}
+@media(max-width:600px){.coll-grid{grid-template-columns:repeat(8,1fr)}}
+.coll-item{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;cursor:default}
+.coll-item.owned{color:#fff}.coll-item.missing{background:var(--surface);color:var(--text3);opacity:.3}
+</style>
+</head>
+<body>
+<div class="hdr">
+<h1>🎴 字阵·抽卡模拟器</h1>
+<div class="sub">96角色 · 3%传说 · 25%精英 · 72%普通 · 50抽保底传说</div>
+</div>
+<div class="bar">
+<span class="coin">🪙 <span id="coins">10000</span></span>
+<span class="pity">保底: <span id="pity5">0</span>/50 传说 | <span id="pity4">0</span>/10 精英</span>
+<span class="prog">图鉴: <b id="collCount">0</b>/96</span>
+</div>
+<div class="gacha-area">
+<button class="btn btn-single" onclick="gacha(1)">单抽 💰100</button>
+<button class="btn btn-ten" onclick="gacha(10)">十连 💰900</button>
+</div>
+<div class="result-area" id="results"></div>
+<div class="collection-toggle">
+<button onclick="toggleCollection()">📚 查看图鉴</button>
+</div>
+<div class="coll-grid" id="collection" style="display:none"></div>
+<div class="history"><h3>📜 抽卡记录</h3><div id="historyList"></div></div>
+<div class="burst" id="burst"></div>
+<script>
+
+const NV={hlm:{n:'红楼梦',c:'#c0392b'},sgy:{n:'三国演义',c:'#27ae60'},shz:{n:'水浒传',c:'#2980b9'},xyj:{n:'西游记',c:'#d4a017'}};
+const D=[{"n":"贾宝玉","r":"传","nv":"hlm","s":[2,6,7,4,8,5],"d":"灵核·因果链接者"},{"n":"林黛玉","r":"精","nv":"hlm","s":[1,8,3,3,9,4],"d":"灵法·焚稿反击"},{"n":"王熙凤","r":"传","nv":"hlm","s":[3,9,2,5,5,7],"d":"计策·四界棋手"},{"n":"薛宝钗","r":"精","nv":"hlm","s":[2,7,6,6,3,5],"d":"辅助·冷香丸"},{"n":"贾母","r":"普","nv":"hlm","s":[1,5,8,7,2,2],"d":"辅助·家族庇护"},{"n":"刘姥姥","r":"普","nv":"hlm","s":[2,3,5,4,3,6],"d":"干扰·乱入奇兵"},{"n":"袭人","r":"普","nv":"hlm","s":[3,4,7,8,2,4],"d":"守护·忠心护主"},{"n":"晴雯","r":"普","nv":"hlm","s":[5,4,3,4,6,7],"d":"突袭·撕扇烈性"},{"n":"元春","r":"精","nv":"hlm","s":[2,6,6,7,5,3],"d":"增益·贵妃恩泽"},{"n":"探春","r":"精","nv":"hlm","s":[4,7,5,6,3,6],"d":"全能·改革图强"},{"n":"史湘云","r":"普","nv":"hlm","s":[4,5,5,4,5,7],"d":"灵活·醉眠芍药"},{"n":"妙玉","r":"精","nv":"hlm","s":[3,7,3,3,8,4],"d":"遁世·槛外人"},{"n":"秦可卿","r":"精","nv":"hlm","s":[2,8,5,4,7,5],"d":"灵媒·太虚引路人"},{"n":"鸳鸯","r":"精","nv":"hlm","s":[3,6,7,9,3,4],"d":"守护·抗命护主"},{"n":"平儿","r":"精","nv":"hlm","s":[3,7,8,7,2,5],"d":"调停·息事宁人"},{"n":"紫鹃","r":"普","nv":"hlm","s":[2,5,7,8,3,4],"d":"守护·忠心护黛"},{"n":"香菱","r":"普","nv":"hlm","s":[2,6,5,5,4,4],"d":"学徒·苦吟诗人"},{"n":"贾政","r":"普","nv":"hlm","s":[4,5,3,7,2,2],"d":"威压·严父道学"},{"n":"贾琏","r":"普","nv":"hlm","s":[4,4,2,4,2,6],"d":"游走·纨绔穿梭"},{"n":"薛蟠","r":"普","nv":"hlm","s":[6,1,1,2,1,4],"d":"蛮力·呆霸王"},{"n":"邢夫人","r":"普","nv":"hlm","s":[2,4,3,5,2,3],"d":"暗算·继母心机"},{"n":"尤三姐","r":"精","nv":"hlm","s":[7,4,3,6,4,7],"d":"绝命·柳湘莲之恋"},{"n":"惜春","r":"普","nv":"hlm","s":[2,5,4,3,6,3],"d":"遁世·出家为尼"},{"n":"甄士隐","r":"精","nv":"hlm","s":[2,7,6,4,8,3],"d":"觉醒·梦幻识通灵"},{"n":"关羽","r":"传","nv":"sgy","s":[10,5,4,10,3,6],"d":"武圣·义之化身"},{"n":"诸葛亮","r":"传","nv":"sgy","s":[3,10,6,8,7,4],"d":"军师·天罡八阵"},{"n":"曹操","r":"传","nv":"sgy","s":[7,9,3,4,5,7],"d":"霸主·四界棋局"},{"n":"刘备","r":"精","nv":"sgy","s":[5,6,8,9,3,5],"d":"领袖·桃园结义"},{"n":"赵云","r":"精","nv":"sgy","s":[9,4,5,8,2,9],"d":"突击·七进七出"},{"n":"周瑜","r":"精","nv":"sgy","s":[7,9,3,5,4,7],"d":"火攻·赤壁烈焰"},{"n":"张飞","r":"普","nv":"sgy","s":[9,2,2,7,1,6],"d":"猛攻·当阳怒吼"},{"n":"黄忠","r":"普","nv":"sgy","s":[8,3,3,7,2,3],"d":"远程·百步穿杨"},{"n":"司马懿","r":"精","nv":"sgy","s":[4,9,2,3,6,5],"d":"反制·鹰视狼顾"},{"n":"吕布","r":"精","nv":"sgy","s":[10,2,1,1,2,8],"d":"狂暴·天下无双"},{"n":"孙尚香","r":"普","nv":"sgy","s":[7,4,3,5,3,8],"d":"突袭·弓腰姬"},{"n":"姜维","r":"普","nv":"sgy","s":[6,7,3,8,3,5],"d":"继承·九伐中原"},{"n":"孙权","r":"精","nv":"sgy","s":[5,8,5,6,3,4],"d":"平衡·守成之主"},{"n":"庞统","r":"精","nv":"sgy","s":[3,9,3,5,7,4],"d":"奇谋·凤雏连环"},{"n":"马超","r":"精","nv":"sgy","s":[9,3,2,4,2,8],"d":"突击·锦马超"},{"n":"典韦","r":"普","nv":"sgy","s":[10,1,2,8,1,5],"d":"死守·古之恶来"},{"n":"许褚","r":"普","nv":"sgy","s":[9,2,2,8,1,4],"d":"肉盾·虎痴"},{"n":"徐庶","r":"精","nv":"sgy","s":[4,8,6,8,4,3],"d":"悲谋·走马荐诸葛"},{"n":"陆逊","r":"精","nv":"sgy","s":[5,9,4,7,3,5],"d":"火攻·火烧连营"},{"n":"魏延","r":"普","nv":"sgy","s":[8,4,2,4,2,7],"d":"反骨·子午谷奇谋"},{"n":"甘宁","r":"普","nv":"sgy","s":[8,3,2,5,2,8],"d":"突袭·锦帆贼"},{"n":"太史慈","r":"普","nv":"sgy","s":[8,4,3,7,2,7],"d":"决斗·神箭无双"},{"n":"张辽","r":"精","nv":"sgy","s":[8,6,3,8,2,7],"d":"威慑·逍遥津"},{"n":"董卓","r":"普","nv":"sgy","s":[7,3,1,1,1,3],"d":"暴政·祸乱天下"},{"n":"宋江","r":"传","nv":"shz","s":[4,7,6,10,4,5],"d":"领袖·义旗招唤"},{"n":"武松","r":"传","nv":"shz","s":[9,4,3,8,2,7],"d":"猛攻·景阳打虎"},{"n":"鲁智深","r":"精","nv":"shz","s":[9,3,5,9,4,5],"d":"狂僧·倒拔垂柳"},{"n":"林冲","r":"精","nv":"shz","s":[8,5,4,7,3,7],"d":"枪术·八十万禁军"},{"n":"公孙胜","r":"传","nv":"shz","s":[3,8,4,6,10,4],"d":"道术·天罡五雷"},{"n":"吴用","r":"精","nv":"shz","s":[2,9,5,7,4,5],"d":"军师·智多星"},{"n":"李逵","r":"普","nv":"shz","s":[9,1,1,6,1,6],"d":"狂暴·黑旋风"},{"n":"花荣","r":"普","nv":"shz","s":[7,4,3,7,2,8],"d":"远程·小李广"},{"n":"时迁","r":"普","nv":"shz","s":[3,5,2,4,2,10],"d":"潜入·鼓上蚤"},{"n":"燕青","r":"普","nv":"shz","s":[6,6,5,7,3,9],"d":"全能·浪子"},{"n":"秦明","r":"普","nv":"shz","s":[8,2,2,7,2,5],"d":"猛攻·霹雳火"},{"n":"扈三娘","r":"普","nv":"shz","s":[7,3,2,5,3,8],"d":"突袭·一丈青"},{"n":"卢俊义","r":"传","nv":"shz","s":[10,5,3,6,3,7],"d":"武绝·玉麒麟"},{"n":"杨志","r":"精","nv":"shz","s":[8,4,3,6,2,6],"d":"绝技·青面兽"},{"n":"戴宗","r":"精","nv":"shz","s":[4,5,3,7,3,10],"d":"神速·神行太保"},{"n":"张顺","r":"精","nv":"shz","s":[7,3,3,7,2,8],"d":"水战·浪里白条"},{"n":"史进","r":"普","nv":"shz","s":[7,3,3,5,2,7],"d":"少年·九纹龙"},{"n":"柴进","r":"精","nv":"shz","s":[4,6,7,7,3,4],"d":"贵族·小旋风"},{"n":"关胜","r":"精","nv":"shz","s":[9,4,3,7,2,6],"d":"传承·大刀"},{"n":"呼延灼","r":"普","nv":"shz","s":[8,4,2,6,2,5],"d":"铁骑·双鞭"},{"n":"解珍","r":"普","nv":"shz","s":[7,2,2,6,1,6],"d":"猎手·两头蛇"},{"n":"孙二娘","r":"普","nv":"shz","s":[6,4,2,5,2,6],"d":"暗算·母夜叉"},{"n":"白胜","r":"普","nv":"shz","s":[3,3,2,3,2,7],"d":"蛊惑·白日鼠"},{"n":"安道全","r":"普","nv":"shz","s":[1,6,9,5,3,2],"d":"医术·神医"},{"n":"孙悟空","r":"传","nv":"xyj","s":[9,6,3,4,9,10],"d":"全能·齐天大圣"},{"n":"唐僧","r":"传","nv":"xyj","s":[1,7,10,9,6,3],"d":"治愈·金蝉子"},{"n":"猪八戒","r":"精","nv":"xyj","s":[7,3,4,5,5,4],"d":"坦克·天蓬元帅"},{"n":"沙悟净","r":"普","nv":"xyj","s":[6,3,5,8,3,5],"d":"守护·卷帘大将"},{"n":"白龙马","r":"普","nv":"xyj","s":[5,3,4,7,4,9],"d":"坐骑·龙族变身"},{"n":"牛魔王","r":"精","nv":"xyj","s":[9,3,2,3,6,5],"d":"巨兽·平天大圣"},{"n":"红孩儿","r":"普","nv":"xyj","s":[6,4,2,3,8,7],"d":"火法·三昧真火"},{"n":"铁扇公主","r":"精","nv":"xyj","s":[5,6,3,4,8,5],"d":"控制·芭蕉扇风"},{"n":"二郎神","r":"精","nv":"xyj","s":[8,6,3,7,5,8],"d":"猎神·天眼通"},{"n":"哪吒","r":"精","nv":"xyj","s":[8,4,3,6,6,9],"d":"突击·三头六臂"},{"n":"太上老君","r":"精","nv":"xyj","s":[2,8,5,5,9,3],"d":"炼器·八卦炉火"},{"n":"观音菩萨","r":"传","nv":"xyj","s":[2,8,10,8,10,3],"d":"治愈·慈航普度"},{"n":"如来佛祖","r":"传","nv":"xyj","s":[3,10,8,7,10,2],"d":"至高·万佛之祖"},{"n":"菩提祖师","r":"传","nv":"xyj","s":[4,10,6,5,10,3],"d":"传道·悟空之师"},{"n":"六耳猕猴","r":"精","nv":"xyj","s":[9,7,2,2,8,9],"d":"镜像·真假美猴王"},{"n":"白骨精","r":"精","nv":"xyj","s":[3,8,1,2,7,7],"d":"幻术·三打白骨精"},{"n":"镇元大仙","r":"精","nv":"xyj","s":[6,8,5,6,8,3],"d":"地仙·人参果树"},{"n":"玉帝","r":"精","nv":"xyj","s":[3,7,4,6,5,3],"d":"天威·三界之主"},{"n":"蜘蛛精","r":"普","nv":"xyj","s":[4,5,2,3,5,7],"d":"暗算·盘丝洞"},{"n":"黄眉大王","r":"精","nv":"xyj","s":[7,6,2,3,7,5],"d":"伪装·小雷音寺"},{"n":"青牛精","r":"普","nv":"xyj","s":[8,3,2,4,4,5],"d":"蛮力·独角兕大王"},{"n":"灵感大王","r":"普","nv":"xyj","s":[6,4,2,3,4,6],"d":"冰冻·通天河"},{"n":"蝎子精","r":"精","nv":"xyj","s":[7,5,2,3,6,7],"d":"毒刺·琵琶洞"},{"n":"嫦娥","r":"普","nv":"xyj","s":[2,6,5,4,7,5],"d":"月华·广寒仙子"}];
+
+let coins=10000, pity5=0, pity4=0, owned=new Set(), history=[];
+const stats={传:14,精:41,普:41};
+
+function roll(){
+  pity5++;pity4++;
+  let r;
+  if(pity5>=50){r='传';pity5=0;pity4=0;}
+  else if(pity4>=10){r='精';pity4=0;}
+  else{
+    const x=Math.random()*100;
+    if(x<3){r='传';pity5=0;pity4=0;}
+    else if(x<28){r='精';pity4=0;}
+    else r='普';
+  }
+  const pool=D.filter(c=>c.r===r);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function gacha(n){
+  const cost=n===1?100:900;
+  if(coins<cost)return;
+  coins-=cost;
+  const results=[];for(let i=0;i<n;i++)results.push(roll());
+  showResults(results);
+  results.forEach(c=>{
+    const isNew=!owned.has(c.n);
+    owned.add(c.n);
+    history.unshift({n:c.n,r:c.r,nv:c.nv,isNew});
+  });
+  if(history.length>40)history.length=40;
+  updateUI();
+}
+
+function showResults(results){
+  const el=document.getElementById('results');
+  const hasLeg=results.some(c=>c.r==='传');
+  el.innerHTML=results.map((c,i)=>{
+    const nv=NV[c.nv];const isNew=!history.some(h=>h.n===c.n)||i===0;
+    const total=c.s.reduce((a,b)=>a+b,0);
+    const stars='★'.repeat(Math.min(Math.floor(total/7),5))+'☆'.repeat(5-Math.min(Math.floor(total/7),5));
+    return `<div class="card-wrap" style="transition-delay:${i*0.1}s">
+      <div class="card-inner">
+        <div class="card-back"></div>
+        <div class="card-front r-${c.r}">
+          ${isNew&&!history.some((h,idx)=>idx>0&&h.n===c.n)?'<span class="new-badge">NEW</span>':'<span class="own-badge">已拥有</span>'}
+          <div class="novel" style="background:${nv.c}">${nv.n}</div>
+          <div class="nm" style="color:${c.r==='传'?'#f1c40f':c.r==='精'?'#9b59b6':'#ccc'}">${c.n}</div>
+          <div class="role">${c.d}</div>
+          <div class="stars" style="color:${c.r==='传'?'#f1c40f':c.r==='精'?'#9b59b6':'#666'}">${stars}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // Animate: show then flip
+  requestAnimationFrame(()=>{
+    el.querySelectorAll('.card-wrap').forEach((w,i)=>{
+      setTimeout(()=>w.classList.add('show'),i*80);
+      setTimeout(()=>w.classList.add('flipped'),i*80+200);
+    });
+  });
+  if(hasLeg){
+    const b=document.getElementById('burst');
+    b.classList.add('active');
+    setTimeout(()=>b.classList.remove('active'),700);
+  }
+}
+
+function updateUI(){
+  document.getElementById('coins').textContent=coins;
+  document.getElementById('pity5').textContent=pity5;
+  document.getElementById('pity4').textContent=pity4;
+  document.getElementById('collCount').textContent=owned.size;
+  document.querySelector('.btn-single').disabled=coins<100;
+  document.querySelector('.btn-ten').disabled=coins<900;
+  // History
+  const h=document.getElementById('historyList');
+  h.innerHTML=history.slice(0,20).map(x=>`<span class="h-item r-${x.r}">${x.n}</span>`).join('');
+}
+
+function toggleCollection(){
+  const el=document.getElementById('collection');
+  if(el.style.display==='none'){
+    el.style.display='grid';
+    el.innerHTML=D.map(c=>{
+      const nv=NV[c.nv];const o=owned.has(c.n);
+      return `<div class="coll-item ${o?'owned':'missing'}" style="background:${o?nv.c+'33':''}" title="${c.n}(${NV[c.nv].n})">${o?c.n.charAt(0):'?'}</div>`;
+    }).join('');
+  }else el.style.display='none';
+}
+
+</script>
+</body>
+</html>

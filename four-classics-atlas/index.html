@@ -66,6 +66,22 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .leaflet-popup-tip{background:#1a1a1a!important}
 .leaflet-popup-content{margin:8px 12px!important;font-size:12px!important}
 @media(max-width:768px){.sidebar{display:none}.hdr h1{font-size:13px}}
+.travel-btn{margin-left:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:1px 6px;border-radius:4px;cursor:pointer;font-size:9px}
+.travel-btn:hover{border-color:var(--text3);color:var(--text)}
+.travel-btn.active{background:#c0392b;border-color:#c0392b;color:#fff}
+.detail-img{max-width:100%;border-radius:8px;margin:8px 0;display:block;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.travel-marker{font-size:18px;text-shadow:0 1px 4px rgba(0,0,0,.8);animation:bounce .6s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+.travel-summary{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-size:12px}
+.travel-summary h4{margin-bottom:6px;font-size:13px}
+.quiz-opt{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin-bottom:6px;color:var(--text);font-size:12px;cursor:pointer;transition:all .15s}
+.quiz-opt:hover{border-color:var(--text3);background:rgba(255,255,255,.05)}
+.quiz-opt.correct{background:#27ae60;border-color:#27ae60;color:#fff}
+.quiz-opt.wrong{background:#c0392b;border-color:#c0392b;color:#fff}
+.quiz-score{font-size:28px;font-weight:700;text-align:center;margin:12px 0}
+.quiz-grade{font-size:36px;text-align:center;font-weight:700;margin:8px 0}
+.quiz-progress{height:3px;background:var(--border);border-radius:2px;margin-bottom:12px}
+.quiz-progress-bar{height:100%;background:var(--text);border-radius:2px;transition:width .3s}
 </style>
 </head>
 <body>
@@ -84,6 +100,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 <div class="tab" data-t="routes" onclick="setTab(this)">路线</div>
 <div class="tab" data-t="chars" onclick="setTab(this)">人物</div>
 <div class="tab" data-t="timeline" onclick="setTab(this)">时间线</div>
+<div class="tab" data-t="quiz" onclick="setTab(this)">问答</div>
 </div>
 <div class="tab-content" id="tabContent"></div>
 </div>
@@ -103,35 +120,35 @@ const LOCS=[
 {id:'nanjing',nm:'南京·金陵',nv:'hlm',lat:32.06,lng:118.80,desc:'金陵十二钗故乡',ev:['金陵怀古'],ch:['林黛玉','史湘云'],xr:''},
 {id:'dahuangshan',nm:'大荒山',nv:'hlm',lat:36.73,lng:117.10,desc:'无稽崖下通灵宝玉诞生地',ev:['顽石化玉'],ch:['空空道人'],xr:'四石归一之地'},
 {id:'taixu',nm:'太虚幻境',nv:'hlm',lat:30.25,lng:120.17,desc:'警幻仙子居所',ev:['宝玉梦游太虚'],ch:['贾宝玉','警幻仙子'],xr:'连接四界的虚空'},
-{id:'xudu',nm:'许都',nv:'sgy',lat:34.02,lng:113.81,desc:'曹操挟天子以令诸侯之都',ev:['许田打围','衣带诏'],ch:['曹操','刘备','关羽'],xr:''},
-{id:'chibi',nm:'赤壁',nv:'sgy',lat:29.72,lng:113.90,desc:'三国鼎立决定性战役之地',ev:['赤壁之战','草船借箭'],ch:['曹操','周瑜','诸葛亮'],xr:'烈焰之力封印处'},
-{id:'wuzhangyuan',nm:'五丈原',nv:'sgy',lat:34.17,lng:107.65,desc:'诸葛亮北伐病逝之地',ev:['秋风五丈原','七星灯'],ch:['诸葛亮','司马懿'],xr:''},
-{id:'baidicheng',nm:'白帝城',nv:'sgy',lat:31.04,lng:109.55,desc:'刘备托孤之城',ev:['白帝托孤'],ch:['刘备','诸葛亮'],xr:''},
-{id:'luoyang',nm:'洛阳',nv:'sgy',lat:34.68,lng:112.45,desc:'东汉国都',ev:['董卓焚城'],ch:['董卓','吕布','貂蝉'],xr:''},
-{id:'jingzhou',nm:'荆州',nv:'sgy',lat:30.33,lng:112.24,desc:'兵家必争之地',ev:['借荆州','吕蒙白衣渡江'],ch:['关羽','吕蒙','诸葛亮'],xr:''},
+{id:'xudu',nm:'许都',nv:'sgy',lat:34.02,lng:113.81,desc:'曹操挟天子以令诸侯之都',ev:['许田打围','衣带诏'],ch:['曹操','刘备','关羽'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Xuchang_Zhouqiao_Bridge_2023.jpg/300px-Xuchang_Zhouqiao_Bridge_2023.jpg'},
+{id:'chibi',nm:'赤壁',nv:'sgy',lat:29.72,lng:113.90,desc:'三国鼎立决定性战役之地',ev:['赤壁之战','草船借箭'],ch:['曹操','周瑜','诸葛亮'],xr:'烈焰之力封印处',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Chibi_Viewing_Stone.jpg/300px-Chibi_Viewing_Stone.jpg'},
+{id:'wuzhangyuan',nm:'五丈原',nv:'sgy',lat:34.17,lng:107.65,desc:'诸葛亮北伐病逝之地',ev:['秋风五丈原','七星灯'],ch:['诸葛亮','司马懿'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Wuzhangyuan.jpg/300px-Wuzhangyuan.jpg'},
+{id:'baidicheng',nm:'白帝城',nv:'sgy',lat:31.04,lng:109.55,desc:'刘备托孤之城',ev:['白帝托孤'],ch:['刘备','诸葛亮'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Baidicheng.jpg/300px-Baidicheng.jpg'},
+{id:'luoyang',nm:'洛阳',nv:'sgy',lat:34.68,lng:112.45,desc:'东汉国都',ev:['董卓焚城'],ch:['董卓','吕布','貂蝉'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Luoyang_New_District.jpg/300px-Luoyang_New_District.jpg'},
+{id:'jingzhou',nm:'荆州',nv:'sgy',lat:30.33,lng:112.24,desc:'兵家必争之地',ev:['借荆州','吕蒙白衣渡江'],ch:['关羽','吕蒙','诸葛亮'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Jingzhou_Ancient_City_Wall_201508.jpg/300px-Jingzhou_Ancient_City_Wall_201508.jpg'},
 {id:'maicheng',nm:'麦城',nv:'sgy',lat:31.07,lng:112.04,desc:'关羽败亡之地',ev:['败走麦城'],ch:['关羽'],xr:''},
-{id:'yiling',nm:'夷陵',nv:'sgy',lat:30.69,lng:111.47,desc:'刘备伐吴惨败之地',ev:['火烧连营'],ch:['刘备','陆逊'],xr:''},
-{id:'changansgy',nm:'长安（三国）',nv:'sgy',lat:34.26,lng:108.94,desc:'西汉故都',ev:['董卓之乱'],ch:['董卓','王允'],xr:''},
+{id:'yiling',nm:'夷陵',nv:'sgy',lat:30.69,lng:111.47,desc:'刘备伐吴惨败之地',ev:['火烧连营'],ch:['刘备','陆逊'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Yichang_Yiling_Square.jpg/300px-Yichang_Yiling_Square.jpg'},
+{id:'changansgy',nm:'长安（三国）',nv:'sgy',lat:34.26,lng:108.94,desc:'西汉故都',ev:['董卓之乱'],ch:['董卓','王允'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Xian_walls.jpg/300px-Xian_walls.jpg'},
 {id:'hanzhong',nm:'汉中',nv:'sgy',lat:33.07,lng:107.03,desc:'蜀汉北伐基地',ev:['定军山之战'],ch:['诸葛亮','黄忠'],xr:''},
-{id:'liangshan',nm:'梁山泊',nv:'shz',lat:35.76,lng:116.10,desc:'一百单八将聚义之地',ev:['梁山聚义','替天行道'],ch:['宋江','吴用','武松'],xr:'义气之力汇聚'},
+{id:'liangshan',nm:'梁山泊',nv:'shz',lat:35.76,lng:116.10,desc:'一百单八将聚义之地',ev:['梁山聚义','替天行道'],ch:['宋江','吴用','武松'],xr:'义气之力汇聚',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Liangshan_County.jpg/300px-Liangshan_County.jpg'},
 {id:'jingyanggang',nm:'景阳冈',nv:'shz',lat:36.11,lng:115.98,desc:'武松打虎之处',ev:['武松打虎'],ch:['武松'],xr:''},
-{id:'dongjing',nm:'东京·汴梁',nv:'shz',lat:34.80,lng:114.35,desc:'北宋都城',ev:['元宵灯会','杨志卖刀'],ch:['宋江','林冲','鲁智深'],xr:''},
+{id:'dongjing',nm:'东京·汴梁',nv:'shz',lat:34.80,lng:114.35,desc:'北宋都城',ev:['元宵灯会','杨志卖刀'],ch:['宋江','林冲','鲁智深'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Kaifeng_Iron_Pagoda_2011.JPG/300px-Kaifeng_Iron_Pagoda_2011.JPG'},
 {id:'yanggu',nm:'阳谷县',nv:'shz',lat:36.12,lng:115.78,desc:'武松故乡',ev:['武松杀嫂'],ch:['武松'],xr:''},
 {id:'jiangzhou',nm:'江州·九江',nv:'shz',lat:29.73,lng:116.00,desc:'宋江题反诗之地',ev:['浔阳楼题反诗'],ch:['宋江','李逵'],xr:''},
 {id:'zhujiazhuang',nm:'祝家庄',nv:'shz',lat:35.38,lng:116.58,desc:'三打祝家庄',ev:['三打祝家庄'],ch:['宋江','林冲'],xr:''},
-{id:'huaguoshan',nm:'花果山',nv:'xyj',lat:34.60,lng:119.20,desc:'孙悟空诞生之地',ev:['石猴出世','大闹天宫'],ch:['孙悟空'],xr:'灵石碎片散落处'},
+{id:'huaguoshan',nm:'花果山',nv:'xyj',lat:34.60,lng:119.20,desc:'孙悟空诞生之地',ev:['石猴出世','大闹天宫'],ch:['孙悟空'],xr:'灵石碎片散落处',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Huaguo_Mountain.jpg/300px-Huaguo_Mountain.jpg'},
 {id:'wuxingshan',nm:'五行山',nv:'xyj',lat:36.60,lng:111.70,desc:'如来镇压悟空之地',ev:['悟空被压五百年'],ch:['孙悟空','如来佛祖'],xr:''},
 {id:'lingtai',nm:'灵台方寸山',nv:'xyj',lat:34.35,lng:107.80,desc:'菩提祖师居所',ev:['悟空学艺'],ch:['孙悟空','菩提祖师'],xr:''},
 {id:'tianting',nm:'天庭',nv:'xyj',lat:36.25,lng:117.10,desc:'玉帝所居天界中心',ev:['大闹天宫'],ch:['玉帝','太上老君'],xr:'天界通道入口'},
 {id:'changanxyj',nm:'长安（出发）',nv:'xyj',lat:34.26,lng:108.94,desc:'唐僧取经出发地',ev:['唐王送别'],ch:['唐僧'],xr:''},
-{id:'lingshan',nm:'灵山·印度',nv:'xyj',lat:24.95,lng:85.05,desc:'如来佛祖讲经之地，取经终点',ev:['取得真经','封佛'],ch:['唐僧','孙悟空','如来佛祖'],xr:'万界归一核心'},
+{id:'lingshan',nm:'灵山·印度',nv:'xyj',lat:24.95,lng:85.05,desc:'如来佛祖讲经之地，取经终点',ev:['取得真经','封佛'],ch:['唐僧','孙悟空','如来佛祖'],xr:'万界归一核心',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Mahabodhi_Temple_Buddha.jpg/300px-Mahabodhi_Temple_Buddha.jpg'},
 {id:'boyuedong',nm:'波月洞',nv:'xyj',lat:40.50,lng:93.50,desc:'黄袍怪洞府',ev:['黄袍怪劫公主'],ch:['黄袍怪'],xr:''},
-{id:'huoyanshan',nm:'火焰山',nv:'xyj',lat:42.95,lng:89.20,desc:'八百里火焰',ev:['三借芭蕉扇'],ch:['孙悟空','铁扇公主','牛魔王'],xr:''},
+{id:'huoyanshan',nm:'火焰山',nv:'xyj',lat:42.95,lng:89.20,desc:'八百里火焰',ev:['三借芭蕉扇'],ch:['孙悟空','铁扇公主','牛魔王'],xr:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Flaming_Mountains.jpg/300px-Flaming_Mountains.jpg'},
 {id:'tongtianhe',nm:'通天河',nv:'xyj',lat:38.50,lng:95.00,desc:'灵感大王所居',ev:['通天河遇险'],ch:['唐僧'],xr:''},
 {id:'lanzhou',nm:'兰州',nv:'xyj',lat:36.06,lng:103.83,desc:'丝路重镇'},
-{id:'jiayuguan',nm:'嘉峪关',nv:'xyj',lat:39.77,lng:98.29,desc:'万里长城西端'},
+{id:'jiayuguan',nm:'嘉峪关',nv:'xyj',lat:39.77,lng:98.29,desc:'万里长城西端',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jiayuguan_Fort.jpg/300px-Jiayuguan_Fort.jpg'},
 {id:'hami',nm:'哈密',nv:'xyj',lat:42.83,lng:93.51,desc:'新疆东大门'},
-{id:'turfan',nm:'吐鲁番',nv:'xyj',lat:42.95,lng:89.17,desc:'火焰山所在地'},
+{id:'turfan',nm:'吐鲁番',nv:'xyj',lat:42.95,lng:89.17,desc:'火焰山所在地',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Turpan_Minaret.jpg/300px-Turpan_Minaret.jpg'},
 {id:'kuche',nm:'库车',nv:'xyj',lat:41.72,lng:82.93,desc:'古龟兹国'},
 {id:'tianshui',nm:'天水',nv:'xyj',lat:34.58,lng:105.72,desc:'丝路节点'},
 {id:'suzhou',nm:'苏州',nv:'hlm',lat:31.30,lng:120.62,desc:'江南水乡'}
@@ -204,8 +221,8 @@ const TLEVENTS=[
 let filter='all',tab='list',selLoc=null,activeRoutes=new Set();
 let markers={},routeLayers={},crossLayers=[];
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
-function locById(id){return L.find(l=>l.id===id)}
-function filtered(){if(filter==='all'||filter==='smy')return L;return L.filter(l=>l.nv===filter)}
+function locById(id){return LOCS.find(l=>l.id===id)}
+function filtered(){if(filter==='all'||filter==='smy')return LOCS;return LOCS.filter(l=>l.nv===filter)}
 
 // === MAP ===
 const map=L.map('map',{zoomControl:false,attributionControl:false}).setView([34,108],5);
@@ -216,7 +233,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{max
 function updateMarkers(){
   Object.values(markers).forEach(m=>map.removeLayer(m));markers={};
   const list=filtered();const ids=new Set(list.map(l=>l.id));
-  L.forEach(l=>{
+  LOCS.forEach(l=>{
     if(!ids.has(l.id))return;
     const nv=NV[l.nv];
     const icon=L.divIcon({
@@ -294,6 +311,7 @@ function setTab(el){$$('.tab').forEach(t=>t.classList.remove('on'));el.classList
 function renderTabContent(){
   if(tab==='list')renderLocList();else if(tab==='routes')renderRouteLegend();
   else if(tab==='chars')renderCharsPanel();else if(tab==='timeline')renderTimeline();
+  else if(tab==='quiz')renderQuiz();
 }
 
 // === LOC LIST ===
@@ -341,11 +359,12 @@ function toggleRoute(id){
 
 // === CHARS ===
 function renderCharsPanel(){
-  $('#tabContent').innerHTML=CHARS.map(c=>{
+  $('#tabContent').innerHTML=CHARS.map((c,i)=>{
     const nv=NV[c.nv];
     return `<div class="loc-item" onclick="highlightChar('${c.n}')">
       <div class="loc-dot" style="background:${nv.c}"></div><span>${c.n}</span>
-      <span style="margin-left:auto;font-size:9px;color:var(--text3)">${nv.n}</span></div>`;
+      <span style="margin-left:auto;font-size:9px;color:var(--text3)">${nv.n}</span>
+      <button class="travel-btn" onclick="event.stopPropagation();startCharTravel(${i})" title="出发旅行">🚀出发</button></div>`;
   }).join('');
 }
 function highlightChar(name){
@@ -380,6 +399,7 @@ function showDetail(id){
   let h=`<span class="close-btn" onclick="closeDetail()">✕</span>`;
   h+=`<h3 style="color:${nv.c}">${l.nm}</h3><div class="tag" style="background:${nv.c}">${nv.n}</div>`;
   h+=`<div class="desc">${l.desc||''}</div>`;
+  if(l.img)h+=`<img class="detail-img" src="${l.img}" alt="${l.nm}" onerror="this.style.display='none'">`;
   if(l.ev&&l.ev.length){h+=`<div class="section"><h4>重大事件</h4>`;l.ev.forEach(e=>h+=`<div style="font-size:11px;color:var(--text2)">· ${e}</div>`);h+='</div>'}
   if(l.ch&&l.ch.length){h+=`<div class="section"><h4>出场人物</h4>`;l.ch.forEach(c=>h+=`<span class="char-tag">${c}</span>`);h+='</div>'}
   const Q={rongguofu:'"满纸荒唐言，一把辛酸泪"',chibi:'"大江东去，浪淘尽，千古风流人物"',liangshan:'"替天行道，忠义双全"',huaguoshan:'"俺老孙来也！"',lingshan:'"色不异空，空不异色"',wuzhangyuan:'"出师未捷身先死"',daguan:'"花谢花飞花满天"',huoyanshan:'"八百里火焰，寸草不生"'};
@@ -415,6 +435,185 @@ function showToast(m){const t=$('#toast');t.textContent=m;t.classList.add('show'
 
 // === INIT ===
 renderFilters();updateMarkers();updateCross();renderStats();renderTabContent();loadParams();
+
+// === CHARACTER TRAVEL ANIMATION ===
+let travelInterval=null,travelMarker=null,travelLine=null,travelDots=[];
+
+function startCharTravel(idx){
+  if(travelInterval){stopCharTravel();return}
+  const c=CHARS[idx];if(!c||c.locs.length<2)return;
+  const nv=NV[c.nv];
+  // Build coords from character's locs
+  const coords=c.locs.map(id=>{const loc=locById(id);return loc?[loc.lat,loc.lng]:null}).filter(Boolean);
+  if(coords.length<2)return;
+  // Compute total distance in km (approx haversine)
+  let totalDist=0;
+  for(let i=1;i<coords.length;i++){
+    totalDist+=haversine(coords[i-1][0],coords[i-1][1],coords[i][0],coords[i][1]);
+  }
+  // Draw route polyline
+  travelLine=L.polyline(coords,{color:nv.c,weight:3,opacity:.8}).addTo(map);
+  // Draw waypoint dots
+  travelDots=coords.map((c2,i)=>{
+    return L.circleMarker(c2,{radius:4,color:nv.c,fillColor:nv.c,fillOpacity:1,weight:2}).addTo(map);
+  });
+  // Create moving marker
+  const emoji=c.nv==='xyj'?'🐒':c.nv==='sgy'?'⚔️':c.nv==='shz'?'🗡️':c.nv==='hlm'?'🌸':'✨';
+  const icon=L.divIcon({className:'travel-marker',iconSize:[24,24],iconAnchor:[12,12],html:emoji});
+  travelMarker=L.marker(coords[0],{icon}).addTo(map);
+  // Interpolate route into small steps
+  const steps=[];
+  for(let i=1;i<coords.length;i++){
+    const stepsPerSeg=30;
+    for(let s=0;s<=stepsPerSeg;s++){
+      const t=s/stepsPerSeg;
+      steps.push([
+        coords[i-1][0]+(coords[i][0]-coords[i-1][0])*t,
+        coords[i-1][1]+(coords[i][1]-coords[i-1][1])*t
+      ]);
+    }
+  }
+  let stepIdx=0;
+  const locNames=c.locs.map(id=>{const loc=locById(id);return loc?loc.nm:''}).filter(Boolean);
+  let passedIdx=0;
+  map.setView(coords[0],6);
+  travelInterval=setInterval(()=>{
+    if(stepIdx>=steps.length){
+      clearInterval(travelInterval);travelInterval=null;
+      // Show travel summary
+      const summaryHtml=`<div class="travel-summary">
+        <h4>🎉 ${c.n}的旅行结束！</h4>
+        <div style="color:var(--text2);margin:6px 0">总距离：约${Math.round(totalDist)} km</div>
+        <div style="color:var(--text2);margin:6px 0">经过地点：${coords.length} 个</div>
+        <div style="color:var(--text3);margin:6px 0">路线：${locNames.join(' → ')}</div>
+        <button onclick="stopCharTravel()" style="margin-top:8px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">关闭</button>
+      </div>`;
+      showToast(`${c.n}到达终点！旅程约${Math.round(totalDist)}km`);
+      // Show summary in sidebar if on chars tab
+      if(tab==='chars'){
+        const tc=$('#tabContent');
+        tc.innerHTML+=summaryHtml;
+      }
+      return;
+    }
+    const pos=steps[stepIdx];
+    travelMarker.setLatLng(pos);
+    map.panTo(pos,{animate:false});
+    // Check if passed a waypoint
+    for(let wi=0;wi<coords.length;wi++){
+      if(wi>passedIdx){
+        const d=haversine(pos[0],pos[1],coords[wi][0],coords[wi][1]);
+        if(d<20){passedIdx=wi;showToast(`📍 到达 ${locNames[wi]||'地点'}`);}
+      }
+    }
+    stepIdx++;
+  },60);
+}
+function stopCharTravel(){
+  if(travelInterval){clearInterval(travelInterval);travelInterval=null;}
+  if(travelMarker){map.removeLayer(travelMarker);travelMarker=null;}
+  if(travelLine){map.removeLayer(travelLine);travelLine=null;}
+  travelDots.forEach(d=>map.removeLayer(d));travelDots=[];
+  if(tab==='chars')renderCharsPanel();
+}
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// === QUIZ GAME ===
+let quizState={score:0,qIdx:0,questions:[],answered:false};
+
+function generateQuizQuestions(){
+  // Pick 10 random locations with descriptions
+  const pool=LOCS.filter(l=>l.desc&&l.desc.length>4);
+  const shuffled=pool.sort(()=>Math.random()-0.5).slice(0,10);
+  return shuffled.map(loc=>{
+    // Pick 3 random wrong answers
+    const wrongPool=LOCS.filter(l=>l.id!==loc.id).sort(()=>Math.random()-0.5).slice(0,3);
+    const options=[loc,...wrongPool].sort(()=>Math.random()-0.5);
+    return{locId:loc.id,desc:loc.desc,novel:NV[loc.nv].n,options:options.map(o=>({id:o.id,nm:o.nm}))};
+  });
+}
+function renderQuiz(){
+  const qs=quizState;
+  if(qs.questions.length===0){
+    // Show start screen
+    $('#tabContent').innerHTML=`<div style="text-align:center;padding:20px 10px">
+      <div style="font-size:36px;margin-bottom:12px">🎯</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">四大名著地理问答</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6">根据地点描述猜出正确地名<br>答对 +10分 · 答错 -5分<br>共10题，看看你能拿什么评级！</div>
+      <button onclick="startQuiz()" style="background:var(--text);color:var(--bg);border:none;padding:8px 24px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:700">开始答题</button>
+    </div>`;
+    return;
+  }
+  if(qs.qIdx>=qs.questions.length){
+    // Show result
+    const grade=qs.score>=90?'S':qs.score>=70?'A':qs.score>=50?'B':qs.score>=30?'C':'D';
+    const gradeColors={S:'#f1c40f',A:'#27ae60',B:'#2980b9',C:'#e67e22',D:'#c0392b'};
+    $('#tabContent').innerHTML=`<div style="text-align:center;padding:20px 10px">
+      <div style="font-size:36px;margin-bottom:8px">🏆</div>
+      <div style="font-size:13px;color:var(--text2)">答题结束！</div>
+      <div class="quiz-score">${qs.score} 分</div>
+      <div class="quiz-grade" style="color:${gradeColors[grade]}">${grade}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:16px">${grade==='S'?'四大名著通！':grade==='A'?'地理达人！':grade==='B'?'不错的成绩！':grade==='C'?'还需加油！':'多看看地图吧！'}</div>
+      <button onclick="startQuiz()" style="background:var(--text);color:var(--bg);border:none;padding:8px 24px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:700">再来一轮</button>
+      <button onclick="quizState={score:0,qIdx:0,questions:[],answered:false};renderQuiz()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;margin-left:6px">返回</button>
+    </div>`;
+    return;
+  }
+  const q=qs.questions[qs.qIdx];
+  const progress=((qs.qIdx)/qs.questions.length)*100;
+  let optHtml=q.options.map((o,i)=>{
+    let cls='quiz-opt';
+    let extra='';
+    if(qs.answered){
+      if(o.id===q.locId)cls='quiz-opt correct';
+      else extra=`data-wrong="1"`;
+    }
+    return `<button class="${cls}" ${extra} onclick="answerQuiz('${o.id}','${q.locId}',this)">${String.fromCharCode(65+i)}. ${o.nm}</button>`;
+  }).join('');
+  $('#tabContent').innerHTML=`<div style="padding:6px 0">
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px">
+      <span>第 ${qs.qIdx+1}/${qs.questions.length} 题</span><span>得分: ${qs.score}</span>
+    </div>
+    <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${progress}%"></div></div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:4px">来自《${q.novel}》</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px;line-height:1.5">${q.desc}</div>
+    <div id="quizOptions">${optHtml}</div>
+    ${qs.answered?'<button onclick="nextQuizQ()" style="margin-top:8px;background:var(--text);color:var(--bg);border:none;padding:6px 18px;border-radius:4px;font-size:12px;cursor:pointer;width:100%">下一题 →</button>':''}
+  </div>`;
+}
+function startQuiz(){
+  quizState={score:0,qIdx:0,questions:generateQuizQuestions(),answered:false};
+  renderQuiz();
+}
+function answerQuiz(chosen,correct,btn){
+  if(quizState.answered)return;
+  quizState.answered=true;
+  if(chosen===correct){
+    quizState.score+=10;
+    btn.classList.add('correct');
+    showToast('✅ 答对了！+10分');
+  }else{
+    quizState.score=Math.max(0,quizState.score-5);
+    btn.classList.add('wrong');
+    // Highlight correct
+    document.querySelectorAll('.quiz-opt').forEach(b=>{
+      if(b.textContent.includes(locById(correct)?.nm))b.classList.add('correct');
+    });
+    showToast('❌ 答错了！-5分');
+  }
+  // Fly to the correct location
+  const loc=locById(correct);
+  if(loc)map.flyTo([loc.lat,loc.lng],6,{duration:1});
+  // Re-render to show correct answer
+  setTimeout(()=>renderQuiz(),50);
+}
+function nextQuizQ(){
+  quizState.qIdx++;quizState.answered=false;renderQuiz();
+}
 </script>
 </body>
 </html>
