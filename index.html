@@ -4,93 +4,288 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>💡 Light Ideas · 创意孵化器</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#060608;--surface:#0e0e12;--surface2:#16161c;--text:#e0e0e0;--text2:#999;--text3:#555;--border:#1e1e24}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.hero{text-align:center;padding:60px 20px 30px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(155,89,182,.08),transparent 70%)}
-.hero h1{font-size:42px;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,#e0e0e0,#9b59b6,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative}
-.hero .sub{font-size:14px;color:var(--text3);margin-top:8px;position:relative}
-.hero .stats{font-size:11px;color:var(--text3);margin-top:12px;position:relative;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-.hero .stats b{color:var(--text2)}
-.projects{max-width:1100px;margin:0 auto;padding:0 20px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
-.card:hover{border-color:#333;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.card .icon{font-size:36px;margin-bottom:12px;display:block}
-.card h2{font-size:18px;font-weight:700;margin-bottom:4px}
-.card .tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;color:#fff;margin-bottom:8px}
-.card .desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px}
-.card .links{display:flex;flex-wrap:wrap;gap:6px}
-.card .links a{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);text-decoration:none;transition:all .2s}
-.card .links a:hover{border-color:var(--text3);color:var(--text)}
-.card .meta{font-size:10px;color:var(--text3);margin-top:12px;display:flex;gap:12px;flex-wrap:wrap}
-.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.card.novel::after{background:linear-gradient(90deg,#9b59b6,#8e44ad)}
-.card.game::after{background:linear-gradient(90deg,#e74c3c,#f39c12)}
-.card.map::after{background:linear-gradient(90deg,#27ae60,#2ecc71)}
-@media(max-width:600px){.hero h1{font-size:28px}.projects{grid-template-columns:1fr}}
+:root{--bg:#04040c;--surface:rgba(12,12,28,0.85);--border:rgba(255,255,255,0.06);--text:#e8e8f0;--text2:#9999aa;--text3:#555566}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif SC',serif;overflow-x:hidden;min-height:100vh}
+#starfield{position:fixed;inset:0;z-index:0}
+
+.hero{position:relative;z-index:1;text-align:center;padding:80px 20px 40px}
+.hero h1{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1.1;background:linear-gradient(135deg,#fff 0%,#a78bfa 40%,#60a5fa 70%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 6s ease-in-out infinite;background-size:200% 100%}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .sub{font-size:15px;color:var(--text2);margin-top:8px;font-weight:400;letter-spacing:4px}
+.hero .line{width:60px;height:2px;background:linear-gradient(90deg,#a78bfa,#34d399);margin:20px auto 0;border-radius:2px}
+.hero .counter{display:flex;justify-content:center;gap:32px;margin-top:28px;flex-wrap:wrap}
+.hero .counter .item{text-align:center}
+.hero .counter .num{font-size:32px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .counter .label{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:2px;text-transform:uppercase}
+
+.section-title{text-align:center;font-size:13px;color:var(--text3);letter-spacing:6px;text-transform:uppercase;margin:40px 0 24px;position:relative;z-index:1}
+.section-title::before,.section-title::after{content:'';display:inline-block;width:40px;height:1px;background:var(--border);vertical-align:middle;margin:0 12px}
+
+.projects{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 60px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;transition:all .35s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;overflow:hidden;backdrop-filter:blur(12px)}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.15);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0.8}
+.card[data-id="novel"]::before{background:linear-gradient(90deg,#9b59b6,#8e44ad)}
+.card[data-id="atlas"]::before{background:linear-gradient(90deg,#2ecc71,#27ae60)}
+.card[data-id="tactics"]::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
+.card[data-id="soundtrack"]::before{background:linear-gradient(90deg,#f39c12,#e67e22)}
+.card[data-id="classics"]::before{background:linear-gradient(90deg,#3498db,#2980b9)}
+.card[data-id="constellation"]::before{background:linear-gradient(90deg,#a78bfa,#7c3aed)}
+
+.card .head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.card .icon{font-size:32px}
+.card .head-text h2{font-size:18px;font-weight:700}
+.card .head-text .en{font-size:10px;color:var(--text3);letter-spacing:1px}
+.card .tag{display:inline-block;font-size:9px;padding:2px 10px;border-radius:10px;color:#fff;margin-bottom:10px}
+.card .desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.card .stats{font-size:10px;color:var(--text3);margin-bottom:14px}
+.card .links{display:flex;flex-wrap:wrap;gap:8px}
+.card .links a{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:5px 14px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text2);text-decoration:none;transition:all .2s;font-family:inherit}
+.card .links a:hover{border-color:rgba(255,255,255,0.2);color:var(--text);background:rgba(255,255,255,0.08)}
+
+.card .glow{position:absolute;width:200px;height:200px;border-radius:50%;filter:blur(80px);opacity:0.08;pointer-events:none;top:-50px;right:-50px}
+.card[data-id="novel"] .glow{background:#9b59b6}
+.card[data-id="atlas"] .glow{background:#2ecc71}
+.card[data-id="tactics"] .glow{background:#e74c3c}
+.card[data-id="soundtrack"] .glow{background:#f39c12}
+.card[data-id="classics"] .glow{background:#3498db}
+.card[data-id="constellation"] .glow{background:#a78bfa}
+
+.footer{position:relative;z-index:1;text-align:center;padding:20px;border-top:1px solid var(--border)}
+.footer p{font-size:10px;color:var(--text3);letter-spacing:1px}
+
+@media(max-width:768px){
+  .hero h1{font-size:32px}
+  .hero .counter .num{font-size:24px}
+  .projects{grid-template-columns:1fr;padding:0 12px 40px}
+  .card{padding:20px 16px}
+}
+
+/* 滚动进入动画 */
+.card{opacity:0;transform:translateY(20px);animation:fadeUp .6s ease forwards}
+.card:nth-child(1){animation-delay:.1s}
+.card:nth-child(2){animation-delay:.2s}
+.card:nth-child(3){animation-delay:.3s}
+.card:nth-child(4){animation-delay:.4s}
+.card:nth-child(5){animation-delay:.5s}
+.card:nth-child(6){animation-delay:.6s}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+
+<canvas id="starfield"></canvas>
+
 <div class="hero">
-<h1>💡 Light Ideas</h1>
-<div class="sub">创意孵化器 · 四大名著宇宙</div>
-<div class="stats">
-<span>📚 <b>72</b> 回小说</span>
-<span>🎴 <b>192</b> 张卡牌</span>
-<span>🗺️ <b>39</b> 个地点</span>
-<span>🛤️ <b>13</b> 条路线</span>
-<span>⚡ <b>21</b> 位人物</span>
+  <h1>Light Ideas</h1>
+  <div class="sub">文 学 创 意 孵 化 器</div>
+  <div class="line"></div>
+  <div class="counter">
+    <div class="item"><div class="num">6</div><div class="label">项目</div></div>
+    <div class="item"><div class="num">150</div><div class="label">名著精读</div></div>
+    <div class="item"><div class="num">120</div><div class="label">回小说</div></div>
+    <div class="item"><div class="num">192</div><div class="label">角色卡牌</div></div>
+    <div class="item"><div class="num">52</div><div class="label">首歌曲</div></div>
+    <div class="item"><div class="num">197</div><div class="label">影响关系</div></div>
+  </div>
 </div>
-</div>
+
+<div class="section-title">项 目 展 厅</div>
+
 <div class="projects">
 
-<div class="card novel">
-<span class="icon">📖</span>
-<h2>四梦归一</h2>
-<span class="tag" style="background:#9b59b6">长篇小说</span>
-<div class="desc">四大名著融合之作。通灵宝玉碎裂，四界裂痕初现，孙悟空、诸葛亮、武松、贾宝玉联手对抗跨界之敌。12卷72回，从界痕初现到万界归一。</div>
-<div class="links">
-<a href="four-classics-novel/chapters/chapter-01.md">📖 第1回</a>
-<a href="four-classics-novel/">📂 全部章节</a>
-</div>
-<div class="meta"><span>12卷 · 72回 · 约30万字</span><span>状态: ✅ 已完成</span></div>
+  <div class="card" data-id="novel">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">📖</span>
+      <div class="head-text">
+        <h2>四梦归一</h2>
+        <div class="en">Four Dreams Become One</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#9b59b6">120回 · 12万字</span>
+    <div class="desc">四大名著融合成一部120回长篇小说。贾宝玉与林黛玉双主角，万界存亡的命运抉择。</div>
+    <div class="stats">120回 · 119,633字 · 4卷 · 双主角</div>
+    <div class="links"><a href="four-classics-novel/chapters-v2/">📖 阅读目录</a><a href="four-classics-novel/README.md">📋 项目说明</a></div>
+  </div>
+
+  <div class="card" data-id="atlas">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">🗺️</span>
+      <div class="head-text">
+        <h2>Atlas · 名著地图</h2>
+        <div class="en">Atlas of the Classics</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#2ecc71">82地点 · 真实地图</span>
+    <div class="desc">82个名著地点标注在真实世界地图上，18条路线+35个人物标记+5阶段23项优化。</div>
+    <div class="stats">82地点 · 18路线 · 35人物 · Leaflet地图</div>
+    <div class="links"><a href="four-classics-atlas/index.html">🗺️ 打开地图</a><a href="four-classics-atlas/README.md">📋 说明</a></div>
+  </div>
+
+  <div class="card" data-id="tactics">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">🎴</span>
+      <div class="head-text">
+        <h2>字阵 · 角色卡牌</h2>
+        <div class="en">Character Tactics</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#e74c3c">192角色 · 属性对战</span>
+    <div class="desc">192张角色卡牌，覆盖四大名著+文学史上最强角色。属性系统+对战模拟。</div>
+    <div class="stats">192角色 · 6属性 · 对战引擎</div>
+    <div class="links"><a href="character-tactics/">🎴 角色列表</a></div>
+  </div>
+
+  <div class="card" data-id="soundtrack">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">🎵</span>
+      <div class="head-text">
+        <h2>声音博物馆</h2>
+        <div class="en">Sound Museum</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#f39c12">52首 · 歌词+播放器</span>
+    <div class="desc">为四大名著创作52首歌曲，含歌词+Suno AI prompt+HTML互动播放器。</div>
+    <div class="stats">52首 · 4系列 · HTML播放器</div>
+    <div class="links"><a href="four-classics-soundtrack/index.html">🎵 打开播放器</a></div>
+  </div>
+
+  <div class="card" data-id="classics">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">📚</span>
+      <div class="head-text">
+        <h2>世界名著精读</h2>
+        <div class="en">World Classics Reading</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#3498db">150本 · 150笔记</span>
+    <div class="desc">150本世界名著全文下载+逐本精读+文学分析笔记。覆盖25国2700年。</div>
+    <div class="stats">150本 · 79.6MB原文 · 150份笔记 · 25国</div>
+    <div class="links"><a href="world-classics/README.md">📋 书目清单</a></div>
+  </div>
+
+  <div class="card" data-id="constellation">
+    <div class="glow"></div>
+    <div class="head">
+      <span class="icon">🌌</span>
+      <div class="head-text">
+        <h2>文学星图</h2>
+        <div class="en">Literary Constellation</div>
+      </div>
+    </div>
+    <span class="tag" style="background:#a78bfa">150书 · 197关系 · 双视图</span>
+    <div class="desc">150本书的思想宇宙——力导向星图+世界地图双视图，197条影响关系，8大主题10大原型。</div>
+    <div class="stats">150书 · 197关系 · 星图+地图 · 150城市</div>
+    <div class="links"><a href="literary-constellation/index.html">🌌 打开星图</a></div>
+  </div>
+
 </div>
 
-<div class="card game">
-<span class="icon">🎴</span>
-<h2>字阵 · 四大名著卡牌对战</h2>
-<span class="tag" style="background:#e74c3c">卡牌游戏策划</span>
-<div class="desc">192角色卡牌对战游戏。六维属性、三十六计、孙子兵法13兵法阵、西点10军规、24法宝、五行生克、6种地形、赛季排位。四部名著角色跨界对决！</div>
-<div class="links">
-<a href="character-tactics/cards.html">🎴 卡牌图鉴</a>
-<a href="character-tactics/gacha.html">🎰 抽卡模拟</a>
-<a href="character-tactics/print-cards.html">🖨️ 打印卡牌</a>
-<a href="character-tactics/README.md">📋 规则文档</a>
-<a href="character-tactics/stratagems.md">📜 三十六计</a>
-<a href="character-tactics/sun-tzu.md">⚔️ 孙子兵法</a>
-<a href="character-tactics/west-point.md">🎖️ 西点军规</a>
-</div>
-<div class="meta"><span>192角色 · 37计策 · 13兵法阵 · 10军规</span><span>状态: ✅ 策划完成</span></div>
+<div class="footer">
+  <p>Light Ideas · 文学创意孵化器 · 2025</p>
 </div>
 
-<div class="card map">
-<span class="icon">🗺️</span>
-<h2>四大名著地理可视化</h2>
-<span class="tag" style="background:#27ae60">交互地图</span>
-<div class="desc">基于 Leaflet.js 真实世界地图，标注39个名著地点（含印度灵山），13条文学/自驾/徒步/骑行路线，19条四梦归一跨界连线，21位人物关系网络。</div>
-<div class="links">
-<a href="four-classics-atlas/index.html">🗺️ 打开地图</a>
-<a href="four-classics-atlas/README.md">📋 说明文档</a>
-</div>
-<div class="meta"><span>39地点 · 13路线 · 21人物 · 17时间线</span><span>状态: ✅ 已完成</span></div>
-</div>
+<script>
+// 星空背景 — 150颗星代表150本名著
+const STARS=[{"id":1,"tz":"傲慢与偏见","col":"#4A90D9","imp":5},{"id":2,"tz":"远大前程","col":"#4A90D9","imp":4},{"id":3,"tz":"简·爱","col":"#4A90D9","imp":5},{"id":4,"tz":"呼啸山庄","col":"#4A90D9","imp":5},{"id":5,"tz":"弗兰肯斯坦","col":"#4A90D9","imp":5},{"id":6,"tz":"米德尔马契","col":"#4A90D9","imp":4},{"id":7,"tz":"德伯家的苔丝","col":"#4A90D9","imp":4},{"id":8,"tz":"道林·格雷的画像","col":"#4A90D9","imp":4},{"id":9,"tz":"鲁滨逊漂流记","col":"#4A90D9","imp":4},{"id":10,"tz":"格列佛游记","col":"#4A90D9","imp":5},{"id":11,"tz":"悲惨世界","col":"#9B59B6","imp":5},{"id":12,"tz":"包法利夫人","col":"#9B59B6","imp":5},{"id":13,"tz":"基督山伯爵","col":"#9B59B6","imp":4},{"id":14,"tz":"三个火枪手","col":"#9B59B6","imp":3},{"id":15,"tz":"老实人","col":"#9B59B6","imp":4},{"id":16,"tz":"巴黎圣母院","col":"#9B59B6","imp":4},{"id":17,"tz":"红与黑","col":"#9B59B6","imp":4},{"id":18,"tz":"战争与和平","col":"#F39C12","imp":5},{"id":19,"tz":"安娜·卡列尼娜","col":"#F39C12","imp":5},{"id":20,"tz":"罪与罚","col":"#F39C12","imp":5},{"id":21,"tz":"卡拉马佐夫兄弟","col":"#F39C12","imp":5},{"id":22,"tz":"父与子","col":"#F39C12","imp":4},{"id":23,"tz":"死魂灵","col":"#F39C12","imp":4},{"id":24,"tz":"叶甫盖尼·奥涅金","col":"#F39C12","imp":3},{"id":25,"tz":"白鲸","col":"#E74C3C","imp":5},{"id":26,"tz":"哈克贝利·费恩历险记","col":"#E74C3C","imp":5},{"id":27,"tz":"红字","col":"#E74C3C","imp":4},{"id":28,"tz":"小妇人","col":"#E74C3C","imp":3},{"id":29,"tz":"汤姆叔叔的小屋","col":"#E74C3C","imp":4},{"id":30,"tz":"野性的呼唤","col":"#E74C3C","imp":4},{"id":31,"tz":"浮士德","col":"#2ECC71","imp":5},{"id":32,"tz":"变形记","col":"#CDDC39","imp":5},{"id":33,"tz":"艾菲·布里斯特","col":"#2ECC71","imp":3},{"id":34,"tz":"伊利亚特","col":"#E67E22","imp":5},{"id":35,"tz":"奥德赛","col":"#E67E22","imp":5},{"id":36,"tz":"神曲","col":"#1ABC9C","imp":5},{"id":37,"tz":"堂吉诃德","col":"#F1C40F","imp":5},{"id":38,"tz":"浮士德博士的悲剧","col":"#4A90D9","imp":4},{"id":39,"tz":"玩偶之家","col":"#3498DB","imp":5},{"id":40,"tz":"培尔·金特","col":"#3498DB","imp":3},{"id":41,"tz":"孙子兵法","col":"#FF5722","imp":5},{"id":42,"tz":"道德经","col":"#FF5722","imp":5},{"id":43,"tz":"红楼梦(英译)","col":"#FF5722","imp":5},{"id":44,"tz":"哥儿","col":"#E91E63","imp":3},{"id":45,"tz":"源氏物语","col":"#E91E63","imp":5},{"id":46,"tz":"天路历程","col":"#4A90D9","imp":4},{"id":47,"tz":"化身博士","col":"#4A90D9","imp":4},{"id":48,"tz":"海底两万里","col":"#9B59B6","imp":4},{"id":49,"tz":"时间机器","col":"#4A90D9","imp":4},{"id":50,"tz":"查拉图斯特拉如是说","col":"#2ECC71","imp":5},{"id":51,"tz":"爱玛","col":"#4A90D9","imp":4},{"id":52,"tz":"理智与情感","col":"#4A90D9","imp":4},{"id":53,"tz":"双城记","col":"#4A90D9","imp":5},{"id":54,"tz":"大卫·科波菲尔","col":"#4A90D9","imp":4},{"id":55,"tz":"黑暗的心","col":"#4A90D9","imp":5},{"id":56,"tz":"贵妇画像","col":"#E74C3C","imp":4},{"id":57,"tz":"螺丝在拧紧","col":"#E74C3C","imp":4},{"id":58,"tz":"失乐园","col":"#4A90D9","imp":5},{"id":59,"tz":"爱丽丝漫游奇境记","col":"#4A90D9","imp":5},{"id":60,"tz":"爱丽丝镜中奇遇","col":"#4A90D9","imp":4},{"id":61,"tz":"坎特伯雷故事集","col":"#4A90D9","imp":5},{"id":62,"tz":"贝奥武夫","col":"#4A90D9","imp":4},{"id":63,"tz":"觉醒","col":"#E74C3C","imp":4},{"id":64,"tz":"我的安东妮亚","col":"#E74C3C","imp":3},{"id":65,"tz":"纯真年代","col":"#E74C3C","imp":4},{"id":66,"tz":"伊坦·弗洛美","col":"#E74C3C","imp":3},{"id":67,"tz":"瓦尔登湖","col":"#E74C3C","imp":5},{"id":68,"tz":"弗雷德里克·道格拉斯自述","col":"#E74C3C","imp":5},{"id":69,"tz":"黑人的灵魂","col":"#E74C3C","imp":4},{"id":70,"tz":"草叶集","col":"#E74C3C","imp":5},{"id":71,"tz":"红色英勇勋章","col":"#E74C3C","imp":4},{"id":72,"tz":"绿野仙踪","col":"#E74C3C","imp":4},{"id":73,"tz":"萌芽","col":"#9B59B6","imp":4},{"id":74,"tz":"情感教育","col":"#9B59B6","imp":4},{"id":75,"tz":"帕尔马修道院","col":"#9B59B6","imp":3},{"id":76,"tz":"歌剧魅影","col":"#9B59B6","imp":3},{"id":77,"tz":"西哈诺","col":"#9B59B6","imp":4},{"id":78,"tz":"白痴","col":"#F39C12","imp":4},{"id":79,"tz":"复活","col":"#F39C12","imp":4},{"id":80,"tz":"奥勃洛莫夫","col":"#F39C12","imp":4},{"id":81,"tz":"好兵帅克","col":"#FF9800","imp":4},{"id":82,"tz":"世界大战","col":"#4A90D9","imp":4},{"id":83,"tz":"隐形人","col":"#4A90D9","imp":3},{"id":84,"tz":"八十天环游地球","col":"#9B59B6","imp":4},{"id":85,"tz":"地心游记","col":"#9B59B6","imp":3},{"id":86,"tz":"金银岛","col":"#4A90D9","imp":4},{"id":87,"tz":"所罗门王的宝藏","col":"#4A90D9","imp":3},{"id":88,"tz":"埃涅阿斯纪","col":"#D35400","imp":5},{"id":89,"tz":"理想国","col":"#E67E22","imp":5},{"id":90,"tz":"沉思录","col":"#D35400","imp":5},{"id":91,"tz":"君主论","col":"#1ABC9C","imp":5},{"id":92,"tz":"忏悔录","col":"#D35400","imp":5},{"id":93,"tz":"鲁拜集","col":"#795548","imp":4},{"id":94,"tz":"柳林风声","col":"#4A90D9","imp":4},{"id":95,"tz":"彼得·潘","col":"#4A90D9","imp":4},{"id":96,"tz":"秘密花园","col":"#4A90D9","imp":3},{"id":97,"tz":"格林童话","col":"#2ECC71","imp":5},{"id":98,"tz":"一千零一夜","col":"#795548","imp":5},{"id":99,"tz":"从奴隶崛起","col":"#E74C3C","imp":4},{"id":100,"tz":"红花侠","col":"#4A90D9","imp":3},{"id":101,"tz":"百年孤独","col":"#F1C40F","imp":5},{"id":102,"tz":"霍乱时期的爱情","col":"#F1C40F","imp":4},{"id":103,"tz":"虚构集","col":"#3498DB","imp":5},{"id":104,"tz":"珍珠","col":"#E74C3C","imp":3},{"id":105,"tz":"人鼠之间","col":"#E74C3C","imp":4},{"id":106,"tz":"愤怒的葡萄","col":"#E74C3C","imp":5},{"id":107,"tz":"老人与海","col":"#E74C3C","imp":5},{"id":108,"tz":"太阳照常升起","col":"#E74C3C","imp":4},{"id":109,"tz":"瓦解","col":"#27AE60","imp":5},{"id":110,"tz":"哭吧亲爱的祖国","col":"#E74C3C","imp":4},{"id":111,"tz":"丛林之书","col":"#4A90D9","imp":4},{"id":112,"tz":"基姆","col":"#4A90D9","imp":4},{"id":113,"tz":"吉檀迦利","col":"#FF8C00","imp":5},{"id":114,"tz":"薄伽梵歌","col":"#FF8C00","imp":5},{"id":115,"tz":"古斯塔贝林的故事","col":"#F7DC6F","imp":3},{"id":116,"tz":"安徒生童话","col":"#85C1E9","imp":5},{"id":117,"tz":"饥饿","col":"#3498DB","imp":4},{"id":118,"tz":"带小狗的女人","col":"#F39C12","imp":4},{"id":119,"tz":"外套","col":"#F39C12","imp":4},{"id":120,"tz":"当代英雄","col":"#F39C12","imp":4},{"id":121,"tz":"小王子","col":"#9B59B6","imp":5},{"id":122,"tz":"在斯万家那边","col":"#9B59B6","imp":5},{"id":123,"tz":"娜娜","col":"#9B59B6","imp":4},{"id":124,"tz":"1984","col":"#4A90D9","imp":5},{"id":125,"tz":"动物庄园","col":"#4A90D9","imp":5},{"id":126,"tz":"美丽新世界","col":"#4A90D9","imp":5},{"id":127,"tz":"了不起的盖茨比","col":"#E74C3C","imp":5},{"id":128,"tz":"青年艺术家的画像","col":"#00CED1","imp":5},{"id":129,"tz":"审判","col":"#CDDC39","imp":5},{"id":130,"tz":"荒原狼","col":"#2ECC71","imp":4},{"id":131,"tz":"悉达多","col":"#2ECC71","imp":5},{"id":132,"tz":"人间失格","col":"#E91E63","imp":5},{"id":133,"tz":"雪国","col":"#E91E63","imp":4},{"id":134,"tz":"西游记","col":"#FF5722","imp":5},{"id":135,"tz":"三国演义","col":"#FF5722","imp":5},{"id":136,"tz":"约婚夫妇","col":"#1ABC9C","imp":4},{"id":137,"tz":"城堡","col":"#FF9800","imp":4},{"id":138,"tz":"底层人","col":"#E67E22","imp":3},{"id":139,"tz":"马丁菲耶罗","col":"#3498DB","imp":4},{"id":140,"tz":"百鸟朝凤","col":"#795548","imp":4},{"id":141,"tz":"列王纪","col":"#795548","imp":5},{"id":142,"tz":"尤利西斯","col":"#00CED1","imp":5},{"id":143,"tz":"达洛维夫人","col":"#4A90D9","imp":4},{"id":144,"tz":"到灯塔去","col":"#4A90D9","imp":4},{"id":145,"tz":"儿子与情人","col":"#4A90D9","imp":4},{"id":146,"tz":"局外人","col":"#9B59B6","imp":5},{"id":147,"tz":"隐形人（ Ellison ）","col":"#E74C3C","imp":5},{"id":148,"tz":"铁皮鼓","col":"#2ECC71","imp":4},{"id":149,"tz":"伊万·杰尼索维奇的一天","col":"#F39C12","imp":5},{"id":150,"tz":"变形记（奥维德）","col":"#D35400","imp":4}];
+const cvs=document.getElementById('starfield');
+const ctx=cvs.getContext('2d');
+let W,H,mx=0,my=0;
 
-</div>
-<div style="text-align:center;padding:20px;font-size:10px;color:var(--text3)">
-Light Ideas · 创意孵化器 · 四大名著宇宙 © 2026
-</div>
+function resize(){
+  W=window.innerWidth;H=window.innerHeight;
+  cvs.width=W*devicePixelRatio;cvs.height=H*devicePixelRatio;
+  cvs.style.width=W+'px';cvs.style.height=H+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+
+// 每颗星的屏幕位置（缓慢旋转）
+const pts=STARS.map((s,i)=>({
+  ...s,
+  angle:i/STARS.length*Math.PI*2,
+  r:150+Math.random()*Math.min(W,H)*0.35,
+  speed:0.00005+Math.random()*0.0001,
+  flicker:Math.random()*Math.PI*2
+}));
+
+// 背景小星星
+const bg=Array.from({length:200},()=>({
+  x:Math.random()*2000,y:Math.random()*2000,r:Math.random()*0.8+0.2,a:Math.random()*0.4+0.1
+}));
+
+let hoverIdx=-1;
+
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+
+  // 背景小星星
+  bg.forEach(s=>{
+    ctx.beginPath();ctx.arc(s.x%W,s.y%H,s.r,0,Math.PI*2);
+    const a=s.a*(0.5+0.5*Math.sin(t*0.001+s.x));
+    ctx.fillStyle='rgba(200,200,255,'+a+')';ctx.fill();
+  });
+
+  // 中央微光
+  const cg=ctx.createRadialGradient(W/2,H*0.35,0,W/2,H*0.35,300);
+  cg.addColorStop(0,'rgba(167,139,250,0.03)');cg.addColorStop(1,'transparent');
+  ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
+
+  // 150颗名著星
+  const cx=W/2,cy=H*0.35;
+  pts.forEach((p,i)=>{
+    p.angle+=p.speed;
+    const px=cx+Math.cos(p.angle)*p.r;
+    const py=cy+Math.sin(p.angle)*p.r*0.6;
+    p.px=px;p.py=py;
+
+    const isHover=i===hoverIdx;
+    const br=2+p.imp*1.2;
+    const r=isHover?br*2:br;
+    const alpha=isHover?1:(0.4+0.3*Math.sin(t*0.002+p.flicker));
+
+    // 发光
+    if(isHover||p.imp>=4){
+      const g=ctx.createRadialGradient(px,py,0,px,py,r*4);
+      g.addColorStop(0,p.col+'44');g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(px,py,r*4,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    }
+
+    ctx.globalAlpha=alpha;
+    ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();
+    ctx.globalAlpha=1;
+
+    if(isHover){
+      ctx.font='bold 12px "Noto Serif SC"';
+      ctx.fillStyle='#fff';ctx.textAlign='center';
+      ctx.fillText(p.tz,px,py-r-8);
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+
+// 鼠标悬停检测
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  hoverIdx=-1;
+  pts.forEach((p,i)=>{
+    if(Math.hypot(p.px-mx,p.py-my)<12)hoverIdx=i;
+  });
+  cvs.style.cursor=hoverIdx>=0?'pointer':'default';
+});
+
+window.addEventListener('resize',resize);
+resize();
+draw(0);
+</script>
 </body>
 </html>
