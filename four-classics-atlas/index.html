@@ -65,7 +65,14 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .leaflet-popup-content-wrapper{background:#1a1a1a!important;color:#e0e0e0!important;border-radius:8px!important;border:1px solid #333!important}
 .leaflet-popup-tip{background:#1a1a1a!important}
 .leaflet-popup-content{margin:8px 12px!important;font-size:12px!important}
-@media(max-width:768px){.sidebar{display:none}.hdr h1{font-size:13px}}
+@media(max-width:768px){
+  .sidebar{display:none;position:fixed;bottom:0;left:0;right:0;height:55vh;border-radius:16px 16px 0 0;border-left:none;border-top:1px solid var(--border);z-index:800;transform:translateY(100%);transition:transform .3s ease}
+  .sidebar.open{display:flex;transform:translateY(0)}
+  .mobile-toggle{display:flex !important}
+  .hdr h1{font-size:13px}
+  .search-box input{width:80px}
+}
+.mobile-toggle{display:none;position:fixed;bottom:16px;right:16px;z-index:900;width:48px;height:48px;border-radius:50%;background:var(--text);color:var(--bg);border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);align-items:center;justify-content:center}
 .travel-btn{margin-left:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:1px 6px;border-radius:4px;cursor:pointer;font-size:9px}
 .travel-btn:hover{border-color:var(--text3);color:var(--text)}
 .travel-btn.active{background:#c0392b;border-color:#c0392b;color:#fff}
@@ -88,7 +95,10 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 <div class="hdr">
 <div><h1>🗺️ 四梦归一 · 四大名著地理可视化</h1><div class="sub">真实地图 · 82地点 · 18路线 · 35人物 · 覆盖中国到印度</div></div>
 <div class="search-box"><span class="icon">🔍</span><input id="searchInput" placeholder="搜索地点..." oninput="searchLoc()"></div>
+<button class="share-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
 <button class="share-btn" onclick="shareUrl()">📋 分享</button>
+<button class="share-btn" onclick="printMap()" title="打印地图">🖨️</button>
+<button class="share-btn" onclick="toggleTTS()" id="ttsBtn" title="语音解说">🔊</button>
 </div>
 <div class="filters" id="filters"></div>
 <div class="main">
@@ -101,11 +111,14 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 <div class="tab" data-t="chars" onclick="setTab(this)">人物</div>
 <div class="tab" data-t="timeline" onclick="setTab(this)">时间线</div>
 <div class="tab" data-t="quiz" onclick="setTab(this)">问答</div>
+<div class="tab" data-t="dashboard" onclick="setTab(this)">📊</div>
+<div class="tab" data-t="novel" onclick="setTab(this)" style="color:#9b59b6">📖</div>
 </div>
 <div class="tab-content" id="tabContent"></div>
 </div>
 </div>
 <div class="detail-bg" id="detailBg" onclick="closeDetail()"><div class="detail" id="detailPanel" onclick="event.stopPropagation()"></div></div>
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" title="展开面板">📊</button>
 <div class="toast" id="toast"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -198,6 +211,39 @@ const LOCS=[
 {id:'panSIDong',nm:'盘丝洞',nv:'xyj',lat:37.50,lng:106.00,desc:'蜘蛛精洞府',alt:'宁夏固原',elev:1700,ev:['盘丝洞七情'],ch:['蜘蛛精','孙悟空'],xr:''}
 ];
 
+const NOVEL_CHAPTERS=[
+{ch:1,title:'通灵宝玉夜生异纹',loc:'rongguofu',arc:'万界觉醒',phase:1},
+{ch:2,title:'石核觉醒花果山',loc:'huaguoshan',arc:'万界觉醒',phase:1},
+{ch:6,title:'琉璃桃花映十二钗',loc:'daguan',arc:'万界觉醒',phase:1},
+{ch:9,title:'赤壁罡风寻源',loc:'chibi',arc:'暗流涌动',phase:1},
+{ch:12,title:'四界裂痕齐扩大',loc:'taixu',arc:'暗流涌动',phase:1},
+{ch:14,title:'宝玉梦入五行山',loc:'wuxingshan',arc:'裂缝初通',phase:1},
+{ch:18,title:'四界共振天穹裂',loc:'tianting',arc:'裂缝初通',phase:1},
+{ch:21,title:'武松打虎精',loc:'jingyanggang',arc:'因果交织',phase:1},
+{ch:24,title:'义气三圣聚首',loc:'longzhong',arc:'因果交织',phase:1},
+{ch:25,title:'石兄石弟并肩立',loc:'dahuangshan',arc:'石兄石弟',phase:1},
+{ch:27,title:'警幻仙子现身说',loc:'taixu',arc:'石兄石弟',phase:1},
+{ch:30,title:'九十天倒计时',loc:'huaguoshan',arc:'石兄石弟',phase:1},
+{ch:32,title:'悟空遇关羽英灵',loc:'guandu',arc:'黛玉觉醒',phase:2},
+{ch:34,title:'宋江取万界碑',loc:'liangshan',arc:'黛玉觉醒',phase:2},
+{ch:37,title:'火焰山碎片争夺',loc:'huoyanshan',arc:'碎片争夺',phase:2},
+{ch:40,title:'曹操交碎片',loc:'xudu',arc:'碎片争夺',phase:2},
+{ch:43,title:'黄袍怪跨界大战',loc:'jingyanggang',arc:'义气之战',phase:2},
+{ch:48,title:'舌战群儒说服三国',loc:'jingzhou',arc:'义气之战',phase:2},
+{ch:49,title:'暗花种子分发万民',loc:'taixu',arc:'暗花绽放',phase:2},
+{ch:54,title:'归一完成不消失',loc:'lingshan',arc:'暗花绽放',phase:2},
+{ch:55,title:'世界重叠第一天',loc:'rongguofu',arc:'世界重叠',phase:3},
+{ch:60,title:'悟空住进荣国府',loc:'rongguofu',arc:'世界重叠',phase:3},
+{ch:66,title:'万界新秩序',loc:'changanxyj',arc:'万界新序',phase:3},
+{ch:73,title:'黑花反扑融合日',loc:'taixu',arc:'至暗时刻',phase:3},
+{ch:78,title:'黛玉感知万界痛苦',loc:'dahuangshan',arc:'至暗时刻',phase:3},
+{ch:85,title:'石头花开天地变',loc:'dahuangshan',arc:'石头花开',phase:3},
+{ch:96,title:'花果山最后一次日落',loc:'huaguoshan',arc:'石头花开',phase:3},
+{ch:108,title:'石花远行归来',loc:'lingshan',arc:'归去来兮',phase:3},
+{ch:116,title:'宝黛最后一次散步',loc:'daguan',arc:'归去来兮',phase:3},
+{ch:120,title:'好',loc:'huaguoshan',arc:'大结局',phase:3}
+];
+
 const C=[
 {f:'rongguofu',t:'huaguoshan',d:'通灵宝玉 ↔ 灵石碎片'},
 {f:'dahuangshan',t:'lingshan',d:'石之始终'},
@@ -242,14 +288,14 @@ const R=[
 {id:'drive-sgy',nm:'三国遗迹自驾',c:'#2ecc71',type:'drive',pts:['xudu','guandu','luoyang','chibi','jingzhou','yiling','baidicheng','hanzhong','wuzhangyuan'],desc:'许都→赤壁→五丈原',dist:'约2500km',days:'9天',icon:'🚗'},
 {id:'drive-silk',nm:'丝路取经自驾',c:'#f39c12',type:'drive',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','turfan','huoyanshan','kuche'],desc:'西安→嘉峪关→吐鲁番',dist:'约2500km',days:'10天',icon:'🚗'},
 {id:'drive-shz',nm:'水浒好汉自驾',c:'#3498db',type:'drive',pts:['yunchengxian','liangshan','dongjing','yanggu','jingyanggang','zhujiazhuang','jiangzhou'],desc:'郓城→梁山→开封→九江',dist:'约800km',days:'4天',icon:'🚗'},
-{id:'hike-qujing',nm:'玄奘之路徒步',c:'#e67e22',type:'hike',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','huoyanshan','turfan','kuche','lingshan'],desc:'重走玄奘西行',dist:'约12000km',days:'180天',icon:'🥾'},
-{id:'hike-chibi',nm:'赤壁古道徒步',c:'#e74c3c',type:'hike',pts:['chibi','jingzhou','yiling'],desc:'赤壁→夷陵',dist:'约180km',days:'5天',icon:'🥾'},
-{id:'hike-liangshan',nm:'梁山泊徒步',c:'#1abc9c',type:'hike',pts:['yunchengxian','liangshan','jingyanggang','yanggu','zhujiazhuang'],desc:'郓城→梁山→祝家庄',dist:'约120km',days:'3天',icon:'🥾'},
-{id:'bike-sgy',nm:'三国征战骑行',c:'#9b59b6',type:'bike',pts:['xudu','luoyang','chibi','jingzhou','baidicheng','hanzhong'],desc:'许都→赤壁→汉中',dist:'约800km',days:'6天',icon:'🚴'},
-{id:'bike-shz',nm:'水浒江湖骑行',c:'#2ecc71',type:'bike',pts:['liangshan','dongjing','zhujiazhuang','jiangzhou'],desc:'梁山→九江',dist:'约450km',days:'4天',icon:'🚴'},
-{id:'bike-hlm',nm:'红楼江南骑行',c:'#e74c3c',type:'bike',pts:['nanjing','suzhou','yangzhou','daguan','beijing','dahuangshan'],desc:'金陵→大荒山',dist:'约1200km',days:'10天',icon:'🚴'},
-{id:'bike-xyj',nm:'取经丝路骑行',c:'#f39c12',type:'bike',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','turfan','huoyanshan'],desc:'西安→火焰山',dist:'约2200km',days:'15天',icon:'🚴'},
-{id:'hike-shu',nm:'蜀道难徒步',c:'#9b59b6',type:'hike',pts:['chengdu','hanzhong','qishan','wuzhangyuan','changansgy'],desc:'成都→长安·诸葛亮北伐路',dist:'约900km',days:'12天',icon:'🥾'}
+    id:'hike-qujing',nm:'玄奘之路徒步',c:'#e67e22',type:'hike',diff:'⭐⭐⭐⭐⭐',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','huoyanshan','turfan','kuche','lingshan'],desc:'重走玄奘西行',dist:'约12000km',days:'180天',icon:'🥾'},
+{id:'hike-chibi',nm:'赤壁古道徒步',c:'#e74c3c',type:'hike',diff:'⭐⭐',pts:['chibi','jingzhou','yiling'],desc:'赤壁→夷陵',dist:'约180km',days:'5天',icon:'🥾'},
+{id:'hike-liangshan',nm:'梁山泊徒步',c:'#1abc9c',type:'hike',diff:'⭐',pts:['yunchengxian','liangshan','jingyanggang','yanggu','zhujiazhuang'],desc:'郓城→梁山→祝家庄',dist:'约120km',days:'3天',icon:'🥾'},
+{id:'bike-sgy',nm:'三国征战骑行',c:'#9b59b6',type:'bike',diff:'⭐⭐⭐',pts:['xudu','luoyang','chibi','jingzhou','baidicheng','hanzhong'],desc:'许都→赤壁→汉中',dist:'约800km',days:'6天',icon:'🚴'},
+{id:'bike-shz',nm:'水浒江湖骑行',c:'#2ecc71',type:'bike',diff:'⭐⭐',pts:['liangshan','dongjing','zhujiazhuang','jiangzhou'],desc:'梁山→九江',dist:'约450km',days:'4天',icon:'🚴'},
+{id:'bike-hlm',nm:'红楼江南骑行',c:'#e74c3c',type:'bike',diff:'⭐⭐',pts:['nanjing','suzhou','yangzhou','daguan','beijing','dahuangshan'],desc:'金陵→大荒山',dist:'约1200km',days:'10天',icon:'🚴'},
+{id:'bike-xyj',nm:'取经丝路骑行',c:'#f39c12',type:'bike',diff:'⭐⭐⭐⭐',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','turfan','huoyanshan'],desc:'西安→火焰山',dist:'约2200km',days:'15天',icon:'🚴'},
+{id:'hike-shu',nm:'蜀道难徒步',c:'#9b59b6',type:'hike',diff:'⭐⭐⭐⭐',pts:['chengdu','hanzhong','qishan','wuzhangyuan','changansgy'],desc:'成都→长安·诸葛亮北伐路',dist:'约900km',days:'12天',icon:'🥾'}
 ];
 
 const CHARS=[
@@ -324,16 +370,98 @@ const TLEVENTS=[
 {y:'终章',t:'四石归位·石头花开',nv:'smy'}
 ];
 
+// === SVG ICONS ===
+const ICONS={
+  hlm:'<path d="M12 2C8 2 5 5 5 8c0 4 7 14 7 14s7-10 7-14c0-3-3-6-7-6z" fill="${c}" opacity=".9"/><circle cx="12" cy="8" r="2" fill="#fff" opacity=".6"/>',
+  sgy:'<path d="M4 18l4-4h3l-2-6h6l-2 6h3l4 4z" fill="${c}" opacity=".9"/><rect x="10" y="4" width="4" height="4" rx="1" fill="${c}"/>',
+  shz:'<path d="M12 3c-5 0-9 4-9 9s4 9 9 9 9-4 9-9-4-9-9-9zm-3 13v-8l7 4z" fill="${c}" opacity=".9"/>',
+  xyj:'<path d="M12 3c-1 0-2 .5-3 1-2 1.5-3 4-3 7 0 4 3 8 6 10 3-2 6-6 6-10 0-3-1-5.5-3-7-1-.5-2-1-3-1z" fill="${c}" opacity=".9"/><circle cx="12" cy="10" r="2.5" fill="#fff" opacity=".5"/>'
+};
+function svgIcon(nv,c,nm){
+  const svg=ICONS[nv]||'<circle cx="12" cy="12" r="6" fill="${c}"/>';
+  return '<svg viewBox="0 0 24 24" width="24" height="24" style="filter:drop-shadow(0 1px 3px '+c+'80)">'+svg.replace(/\$\{c\}/g,c)+'</svg>';
+}
+
+// === THEME ===
+let darkMode=true,terrainMode=false,satMode=false;
+function toggleTheme(){
+  // Cycle: dark → light → terrain → satellite → dark
+  if(!terrainMode&&!satMode&&!darkMode){terrainMode=true}
+  else if(terrainMode){terrainMode=false;satMode=true}
+  else if(satMode){satMode=false;darkMode=true}
+  else{darkMode=false}
+  // Update CSS vars
+  const light=!darkMode;
+  document.body.style.setProperty('--bg',darkMode?'#0a0a0a':'#f5f5f0');
+  document.body.style.setProperty('--surface',darkMode?'#141414':'#fff');
+  document.body.style.setProperty('--text',darkMode?'#e0e0e0':'#222');
+  document.body.style.setProperty('--text2',darkMode?'#999':'#666');
+  document.body.style.setProperty('--text3',darkMode?'#555':'#aaa');
+  document.body.style.setProperty('--border',darkMode?'#222':'#ddd');
+  document.getElementById('map').style.background=darkMode?'#0d1117':'#e8e4df';
+  // Swap tile layer
+  map.removeLayer(currentTile);
+  let url,maxZ=18;
+  if(terrainMode)url='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',maxZ=17;
+  else if(satMode)url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maxZ=18;
+  else url=darkMode?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+  currentTile=L.tileLayer(url,{maxZoom:maxZ,minZoom:2}).addTo(map);
+  document.getElementById('themeBtn').textContent=terrainMode?'⛰️':satMode?'🛰️':darkMode?'🌙':'☀️';
+  document.getElementById('themeBtn').title=terrainMode?'地形模式':satMode?'卫星模式':darkMode?'暗色模式':'亮色模式';
+}
+
+// === DASHBOARD ===
+function renderDashboard(){
+  const counts={hlm:0,sgy:0,shz:0,xyj:0};
+  LOCS.forEach(l=>{if(counts[l.nv]!==undefined)counts[l.nv]++});
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  const avgElev=Math.round(LOCS.filter(l=>l.elev).reduce((s,l)=>s+l.elev,0)/LOCS.filter(l=>l.elev).length);
+  const provinces=new Set(LOCS.filter(l=>l.alt).map(l=>l.alt.split('·')[0].substring(0,2)));
+  let html='<div style="padding:8px">';
+  html+='<div style="font-size:13px;font-weight:700;margin-bottom:10px">📊 数据总览</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">';
+  const cards=[
+    {label:'地点',value:total,color:'var(--text)'},
+    {label:'路线',value:R.length,color:'#27ae60'},
+    {label:'人物',value:CHARS.length,color:'#2980b9'},
+    {label:'连线',value:C.length,color:'#9b59b6'},
+  ];
+  cards.forEach(c=>{
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center">
+      <div style="font-size:18px;font-weight:700;color:${c.color}">${c.value}</div>
+      <div style="font-size:9px;color:var(--text3)">${c.label}</div></div>`;
+  });
+  html+='</div>';
+  // Novel breakdown
+  html+='<div style="margin-bottom:12px">';
+  Object.entries(NV).forEach(([k,v])=>{
+    if(k==='smy')return;
+    const pct=Math.round(counts[k]/total*100);
+    html+=`<div style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:2px"><span>${v.n}</span><span>${counts[k]}地</span></div>
+    <div style="height:4px;background:var(--border);border-radius:2px"><div style="height:100%;width:${pct}%;background:${v.c};border-radius:2px"></div></div></div>`;
+  });
+  html+='</div>';
+  // Stats
+  html+=`<div style="font-size:10px;color:var(--text3);line-height:1.8">
+    <div>🏔️ 平均海拔：${avgElev}m</div>
+    <div>📏 覆盖省份：${provinces.size}个</div>
+    <div>🌍 纬度范围：${Math.min(...LOCS.map(l=>l.lat)).toFixed(1)}°N ~ ${Math.max(...LOCS.map(l=>l.lat)).toFixed(1)}°N</div>
+    <div>📐 经度范围：${Math.min(...LOCS.map(l=>l.lng)).toFixed(1)}°E ~ ${Math.max(...LOCS.map(l=>l.lng)).toFixed(1)}°E</div>
+  </div>`;
+  html+='</div>';
+  return html;
+}
+
 let filter='all',tab='list',selLoc=null,activeRoutes=new Set();
 let markers={},routeLayers={},crossLayers=[];
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 function locById(id){return LOCS.find(l=>l.id===id)}
-function filtered(){if(filter==='all'||filter==='smy')return LOCS;return LOCS.filter(l=>l.nv===filter)}
+function filtered(){return(filter==='all'||filter==='smy'?LOCS:LOCS.filter(l=>l.nv===filter)).filter(l=>isLocThemed(l))}
 
 // === MAP ===
 const map=L.map('map',{zoomControl:false,attributionControl:false}).setView([34,108],5);
 L.control.zoom({position:'topleft'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,minZoom:2}).addTo(map);
+let currentTile=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,minZoom:2}).addTo(map);
 
 // === MARKERS ===
 function updateMarkers(){
@@ -343,8 +471,8 @@ function updateMarkers(){
     if(!ids.has(l.id))return;
     const nv=NV[l.nv];
     const icon=L.divIcon({
-      className:'',iconSize:[20,20],iconAnchor:[10,10],
-      html:`<div style="width:14px;height:14px;border-radius:50%;background:${nv.c};border:2px solid ${nv.c}40;box-shadow:0 0 8px ${nv.c}60;cursor:pointer" title="${l.nm}"></div>`
+      className:'',iconSize:[24,24],iconAnchor:[12,12],
+      html:svgIcon(l.nv,nv.c,l.nm)
     });
     const m=L.marker([l.lat,l.lng],{icon}).addTo(map);
     m.on('click',()=>showDetail(l.id));
@@ -392,24 +520,36 @@ function updateCross(){
 }
 
 // === FILTER ===
-function renderFilters(){
-  $('#filters').innerHTML=`
-    <div class="chip ch-all on" data-f="all" onclick="setFilter(this)">全部</div>
-    <div class="chip ch-hlm" data-f="hlm" onclick="setFilter(this)"><span class="d"></span>红楼梦</div>
-    <div class="chip ch-sgy" data-f="sgy" onclick="setFilter(this)"><span class="d"></span>三国</div>
-    <div class="chip ch-shz" data-f="shz" onclick="setFilter(this)"><span class="d"></span>水浒</div>
-    <div class="chip ch-xyj" data-f="xyj" onclick="setFilter(this)"><span class="d"></span>西游</div>
-    <div class="chip ch-smy" data-f="smy" onclick="setFilter(this)"><span class="d"></span>四梦归一</div>`;
-}
 function setFilter(el){
   $$('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');
   filter=el.dataset.f;updateMarkers();updateCross();renderStats();renderTabContent();
 }
 
 // === STATS ===
+function renderFilters(){
+  const chips=[{k:'all',n:'全部',cls:'ch-all'},{k:'hlm',n:'红楼梦',cls:'ch-hlm'},{k:'sgy',n:'三国演义',cls:'ch-sgy'},{k:'shz',n:'水浒传',cls:'ch-shz'},{k:'xyj',n:'西游记',cls:'ch-xyj'},{k:'smy',n:'四梦归一',cls:'ch-smy'}];
 function renderStats(){
-  const list=filtered();
+  const list=filtered().filter(l=>isLocThemed(l));
   $('#stats').innerHTML=`<span>${list.length} 地点</span><span>${R.length} 路线</span><span>${CHARS.length} 人物</span><span>${C.length} 连线</span>`;
+}
+  $('#filters').innerHTML=chips.map(c=>`<div class="chip ${c.cls}${filter===c.k?' on':''}" data-f="${c.k}" onclick="setFilter(this)"><span class="d"></span>${c.n}</div>`).join('')+
+  '<span style="margin-left:auto;font-size:9px;color:var(--text3)">主题：</span>'+
+  ['all|全部','war|⚔️战争','poetry|📜诗词','love|💕爱情','myth|🔮神话'].map(t=>{
+    const[k,n]=t.split('|');
+    return `<div class="chip${heatFilter===k?' on':''}" style="font-size:9px" onclick="setHeatFilter('${k}')">${n}</div>`;
+  }).join('');
+}
+let heatFilter='all';
+function setHeatFilter(k){heatFilter=k;updateMarkers();renderFilters();renderStats();renderTabContent();}
+function isLocThemed(l){
+  if(heatFilter==='all')return true;
+  const themes={
+    war:['chibi','guandu','yiling','jingzhou','maicheng','changbanpo','bowangpo','dingjunshan','qishan','hefei','liangshan','jingyanggang','shizipo','mengzhou','zhujiazhuang','changansgy','luoyang','xiapi'],
+    poetry:['daguan','rongguofu','xiaoxiangguan','yihongyuan','hengwuyuan','qiushuangzhai','nanjing','suzhou','yangzhou','daoguanxiang'],
+    love:['daguan','rongguofu','xiaoxiangguan','yihongyuan','hengwuyuan','taixu','nverguo','lingshan'],
+    myth:['huaguoshan','wuxingshan','tianting','lingshan','huoyanshan','dahuangshan','taixu','baigudong','wanshoushan','boyuedong']
+  };
+  return themes[heatFilter]?themes[heatFilter].includes(l.id):true;
 }
 
 // === TABS ===
@@ -417,7 +557,8 @@ function setTab(el){$$('.tab').forEach(t=>t.classList.remove('on'));el.classList
 function renderTabContent(){
   if(tab==='list')renderLocList();else if(tab==='routes')renderRouteLegend();
   else if(tab==='chars')renderCharsPanel();else if(tab==='timeline')renderTimeline();
-  else if(tab==='quiz')renderQuiz();
+  else if(tab==='quiz')renderQuiz();else if(tab==='dashboard')document.getElementById('tabContent').innerHTML=renderDashboard();
+  else if(tab==='novel')renderNovelMap();
 }
 
 // === LOC LIST ===
@@ -448,7 +589,7 @@ function renderRouteLegend(){
         <span class="route-line" style="background:${r.c}${on?'':';opacity:.3'}"></span>
         <span style="font-weight:${on?600:400}">${r.icon||''} ${r.nm}</span>
         <span style="font-size:9px;color:var(--text3);margin-left:auto">${r.pts.length}站</span>
-        ${r.dist?`<div style="width:100%;font-size:9px;color:var(--text3);padding-left:20px">${r.desc} · ${r.dist} · ${r.days}</div>`:''}
+        ${r.dist?`<div style="width:100%;font-size:9px;color:var(--text3);padding-left:20px">${r.desc} · ${r.dist} · ${r.days}${r.diff?' · '+r.diff:''}</div>`:''}
       </div>`;}).join('')}</div>`;
   }).join('');
 }
@@ -465,13 +606,46 @@ function toggleRoute(id){
 
 // === CHARS ===
 function renderCharsPanel(){
-  $('#tabContent').innerHTML=CHARS.map((c,i)=>{
+  $('#tabContent').innerHTML=`<div style="margin-bottom:8px;display:flex;gap:6px">
+    <button onclick="showCharRelGraph()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px;border-radius:6px;font-size:10px;cursor:pointer">🕸️ 关系图</button>
+  </div>`+CHARS.map((c,i)=>{
     const nv=NV[c.nv];
     return `<div class="loc-item" onclick="highlightChar('${c.n}')">
       <div class="loc-dot" style="background:${nv.c}"></div><span>${c.n}</span>
       <span style="margin-left:auto;font-size:9px;color:var(--text3)">${nv.n}</span>
       <button class="travel-btn" onclick="event.stopPropagation();startCharTravel(${i})" title="出发旅行">🚀出发</button></div>`;
   }).join('');
+}
+function showCharRelGraph(){
+  // Build relation data for canvas force graph
+  const canvas=`<canvas id="relCanvas" width="280" height="400" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:grab"></canvas>
+    <div style="margin-top:6px;font-size:9px;color:var(--text3);text-align:center">拖拽节点 · 同色=同书 · 线=关系</div>
+    <button onclick="renderCharsPanel()" style="margin-top:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">返回列表</button>`;
+  $('#tabContent').innerHTML=canvas;
+  setTimeout(drawRelGraph,50);
+}
+function drawRelGraph(){
+  const cvs=document.getElementById('relCanvas');if(!cvs)return;
+  const ctx=cvs.getContext('2d');
+  const W=cvs.width,H=cvs.height;
+  const nodes=CHARS.map((c,i)=>({x:W/2+Math.cos(i*2.4)*80+Math.random()*40,y:H/2+Math.sin(i*2.4)*60+Math.random()*40,n:c.n,nv:c.nv,rel:c.rel,r:8}));
+  const edges=[];
+  nodes.forEach((a,i)=>{a.rel.forEach(rn=>{const j=nodes.findIndex(b=>b.n===rn);if(j>i)edges.push({s:i,t:j})})});
+  let drag=-1;
+  cvs.onmousedown=e=>{const r=cvs.getBoundingClientRect(),mx=e.offsetX*(W/r.width),my=e.offsetY*(H/r.height);drag=nodes.findIndex(n=>(n.x-mx)**2+(n.y-my)**2<(n.r*2)**2);if(drag>=0)cvs.style.cursor='grabbing'};
+  cvs.onmousemove=e=>{if(drag<0)return;const r=cvs.getBoundingClientRect();nodes[drag].x=e.offsetX*(W/r.width);nodes[drag].y=e.offsetY*(H/r.height)};
+  cvs.onmouseup=()=>{drag=-1;cvs.style.cursor='grab'};
+  function tick(){
+    // Force simulation
+    nodes.forEach((a,i)=>{nodes.forEach((b,j)=>{if(i===j)return;let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1,f=(d-60)*0.003;a.x-=dx/d*f;a.y-=dy/d*f})});
+    edges.forEach(e=>{const a=nodes[e.s],b=nodes[e.t];let dx=b.x-a.x,dy=b.y-a.y;a.x+=dx*0.005;a.y+=dy*0.005;b.x-=dx*0.005;b.y-=dy*0.005});
+    nodes.forEach(n=>{n.x=Math.max(15,Math.min(W-15,n.x));n.y=Math.max(15,Math.min(H-15,n.y));if(drag<0){n.x+=(W/2-n.x)*0.001;n.y+=(H/2-n.y)*0.001}});
+    ctx.clearRect(0,0,W,H);
+    edges.forEach(e=>{const a=nodes[e.s],b=nodes[e.t];ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;ctx.stroke()});
+    nodes.forEach(n=>{const c=NV[n.nv]?.c||'#999';ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();ctx.font='7px sans-serif';ctx.fillStyle='var(--text,#ccc)';ctx.textAlign='center';ctx.fillText(n.n,n.x,n.y+n.r+10)});
+    requestAnimationFrame(tick);
+  }
+  tick();
 }
 function highlightChar(name){
   const c=CHARS.find(x=>x.n===name);if(!c)return;
@@ -493,9 +667,50 @@ function resetChars(){Object.values(markers).forEach(m=>m.setOpacity(1));renderC
 
 // === TIMELINE ===
 function renderTimeline(){
-  $('#tabContent').innerHTML=`<div class="timeline">${TLEVENTS.map(e=>
-    `<div class="tl-item ${e.nv}"><div class="tl-year">${e.y}</div><div class="tl-text">${e.t}</div></div>`
+  const btnLabel=tlPlaying?'⏸ 暂停':'▶ 播放故事';
+  $('#tabContent').innerHTML=`<div style="margin-bottom:8px;display:flex;gap:6px">
+    <button onclick="toggleTimelinePlay()" style="flex:1;background:var(--text);color:var(--bg);border:none;padding:6px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700">${btnLabel}</button>
+    <button onclick="tlSpeed=tlSpeed===1?2:tlSpeed===2?4:1;renderTimeline()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer">${tlSpeed}x</button>
+  </div><div class="timeline">${TLEVENTS.map((e,i)=>
+    `<div class="tl-item ${e.nv}${tlIdx===i?' active':''}" onclick="jumpTimeline(${i})" style="cursor:pointer;${tlIdx===i?'background:rgba(255,255,255,.06);border-radius:4px':''}"><div class="tl-year">${e.y}</div><div class="tl-text">${e.t}</div></div>`
   ).join('')}</div>`;
+}
+let tlPlaying=false,tlIdx=-1,tlTimer=null,tlSpeed=1;
+function toggleTimelinePlay(){
+  if(tlPlaying){clearInterval(tlTimer);tlPlaying=false;renderTimeline();return}
+  tlPlaying=true;tlIdx=tlIdx<0?0:tlIdx;
+  renderTimeline();playTimelineStep();
+}
+function playTimelineStep(){
+  if(!tlPlaying||tlIdx>=TLEVENTS.length){tlPlaying=false;renderTimeline();return}
+  const e=TLEVENTS[tlIdx];
+  // Find matching locations by novel
+  const matches=LOCS.filter(l=>l.nv===e.nv);
+  if(matches.length){
+    const avgLat=matches.reduce((s,l)=>s+l.lat,0)/matches.length;
+    const avgLng=matches.reduce((s,l)=>s+l.lng,0)/matches.length;
+    map.flyTo([avgLat,avgLng],6,{duration:1});
+    // Highlight matching markers
+    Object.entries(markers).forEach(([id,m])=>{
+      const loc=locById(id);
+      m.setOpacity(loc&&loc.nv===e.nv?1:0.15);
+    });
+  }
+  renderTimeline();
+  tlIdx++;
+  tlTimer=setTimeout(playTimelineStep,Math.round(2000/tlSpeed));
+}
+function jumpTimeline(idx){
+  tlIdx=idx;tlPlaying=false;
+  if(tlTimer)clearTimeout(tlTimer);
+  const e=TLEVENTS[idx];
+  const matches=LOCS.filter(l=>l.nv===e.nv);
+  if(matches.length){
+    const avgLat=matches.reduce((s,l)=>s+l.lat,0)/matches.length;
+    const avgLng=matches.reduce((s,l)=>s+l.lng,0)/matches.length;
+    map.flyTo([avgLat,avgLng],6,{duration:1});
+  }
+  renderTimeline();
 }
 
 // === DETAIL MODAL ===
@@ -720,6 +935,132 @@ function answerQuiz(chosen,correct,btn){
 }
 function nextQuizQ(){
   quizState.qIdx++;quizState.answered=false;renderQuiz();
+}
+
+// === NOVEL MAP (四梦归一联动) ===
+let novelLayer=null,novelMarkers=[];
+function renderNovelMap(){
+  let html='<div style="padding:4px 0">';
+  html+='<div style="font-size:13px;font-weight:700;margin-bottom:6px;color:#9b59b6">📖 四梦归一 · 章节地图</div>';
+  html+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px;line-height:1.5">120回融合小说的关键情节在地图上的位置<br>点击章节可飞到对应地点</div>';
+  const arcs=['万界觉醒','暗流涌动','裂缝初通','因果交织','石兄石弟','黛玉觉醒','碎片争夺','义气之战','暗花绽放','世界重叠','万界新序','至暗时刻','石头花开','归去来兮','大结局'];
+  let curArc='';
+  NOVEL_CHAPTERS.forEach((nc,i)=>{
+    if(nc.arc!==curArc){
+      curArc=nc.arc;
+      html+=`<div style="margin-top:10px;margin-bottom:4px;font-size:10px;font-weight:700;color:#9b59b6;border-bottom:1px solid var(--border);padding-bottom:3px">${curArc}</div>`;
+    }
+    html+=`<div class="loc-item" onclick="flyToNovelChapter(${i})" style="font-size:10px;padding:4px 6px">
+      <span style="color:var(--text3);min-width:30px;display:inline-block">第${nc.ch}回</span>
+      <span style="color:var(--text2)">${nc.title}</span>
+    </div>`;
+  });
+  html+='</div>';
+  $('#tabContent').innerHTML=html;
+  showNovelMarkers();
+}
+function showNovelMarkers(){
+  clearNovelLayer();
+  novelLayer=L.layerGroup().addTo(map);
+  NOVEL_CHAPTERS.forEach(nc=>{
+    const loc=locById(nc.loc);if(!loc)return;
+    const m=L.circleMarker([loc.lat,loc.lng],{
+      radius:6,color:'#9b59b6',fillColor:'#9b59b6',fillOpacity:.6,weight:2
+    }).addTo(novelLayer);
+    m.bindPopup(`<b style="color:#9b59b6">第${nc.ch}回</b><br>${nc.title}<br><span style="font-size:10px;color:#999">${loc.nm}</span>`);
+    novelMarkers.push(m);
+  });
+}
+function clearNovelLayer(){if(novelLayer){map.removeLayer(novelLayer);novelLayer=null;novelMarkers=[];}}
+function flyToNovelChapter(idx){
+  const nc=NOVEL_CHAPTERS[idx];
+  const loc=locById(nc.loc);if(!loc)return;
+  map.flyTo([loc.lat,loc.lng],8,{duration:1.5});
+  // Open popup
+  if(novelMarkers[idx])novelMarkers[idx].openPopup();
+  showToast(`📖 第${nc.ch}回：${nc.title} @ ${loc.nm}`);
+}
+
+// === PRINT ===
+function printMap(){
+  // Create printable version
+  const printWin=window.open('','_blank');
+  const list=filtered();
+  const nvGroups={};
+  list.forEach(l=>{if(!nvGroups[l.nv])nvGroups[l.nv]=[];nvGroups[l.nv].push(l)});
+  let html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>四梦归一·四大名著地图</title>
+<style>body{font-family:'Noto Sans SC',sans-serif;padding:20px;color:#222}
+h1{font-size:18px;text-align:center;border-bottom:2px solid #333;padding-bottom:8px}
+h2{font-size:14px;margin-top:16px;color:#555}
+.loc{padding:4px 8px;font-size:11px;border-bottom:1px solid #eee}
+.loc b{color:#333}.loc span{color:#888;margin-left:6px}
+.stats{text-align:center;font-size:12px;color:#666;margin:12px 0}
+@media print{body{padding:0}}</style></head><body>`;
+  html+=`<h1>🗺️ 四梦归一 · 四大名著地理可视化</h1>`;
+  html+=`<div class="stats">${list.length} 地点 · ${R.length} 路线 · ${CHARS.length} 人物 · ${C.length} 跨界连线</div>`;
+  Object.entries(nvGroups).forEach(([nv,locs])=>{
+    const n=NV[nv];
+    html+=`<h2 style="color:${n.c}">${n.n}（${locs.length}个地点）</h2>`;
+    locs.forEach(l=>{
+      html+=`<div class="loc"><b>${l.nm}</b><span>${l.alt||''}</span><span>${l.desc||''}</span></div>`;
+    });
+  });
+  html+=`</body></html>`;
+  printWin.document.write(html);
+  printWin.document.close();
+  setTimeout(()=>{printWin.print()},500);
+}
+
+// === TTS (语音解说) ===
+let ttsActive=false,ttsUtterance=null;
+function toggleTTS(){
+  ttsActive=!ttsActive;
+  document.getElementById('ttsBtn').textContent=ttsActive?'🔇':'🔊';
+  if(!ttsActive&&window.speechSynthesis){window.speechSynthesis.cancel();return}
+  if(ttsActive)speakCurrentView();
+}
+function speakCurrentView(){
+  if(!ttsActive)return;
+  const center=map.getCenter();
+  const list=filtered().filter(l=>{
+    const dx=l.lng-center.lng,dy=l.lat-center.lat;
+    return Math.sqrt(dx*dx+dy*dy)<5;
+  });
+  if(list.length===0){speakText('当前视野内没有名著地点，请移动地图');return}
+  const text=list.slice(0,5).map(l=>{
+    const nv=NV[l.nv];
+    return `${l.nm}，${nv.n}中的地点。${l.desc||''}`;
+  }).join('。');
+  speakText(`当前视野内有${list.length}个地点：${text}`);
+}
+function speakText(text){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  ttsUtterance=new SpeechSynthesisUtterance(text);
+  ttsUtterance.lang='zh-CN';ttsUtterance.rate=0.9;
+  ttsUtterance.onend=()=>{if(ttsActive)setTimeout(()=>speakCurrentView(),3000)};
+  window.speechSynthesis.speak(ttsUtterance);
+}
+// Update TTS on map move
+map.on('moveend',()=>{if(ttsActive){window.speechSynthesis.cancel();setTimeout(()=>speakCurrentView(),1000)}});
+
+// === SERVICE WORKER (离线缓存) ===
+if('serviceWorker' in navigator){
+  const swCode=`
+self.addEventListener('install',e=>{self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(clients.claim())});
+self.addEventListener('fetch',e=>{
+  const url=new URL(e.request.url);
+  if(url.hostname==='localhost'||url.hostname==='127.0.0.1')return;
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
+    if(resp.ok&&url.protocol==='https:'){
+      const c=resp.clone();caches.open('atlas-v1').then(cache=>cache.put(e.request,c));
+    }
+    return resp;
+  }).catch(()=>new Response('离线',{status:503})))});
+`;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 }
 </script>
 </body>
