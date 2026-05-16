@@ -259,8 +259,22 @@
 
 ```
 character-tactics/
-├── README.md          ← 本文件（游戏概述+角色六维属性表）
-├── stratagems.md      ← 三十六计卡牌完整列表（36+1张）
-├── rules.md           ← 对战规则、阵位系统、元素克制
-└── characters/        ← 每个角色的详细技能描述（后续补充）
+├── README.md          ← 游戏概述 + 96角色属性表
+├── rules.md           ← 对战规则
+├── stratagems.md      ← 三十六计卡牌完整列表
+├── sun-tzu.md         ← 孙子兵法·13种兵法阵系统
+├── west-point.md      ← 西点军校·10条军规光环系统
+├── artifacts.md       ← 法宝装备系统·24件法宝
+├── elements.md        ← 五行生克系统·金木水火土
+├── terrain.md         ← 地形系统·山/水/城/林/火/平
+├── season.md          ← 赛季模式·排位赛/锦标赛/赏金赛
+├── balance.md         ← 平衡性分析·96角色统计+调整建议
+├── tactics.md         ← 阵容推荐+克制+Combo+三层策略
+├── cards.html         ← 96角色交互卡牌图鉴+部署模拟器
+├── expansion-plan.md  ← 扩充规划表
+└── characters/
+    ├── characters-hlm.md  ← 红楼梦24角色技能
+    ├── characters-sgy.md  ← 三国24角色技能
+    ├── characters-shz.md  ← 水浒24角色技能
+    └── characters-xyj.md  ← 西游记24角色技能
 ```

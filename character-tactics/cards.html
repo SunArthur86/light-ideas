@@ -66,9 +66,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:v
   <div class="chip ch-r ch-r-chuan on" data-r="传" onclick="setR(this)">传说</div>
   <div class="chip ch-r ch-r-jing on" data-r="精" onclick="setR(this)">精英</div>
   <div class="chip ch-r ch-r-pu on" data-r="普" onclick="setR(this)">普通</div>
+<button id="deployBtn" onclick="toggleDeploy()" style="margin-left:auto;background:#2a2a2a;border:1px solid #555;color:#ccc;padding:4px 14px;border-radius:16px;cursor:pointer;font-size:12px">⚔️ 部署模拟</button>
 </div>
 <div class="stats" id="stats"></div>
 <div class="grid" id="grid"></div>
+<div id="deployPanel" style="display:none;max-width:720px;margin:0 auto;padding:16px"></div>
 <div class="modal-bg" id="modalBg" onclick="closeModal()">
   <div class="modal" id="modal" onclick="event.stopPropagation()"></div>
 </div>
@@ -140,6 +142,132 @@ function showModal(idx){
   document.getElementById('modalBg').classList.add('show');
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+
+/* === DEPLOY MODE === */
+let deployMode=false, board=Array(16).fill(null), selectedChar=null;
+
+function toggleDeploy(){
+  deployMode=!deployMode;
+  document.getElementById('deployBtn').textContent=deployMode?'返回图鉴':'⚔️ 部署模拟';
+  document.getElementById('grid').style.display=deployMode?'none':'grid';
+  document.getElementById('deployPanel').style.display=deployMode?'flex':'none';
+  if(deployMode) renderDeploy();
+  else render();
+}
+
+function renderDeploy(){
+  const p=document.getElementById('deployPanel');
+  // Build 4x4 board
+  let boardHtml='<div style="display:flex;flex-direction:column;gap:2px">';
+  const terrains=['山','林','平','水','城','平','平','平','平','平','林','山','水','平','城','林'];
+  const tColors={'山':'#8B6914','林':'#2d5016','平':'#333','水':'#1a5276','城':'#555','火':'#8B0000'};
+  for(let r=0;r<4;r++){
+    boardHtml+='<div style="display:flex;gap:2px">';
+    for(let c=0;c<4;c++){
+      const idx=r*4+c;
+      const ch=board[idx];
+      const t=terrains[idx];
+      const bg=tColors[t]||'#333';
+      boardHtml+=`<div class="board-cell" data-idx="${idx}" onclick="placeChar(${idx})" ondragover="event.preventDefault()" ondrop="dropChar(event,${idx})" style="width:90px;height:90px;background:${bg};border:1px solid ${ch?'#fff':'#555'};border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .2s">`;
+      boardHtml+=`<div style="position:absolute;top:2px;left:4px;font-size:9px;color:#888">${t}</div>`;
+      if(ch){
+        const char=D.find(x=>x.n===ch);
+        if(char){
+          boardHtml+=`<div style="font-size:10px;font-weight:bold;color:${NV[char.nv].c}">${ch}</div>`;
+          boardHtml+=`<div style="font-size:8px;color:#aaa">${char.r[0]} ${char.s.reduce((a,b)=>a+b,0)}点</div>`;
+        }
+      } else {
+        boardHtml+=`<div style="font-size:9px;color:#555">空</div>`;
+      }
+      boardHtml+='</div>';
+    }
+    boardHtml+='</div>';
+  }
+  boardHtml+='</div>';
+
+  // Character selection list
+  const deployed=new Set(board.filter(Boolean));
+  let listHtml='<div style="max-height:400px;overflow-y:auto;width:220px">';
+  listHtml+=`<div style="padding:8px;border-bottom:1px solid #333"><input id="deploySearch" placeholder="搜索角色..." oninput="filterDeployList()" style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:4px;color:#fff;padding:4px 8px;font-size:12px"></div>`;
+  listHtml+='<div id="deployList">';
+  const sorted=[...D].sort((a,b)=>b.s.reduce((x,y)=>x+y,0)-a.s.reduce((x,y)=>x+y,0));
+  sorted.forEach(char=>{
+    if(deployed.has(char.n)) return;
+    listHtml+=`<div class="deploy-char-item" data-name="${char.n}" draggable="true" ondragstart="dragChar(event,'${char.n}')" onclick="selectForDeploy('${char.n}')" style="padding:4px 8px;cursor:pointer;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;gap:6px;font-size:11px">`;
+    listHtml+=`<div style="width:8px;height:8px;border-radius:50%;background:${NV[char.nv].c}"></div>`;
+    listHtml+=`<span>${char.n}</span>`;
+    listHtml+=`<span style="color:#666;font-size:9px">${char.r} ${char.s.reduce((a,b)=>a+b,0)}点</span>`;
+    listHtml+='</div>';
+  });
+  listHtml+='</div></div>';
+
+  // Stats
+  const deployedChars=board.filter(Boolean).map(n=>D.find(x=>x.n===n)).filter(Boolean);
+  let statsHtml='<div style="margin-top:12px;padding:8px;background:#1a1a1a;border-radius:6px;font-size:11px">';
+  statsHtml+=`<div style="color:#888;margin-bottom:4px">已部署 ${deployedChars.length}/4</div>`;
+  if(deployedChars.length>0){
+    const totals=['MAR','INT','BEN','LOY','SPI','SPD'].map((s,i)=>{
+      const sum=deployedChars.reduce((a,c)=>a+c.s[i],0);
+      return `${s}:${sum}`;
+    }).join(' ');
+    statsHtml+=`<div style="color:#ccc">${totals}</div>`;
+    // Check resonance
+    const novels=deployedChars.map(c=>c.nv);
+    const unique=new Set(novels);
+    if(unique.size>=4) statsHtml+=`<div style="color:#f1c40f;margin-top:4px">✨ 四书共鸣！全属性+2</div>`;
+    if(unique.size>=3) statsHtml+=`<div style="color:#2ecc71;margin-top:4px">📖 三书联合作战</div>`;
+    const nvs=[...novels];
+    if(nvs.length===4 && new Set(nvs).size===4) statsHtml+=`<div style="color:#9b59b6;margin-top:4px">🌟 四界归一阵！</div>`;
+  }
+  statsHtml+=`<button onclick="clearBoard()" style="margin-top:8px;background:#333;border:1px solid #555;color:#aaa;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">清空棋盘</button>`;
+  statsHtml+='</div>';
+
+  p.innerHTML=`<div style="display:flex;gap:16px;align-items:flex-start">
+    <div><h3 style="font-size:14px;margin-bottom:8px;color:#888">阵位部署（拖拽或点击）</h3>${boardHtml}${statsHtml}</div>
+    <div><h3 style="font-size:14px;margin-bottom:8px;color:#888">选择角色</h3>${listHtml}</div>
+  </div>`;
+}
+
+function selectForDeploy(name){
+  selectedChar=name;
+  document.querySelectorAll('.deploy-char-item').forEach(el=>{
+    el.style.background=el.dataset.name===name?'#2a2a2a':'';
+  });
+}
+
+function placeChar(idx){
+  if(selectedChar){
+    // Remove from other slots
+    const otherIdx=board.indexOf(selectedChar);
+    if(otherIdx>=0) board[otherIdx]=null;
+    board[idx]=selectedChar;
+    selectedChar=null;
+    renderDeploy();
+  } else if(board[idx]){
+    // Remove from board
+    board[idx]=null;
+    renderDeploy();
+  }
+}
+
+function dragChar(e,name){e.dataTransfer.setData('text',name);}
+function dropChar(e,idx){
+  e.preventDefault();
+  const name=e.dataTransfer.getData('text');
+  const otherIdx=board.indexOf(name);
+  if(otherIdx>=0) board[otherIdx]=null;
+  board[idx]=name;
+  renderDeploy();
+}
+
+function clearBoard(){board=Array(16).fill(null);selectedChar=null;renderDeploy();}
+
+function filterDeployList(){
+  const q=document.getElementById('deploySearch').value.toLowerCase();
+  document.querySelectorAll('.deploy-char-item').forEach(el=>{
+    el.style.display=el.dataset.name.toLowerCase().includes(q)?'':'none';
+  });
+}
 
 render();
 </script>
