@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⏳ 世界文学时间轴</title>
+<title>\u23f3 世界文学时间轴</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#fafafa;--fg:#1d1d1f;--muted:#86868b;--accent:#0071e3;--card:#fff;--border:rgba(0,0,0,.08);--shadow:0 2px 12px rgba(0,0,0,.06)}
-body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;overflow:hidden;height:100vh;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;overflow:hidden;height:100vh}
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,250,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 24px;gap:16px}
 .nav a{color:var(--muted);text-decoration:none;font-size:13px}.nav a:hover{color:var(--fg)}
 .nav h1{font-size:17px;font-weight:700;letter-spacing:-.3px}
@@ -69,15 +69,14 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 </style>
 </head>
 <body>
-<div class="ld" id="ld"><h2>⏳ 构建时间轴...</h2><div class="bar"><div></div></div></div>
-<nav class="nav"><a href="../index.html">← 返回</a><h1>世界文学时间轴</h1><span class="stat" id="stat"></span><div class="ctrl"><div class="sch"><input id="sq" placeholder="搜索书名/作者..."></div><div class="zoom"><button onclick="zI()">+</button><span id="zl">100%</span><button onclick="zO()">−</button></div></div></nav>
+<div class="ld" id="ld"><h2>\u23f3 构建时间轴...</h2><div class="bar"><div></div></div></div>
+<nav class="nav"><a href="../index.html">\u2190 返回</a><h1>世界文学时间轴</h1><span class="stat" id="stat"></span><div class="ctrl"><div class="sch"><input id="sq" placeholder="搜索书名/作者..."></div><div class="zoom"><button onclick="zI()">+</button><span id="zl">100%</span><button onclick="zO()">\u2212</button></div></div></nav>
 <div class="eras" id="ebar"></div>
 <div class="vp" id="vp"><div class="tl" id="tl"></div></div>
 <div class="leg" id="leg"></div>
 <div class="tip" id="tip"></div>
 <div class="mo" id="mo"><div class="md" id="md"></div></div>
 <script>
-
 var B=[
 {id:1,t:"傲慢与偏见",a:"简·奥斯汀",c:"英国",g:"世态小说",imp:5,col:"#4A90D9",y:1813},
 {id:2,t:"远大前程",a:"狄更斯",c:"英国",g:"成长小说",imp:4,col:"#4A90D9",y:1861},
@@ -125,7 +124,10 @@ var B=[
 {id:48,t:"海底两万里",a:"凡尔纳",c:"法国",g:"科幻冒险",imp:4,col:"#9B59B6",y:1870},
 {id:49,t:"时间机器",a:"威尔斯",c:"英国",g:"科幻小说",imp:4,col:"#4A90D9",y:1895},
 {id:50,t:"查拉图斯特拉如是说",a:"尼采",c:"德国",g:"哲学文学",imp:5,col:"#2ECC71",y:1885},
+{id:51,t:"爱玛",a:"奥斯汀",c:"英国",g:"世态小说",imp:4,col:"#4A90D9",y:1815},
+{id:52,t:"理智与情感",a:"奥斯汀",c:"英国",g:"世态小说",imp:4,col:"#4A90D9",y:1811},
 {id:53,t:"双城记",a:"狄更斯",c:"英国",g:"历史小说",imp:5,col:"#4A90D9",y:1859},
+{id:54,t:"大卫·科波菲尔",a:"狄更斯",c:"英国",g:"成长小说",imp:4,col:"#4A90D9",y:1850},
 {id:55,t:"黑暗的心",a:"康拉德",c:"英国",g:"中篇小说",imp:5,col:"#4A90D9",y:1899},
 {id:58,t:"失乐园",a:"弥尔顿",c:"英国",g:"史诗",imp:5,col:"#4A90D9",y:1667},
 {id:59,t:"爱丽丝漫游奇境记",a:"卡罗尔",c:"英国",g:"幻想文学",imp:5,col:"#4A90D9",y:1865},
@@ -133,6 +135,15 @@ var B=[
 {id:62,t:"贝奥武夫",a:"匿名",c:"英国",g:"史诗",imp:4,col:"#4A90D9",y:1000},
 {id:67,t:"瓦尔登湖",a:"梭罗",c:"美国",g:"散文哲学",imp:5,col:"#E74C3C",y:1854},
 {id:70,t:"草叶集",a:"惠特曼",c:"美国",g:"诗歌",imp:5,col:"#E74C3C",y:1855},
+{id:73,t:"萌芽",a:"左拉",c:"法国",g:"自然主义",imp:4,col:"#9B59B6",y:1885},
+{id:74,t:"情感教育",a:"福楼拜",c:"法国",g:"现实主义",imp:4,col:"#9B59B6",y:1869},
+{id:78,t:"白痴",a:"陀思妥耶夫斯基",c:"俄国",g:"心理小说",imp:4,col:"#F39C12",y:1869},
+{id:79,t:"复活",a:"托尔斯泰",c:"俄国",g:"社会小说",imp:4,col:"#F39C12",y:1899},
+{id:80,t:"奥勃洛莫夫",a:"冈察洛夫",c:"俄国",g:"现实主义",imp:4,col:"#F39C12",y:1859},
+{id:81,t:"好兵帅克",a:"哈谢克",c:"捷克",g:"讽刺小说",imp:4,col:"#FF9800",y:1923},
+{id:82,t:"世界大战",a:"威尔斯",c:"英国",g:"科幻小说",imp:4,col:"#4A90D9",y:1898},
+{id:84,t:"八十天环游地球",a:"凡尔纳",c:"法国",g:"冒险小说",imp:4,col:"#9B59B6",y:1873},
+{id:86,t:"金银岛",a:"史蒂文森",c:"英国",g:"冒险小说",imp:4,col:"#4A90D9",y:1883},
 {id:88,t:"埃涅阿斯纪",a:"维吉尔",c:"古罗马",g:"史诗",imp:5,col:"#D35400",y:-19},
 {id:89,t:"理想国",a:"柏拉图",c:"古希腊",g:"哲学对话",imp:5,col:"#E67E22",y:-380},
 {id:90,t:"沉思录",a:"奥勒留",c:"古罗马",g:"哲学日记",imp:5,col:"#D35400",y:170},
@@ -142,7 +153,12 @@ var B=[
 {id:97,t:"格林童话",a:"格林兄弟",c:"德国",g:"童话集",imp:5,col:"#2ECC71",y:1812},
 {id:98,t:"一千零一夜",a:"匿名",c:"阿拉伯",g:"故事集",imp:5,col:"#795548",y:800},
 {id:101,t:"百年孤独",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:5,col:"#F1C40F",y:1967},
+{id:102,t:"霍乱时期的爱情",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:4,col:"#F1C40F",y:1985},
+{id:103,t:"虚构集",a:"博尔赫斯",c:"阿根廷",g:"后现代",imp:5,col:"#3498DB",y:1944},
+{id:105,t:"人鼠之间",a:"斯坦贝克",c:"美国",g:"社会小说",imp:4,col:"#E74C3C",y:1937},
+{id:106,t:"愤怒的葡萄",a:"斯坦贝克",c:"美国",g:"社会小说",imp:5,col:"#E74C3C",y:1939},
 {id:107,t:"老人与海",a:"海明威",c:"美国",g:"中篇小说",imp:5,col:"#E74C3C",y:1952},
+{id:108,t:"太阳照常升起",a:"海明威",c:"美国",g:"现代主义",imp:4,col:"#E74C3C",y:1926},
 {id:109,t:"瓦解",a:"阿契贝",c:"尼日利亚",g:"后殖民小说",imp:5,col:"#27AE60",y:1958},
 {id:113,t:"吉檀迦利",a:"泰戈尔",c:"印度",g:"诗歌",imp:5,col:"#FF8C00",y:1910},
 {id:114,t:"薄伽梵歌",a:"毗耶娑",c:"印度",g:"宗教哲学",imp:5,col:"#FF8C00",y:-200},
@@ -157,10 +173,16 @@ var B=[
 {id:129,t:"审判",a:"卡夫卡",c:"奥地利",g:"现代主义",imp:5,col:"#CDDC39",y:1925},
 {id:131,t:"悉达多",a:"黑塞",c:"德国",g:"哲学小说",imp:5,col:"#2ECC71",y:1922},
 {id:132,t:"人间失格",a:"太宰治",c:"日本",g:"私小说",imp:5,col:"#E91E63",y:1948},
+{id:133,t:"雪国",a:"川端康成",c:"日本",g:"唯美主义",imp:4,col:"#E91E63",y:1937},
 {id:134,t:"西游记",a:"吴承恩",c:"中国",g:"神魔小说",imp:5,col:"#FF5722",y:1592},
 {id:135,t:"三国演义",a:"罗贯中",c:"中国",g:"历史演义",imp:5,col:"#FF5722",y:1522},
 {id:142,t:"尤利西斯",a:"乔伊斯",c:"爱尔兰",g:"意识流",imp:5,col:"#00CED1",y:1922},
+{id:143,t:"达洛维夫人",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1925},
+{id:144,t:"到灯塔去",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1927},
 {id:146,t:"局外人",a:"加缪",c:"法国",g:"存在主义",imp:5,col:"#9B59B6",y:1942},
+{id:147,t:"隐形人",a:"埃里森",c:"美国",g:"非裔文学",imp:5,col:"#E74C3C",y:1952},
+{id:148,t:"铁皮鼓",a:"格拉斯",c:"德国",g:"魔幻现实主义",imp:4,col:"#2ECC71",y:1959},
+{id:149,t:"伊万·杰尼索维奇的一天",a:"索尔仁尼琴",c:"俄国",g:"集中营文学",imp:5,col:"#F39C12",y:1962},
 {id:150,t:"变形记(奥维德)",a:"奥维德",c:"古罗马",g:"叙事诗",imp:4,col:"#D35400",y:8},
 {id:151,t:"吉尔伽美什史诗",a:"匿名",c:"美索不达米亚",g:"史诗",imp:5,col:"#8D6E63",y:-2100},
 {id:152,t:"吠陀经",a:"匿名",c:"印度",g:"宗教诗",imp:5,col:"#FF8C00",y:-1500},
@@ -180,26 +202,7 @@ var B=[
 {id:166,t:"飘",a:"米切尔",c:"美国",g:"历史小说",imp:4,col:"#E74C3C",y:1936},
 {id:167,t:"大师和玛格丽特",a:"布尔加科夫",c:"俄国",g:"魔幻讽刺",imp:5,col:"#F39C12",y:1967},
 {id:168,t:"霍乱时期的爱情",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:4,col:"#F1C40F",y:1985},
-{id:169,t:"飘",a:"菲茨杰拉德",c:"美国",g:"现代主义",imp:4,col:"#E74C3C",y:1925},
-{id:170,t:"愤怒的葡萄",a:"斯坦贝克",c:"美国",g:"社会小说",imp:5,col:"#E74C3C",y:1939},
-{id:171,t:"瓦解",a:"阿契贝",c:"尼日利亚",g:"后殖民",imp:5,col:"#27AE60",y:1958},
-{id:172,t:"达洛维夫人",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1925},
-{id:173,t:"到灯塔去",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1927},
-{id:174,t:"儿子与情人",a:"劳伦斯",c:"英国",g:"心理小说",imp:4,col:"#4A90D9",y:1913},
-{id:175,t:"荒原狼",a:"黑塞",c:"德国",g:"哲学小说",imp:4,col:"#2ECC71",y:1927},
-{id:176,t:"雪国",a:"川端康成",c:"日本",g:"唯美主义",imp:4,col:"#E91E63",y:1937},
-{id:177,t:"隐形人",a:"埃里森",c:"美国",g:"非裔文学",imp:5,col:"#E74C3C",y:1952},
-{id:178,t:"铁皮鼓",a:"格拉斯",c:"德国",g:"魔幻现实主义",imp:4,col:"#2ECC71",y:1959},
-{id:179,t:"伊万·杰尼索维奇的一天",a:"索尔仁尼琴",c:"俄国",g:"集中营文学",imp:5,col:"#F39C12",y:1962},
-{id:180,t:"好兵帅克",a:"哈谢克",c:"捷克",g:"讽刺小说",imp:4,col:"#FF9800",y:1923},
-{id:181,t:"人鼠之间",a:"斯坦贝克",c:"美国",g:"社会小说",imp:4,col:"#E74C3C",y:1937},
-{id:182,t:"太阳照常升起",a:"海明威",c:"美国",g:"现代主义",imp:4,col:"#E74C3C",y:1926},
-{id:183,t:"黑暗的心",a:"康拉德",c:"英国",g:"中篇小说",imp:5,col:"#4A90D9",y:1899},
-{id:184,t:"萌芽",a:"左拉",c:"法国",g:"自然主义",imp:4,col:"#9B59B6",y:1885},
-{id:185,t:"金银岛",a:"史蒂文森",c:"英国",g:"冒险小说",imp:4,col:"#4A90D9",y:1883},
-{id:186,t:"绿野仙踪",a:"鲍姆",c:"美国",g:"儿童文学",imp:4,col:"#E74C3C",y:1900},
 ];
-
 
 var ERAS=[
 {name:"远古",s:-2100,e:-500,c:"#8D6E63"},
@@ -214,38 +217,38 @@ var ERAS=[
 {name:"现代主义",s:1900,e:1950,c:"#00CED1"},
 {name:"后现代",s:1950,e:2000,c:"#F1C40F"},
 ];
-var MV={"-2100":"人类最早的文学，四大文明古国的智慧结晶","-800":"荷马时代，希腊史诗诞生，西方文学的源头","-500":"轴心时代，人类思想大爆发，东西方哲学奠基","0":"古典晚期，帝国文学与宗教文本兴起","500":"中世纪黎明，宗教文学主导欧洲","800":"阿拉伯文学黄金时代，一千零一夜","1000":"东方古典巅峰，紫式部与宋词","1200":"欧洲中世纪盛期，骑士文学与史诗","1300":"文艺复兴前夜，但丁与薄伽丘的人文觉醒","1400":"文艺复兴，人文主义觉醒，乔叟与罗贯中","1500":"大航海时代，塞万提斯与莎士比亚","1600":"巴洛克时代，弥尔顿与戏剧黄金期","1700":"启蒙运动，理性与批判的世纪","1770":"狂飙突进，情感的觉醒，歌德引领浪漫主义","1800":"浪漫主义，想象力与自然的颂歌","1830":"现实主义兴起，社会全景的文学镜像","1850":"现实主义鼎盛，小说的黄金时代","1870":"自然主义，科学方法进入文学","1890":"世纪末美学，颓废与象征主义","1900":"现代主义先锋，意识流与文学实验","1910":"大战与文学，迷惘的一代","1920":"现代主义巅峰，乔伊斯与普鲁斯特","1930":"反乌托邦，对极权主义的预言","1940":"战后存在主义，荒诞与抉择","1950":"后殖民文学兴起，多元世界的声音","1960":"魔幻现实主义，拉丁美洲文学爆炸","1980":"全球化文学，跨越边界的声音"};
+var MV={"-2100":"人类最早的文学，四大文明古国的智慧结晶","-800":"荷马时代，希腊史诗诞生，西方文学的源头","-500":"轴心时代，人类思想大爆发，东西方哲学奠基","0":"古典晚期，帝国文学与宗教文本兴起","500":"中世纪黎明，宗教文学主导欧洲","800":"阿拉伯文学黄金时代，一千零一夜","1000":"东方古典巅峰，紫式部与宋词","1200":"欧洲中世纪盛期，骑士文学与史诗","1300":"文艺复兴前夜，但丁与薄伽丘","1400":"文艺复兴，人文主义觉醒","1500":"大航海时代，塞万提斯与莎士比亚","1600":"巴洛克时代，弥尔顿与戏剧黄金期","1700":"启蒙运动，理性与批判的世纪","1770":"狂飙突进，歌德引领浪漫主义","1800":"浪漫主义，想象力与自然的颂歌","1830":"现实主义兴起，社会全景的文学镜像","1850":"现实主义鼎盛，小说的黄金时代","1870":"自然主义，科学方法进入文学","1890":"世纪末美学，颓废与象征主义","1900":"现代主义先锋，意识流与文学实验","1910":"大战与文学，迷惘的一代","1920":"现代主义巅峰，乔伊斯与普鲁斯特","1930":"反乌托邦，对极权主义的预言","1940":"战后存在主义，荒诞与抉择","1950":"后殖民文学，多元世界的声音","1960":"魔幻现实主义，拉丁美洲文学爆炸","1980":"全球化文学，跨越边界的声音"};
 var sc=1,px=0,py=0,dr=false,lx=0,ly=0,aEra=null,sq="";
 B.sort(function(a,b){return a.y-b.y});
-
 document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("stat").textContent=B.length+" 部作品 · "+fy(B[0].y)+" — "+fy(B[B.length-1].y);
-  bE();bL();render();
-  document.getElementById("ld").style.display="none";
-  bE2();
+  bE();bL();render();document.getElementById("ld").style.display="none";bE2();
 });
-
 function fy(y){return y<0?Math.abs(y)+" BC":y===0?"1 AD":y+" AD"}
-
 function bE(){
   var bar=document.getElementById("ebar");
-  var h='<button class="ebtn on" onclick="fE(null,this)">全部</button>';
+  var h='<button class="ebtn on" data-era="">全部</button>';
   ERAS.forEach(function(e){
     var n=B.filter(function(b){return b.y>=e.s&&b.y<e.e}).length;
-    if(n>0) h+='<button class="ebtn" onclick="fE(''+e.name+"',this)">"+e.name+"<span style=opacity:.4;margin-left:3px>"+n+"</span></button>";
+    if(n>0) h+='<button class="ebtn" data-era="'+e.name+'">'+e.name+' ('+n+')</button>';
   });
   bar.innerHTML=h;
+  bar.querySelectorAll(".ebtn").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      aEra=btn.dataset.era||null;
+      bar.querySelectorAll(".ebtn").forEach(function(b){b.classList.remove("on")});
+      btn.classList.add("on");
+      px=0;py=0;render();
+    });
+  });
 }
-
 function bL(){
-  var cols={};
-  B.forEach(function(b){if(!cols[b.c])cols[b.c]=b.col});
+  var cols={};B.forEach(function(b){if(!cols[b.c])cols[b.c]=b.col});
   var rg=["中国","古希腊","古罗马","印度","英国","法国","俄国","美国","德国","日本","意大利","西班牙","波斯","阿拉伯"];
   var h="<h4>地区图例</h4>";
   rg.forEach(function(c){if(cols[c])h+='<div class="li"><span class="dt" style="background:'+cols[c]+'"></span>'+c+"</div>"});
   document.getElementById("leg").innerHTML=h;
 }
-
 function render(){
   var vp=document.getElementById("vp"),tl=document.getElementById("tl");
   var W=vp.clientWidth,H=vp.clientHeight;
@@ -254,30 +257,26 @@ function render(){
     if(sq){var q=sq.toLowerCase();if(b.t.toLowerCase().indexOf(q)<0&&b.a.toLowerCase().indexOf(q)<0)return false}
     return true;
   });
-  if(!books.length){tl.innerHTML="<div style=padding:40px;text-align:center;color:#999>未找到匹配作品</div>";tl.style.width="100%";return}
+  if(!books.length){tl.innerHTML='<div style="padding:40px;text-align:center;color:#999">未找到匹配作品</div>';tl.style.width="100%";return}
   var yMin=books[0].y,yMax=books[books.length-1].y,ySpan=Math.max(1,yMax-yMin);
   var bpx=2.5,tW=Math.max(W*2,ySpan*bpx*sc);
   tl.innerHTML="";tl.style.width=tW+"px";
-
   ERAS.forEach(function(e){
     if(e.s>yMax||e.e<yMin)return;
     var l=((e.s-yMin)/ySpan)*tW,w=((e.e-e.s)/ySpan)*tW;
     var d=document.createElement("div");d.className="ecol";
     d.style.cssText="left:"+l+"px;width:"+w+"px;background:"+e.c+"08";
-    d.innerHTML='<div class="el">'+e.name+'</div>';
+    d.innerHTML='<div class="el">'+e.name+"</div>";
     tl.appendChild(d);
   });
-
   var step=ySpan>2000?200:ySpan>500?50:ySpan>200?20:10;
   for(var yr=Math.ceil(yMin/step)*step;yr<=yMax;yr+=step){
     var l=((yr-yMin)/ySpan)*tW;
     var d=document.createElement("div");d.className="ym";d.style.left=l+"px";d.textContent=fy(yr);
     tl.appendChild(d);
   }
-
   var bs=Math.max(1,Math.round(ySpan/200)),bk={};
   books.forEach(function(b){var k=Math.round(b.y/bs)*bs;if(!bk[k])bk[k]=[];bk[k].push(b)});
-
   books.forEach(function(b){
     var l=((b.y-yMin)/ySpan)*(tW-40)+20;
     var k=Math.round(b.y/bs)*bs,idx=bk[k].indexOf(b),tot=bk[k].length;
@@ -286,13 +285,13 @@ function render(){
     var n=document.createElement("div");n.className="bn";
     n.style.cssText="left:"+l+"px;top:"+t+"px;width:"+sz+"px;height:"+sz+"px;background:"+b.col+";transform:translate(-50%,-50%)";
     var lb=document.createElement("div");lb.className="bl "+(idx%2===0?"ab":"be");lb.textContent=b.t;n.appendChild(lb);
-    n.onmouseenter=function(ev){sT(ev,b)};n.onmouseleave=hT;n.onclick=function(){sM(b)};
-    n.ontouchend=function(ev){ev.preventDefault();sM(b)};
+    n.addEventListener("mouseenter",function(ev){sT(ev,b)});
+    n.addEventListener("mouseleave",hT);
+    n.addEventListener("click",function(){sM(b)});
     tl.appendChild(n);
   });
   tl.style.transform="translate("+px+"px,"+py+"px)";
 }
-
 function sT(ev,b){
   var t=document.getElementById("tip");
   t.innerHTML="<h3>"+b.t+"</h3><div class=ta>"+b.a+" · "+b.c+"</div><div class=tg>"+b.g+"</div><div class=ty>"+fy(b.y)+"</div>";
@@ -301,30 +300,19 @@ function sT(ev,b){
   t.style.top=Math.min(ev.clientY+12,window.innerHeight-120)+"px";
 }
 function hT(){document.getElementById("tip").classList.remove("show")}
-
 function sM(b){
   var mo=document.getElementById("mo"),md=document.getElementById("md");
   var ks=Object.keys(MV).map(Number).sort(function(a,b){return a-b}),mv="";
   for(var i=0;i<ks.length;i++){if(b.y>=ks[i])mv=MV[ks[i]]}
-  md.innerHTML='<button class=cx onclick=cM()>&times;</button><h2>'+b.t+'</h2><div class=ma>'+b.a+'</div><div><span class=mb>'+b.c+'</span><span class=mb>'+b.g+'</span>'+(b.imp>=5?'<span class=mb style="background:rgba(255,87,34,.08);color:#FF5722">★ 经典</span>':"")+'</div><div class=my>'+fy(b.y)+' <span>· 文学运动</span></div><div class=mc>'+(mv||"")+'</div>';
+  md.innerHTML='<button class=cx onclick=cM()>\u00d7</button><h2>'+b.t+'</h2><div class=ma>'+b.a+'</div><div><span class=mb>'+b.c+'</span><span class=mb>'+b.g+'</span>'+(b.imp>=5?'<span class=mb style="background:rgba(255,87,34,.08);color:#FF5722">\u2605 经典</span>':"")+'</div><div class=my>'+fy(b.y)+'</div><div class=mc>'+(mv||"")+'</div>';
   mo.classList.add("show");
 }
 function cM(){document.getElementById("mo").classList.remove("show")}
 document.getElementById("mo").addEventListener("click",function(e){if(e.target.id==="mo")cM()});
-
-function fE(name,btn){
-  aEra=name;
-  document.querySelectorAll(".ebtn").forEach(function(b){b.classList.remove("on")});
-  if(btn)btn.classList.add("on");else document.querySelector(".ebtn").classList.add("on");
-  px=0;py=0;render();
-}
-
 function zI(){sc=Math.min(5,sc*1.3);uZ();render()}
 function zO(){sc=Math.max(.3,sc/1.3);uZ();render()}
 function uZ(){document.getElementById("zl").textContent=Math.round(sc*100)+"%"}
-
 document.getElementById("sq").addEventListener("input",function(e){sq=e.target.value.trim();render()});
-
 function bE2(){
   var vp=document.getElementById("vp");
   vp.addEventListener("mousedown",function(e){dr=true;lx=e.clientX;ly=e.clientY});
@@ -340,4 +328,3 @@ function bE2(){
 </script>
 </body>
 </html>
-
