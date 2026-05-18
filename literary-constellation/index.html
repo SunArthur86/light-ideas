@@ -136,6 +136,8 @@ const cs=[...new Set(B.map(b=>b.c))].sort();
 const rc={};B.forEach(b=>{if(!rc[b.c]||b.imp>(rc[b.c].imp||0))rc[b.c]=b});
 document.getElementById('leg').innerHTML=cs.filter(c=>rc[c]).map(c=>`<div class="li"><div class="dot" style="background:${rc[c].col}"></div>${c}</div>`).join('');
 
+window.addEventListener('DOMContentLoaded',rsz);
+window.addEventListener('load',rsz);
 rsz();
 </script>
 </body>
