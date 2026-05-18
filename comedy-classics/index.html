@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>喜剧精读 · Comedy Classics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--surface:#f5f5f7;--text:#1d1d1f;--text2:#6e6e73;--accent:#ca8a04;--border:#e5e5e5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.06);height:48px;display:flex;align-items:center;padding:0 20px;gap:16px}
+nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+nav .title{font-size:15px;font-weight:600}
+.hero{text-align:center;padding:48px 24px 24px}
+.hero h1{font-size:32px;font-weight:700;letter-spacing:-1px}
+.hero .sub{color:var(--text2);font-size:15px;margin-top:8px}
+.stats{display:flex;justify-content:center;gap:32px;margin-top:20px}
+.stats .n{font-size:28px;font-weight:700}
+.stats .l{font-size:11px;color:var(--text2);letter-spacing:1px}
+.filters{max-width:1200px;margin:20px auto 0;padding:0 24px;display:flex;gap:6px;flex-wrap:wrap}
+.filters button{padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.filters button:hover{border-color:#aaa}
+.filters button.active{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.grid{max-width:1200px;margin:16px auto 0;padding:0 24px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:#fff;border-radius:16px;padding:20px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.card .flag{font-size:24px;margin-bottom:8px}
+.card .zh{font-size:16px;font-weight:600;margin-bottom:2px}
+.card .en{font-size:12px;color:var(--text2);margin-bottom:8px}
+.card .author{font-size:13px;color:var(--text2);margin-bottom:8px}
+.card .tag{display:inline-block;font-size:11px;padding:2px 10px;border-radius:100px;background:#fefce8;color:#ca8a04}
+footer{text-align:center;padding:40px;border-top:1px solid var(--border);color:var(--text2);font-size:13px}
+@media(max-width:640px{.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="back">← Light Ideas</a>
+  <span class="title">😂 喜剧精读</span>
+</nav>
+<div class="hero">
+  <h1>喜剧精读</h1>
+  <div class="sub">Comedy Classics · 50 Books · 12 Countries · 2400 Years</div>
+  <div class="stats">
+    <div><div class="n">50</div><div class="l">喜剧名著</div></div>
+    <div><div class="n">12</div><div class="l">国家</div></div>
+    <div><div class="n">2400</div><div class="l">年跨度</div></div>
+  </div>
+</div>
+<div class="filters">
+  <button class="active" onclick="filter('all',this)">全部</button>
+  <button onclick="filterGenre('侦探喜剧',this)">侦探喜剧</button><button onclick="filterGenre('反战喜剧',this)">反战喜剧</button><button onclick="filterGenre('哥特讽刺',this)">哥特讽刺</button><button onclick="filterGenre('哲学讽刺',this)">哲学讽刺</button><button onclick="filterGenre('哲理惊悚喜剧',this)">哲理惊悚喜剧</button><button onclick="filterGenre('哲理讽刺',this)">哲理讽刺</button><button onclick="filterGenre('喜剧小说',this)">喜剧小说</button><button onclick="filterGenre('奇幻喜剧',this)">奇幻喜剧</button><button onclick="filterGenre('官场讽刺',this)">官场讽刺</button><button onclick="filterGenre('幽默小说',this)">幽默小说</button><button onclick="filterGenre('幽默日记',this)">幽默日记</button><button onclick="filterGenre('幽默游记',this)">幽默游记</button><button onclick="filterGenre('性格喜剧',this)">性格喜剧</button><button onclick="filterGenre('悲喜剧',this)">悲喜剧</button><button onclick="filterGenre('战争讽刺',this)">战争讽刺</button><button onclick="filterGenre('政治喜剧',this)">政治喜剧</button><button onclick="filterGenre('政治讽刺',this)">政治讽刺</button><button onclick="filterGenre('文学讽刺',this)">文学讽刺</button><button onclick="filterGenre('民俗喜剧',this)">民俗喜剧</button><button onclick="filterGenre('法庭讽刺',this)">法庭讽刺</button><button onclick="filterGenre('流浪喜剧',this)">流浪喜剧</button><button onclick="filterGenre('爱情喜剧',this)">爱情喜剧</button><button onclick="filterGenre('田园喜剧',this)">田园喜剧</button><button onclick="filterGenre('短篇喜剧',this)">短篇喜剧</button><button onclick="filterGenre('社会喜剧',this)">社会喜剧</button><button onclick="filterGenre('绅士喜剧',this)">绅士喜剧</button><button onclick="filterGenre('荒诞喜剧',this)">荒诞喜剧</button><button onclick="filterGenre('荒诞寓言',this)">荒诞寓言</button><button onclick="filterGenre('荒诞幽默',this)">荒诞幽默</button><button onclick="filterGenre('荒诞童话',this)">荒诞童话</button><button onclick="filterGenre('荒诞讽刺',this)">荒诞讽刺</button><button onclick="filterGenre('讽刺喜剧',this)">讽刺喜剧</button><button onclick="filterGenre('讽刺寓言',this)">讽刺寓言</button><button onclick="filterGenre('误会喜剧',this)">误会喜剧</button><button onclick="filterGenre('问题喜剧',this)">问题喜剧</button>
+</div>
+<div class="grid" id="grid"></div>
+<footer><p>Light Ideas · 喜剧精读</p></footer>
+<script>
+const B=[{"id": 1, "title": "Lysistrata", "title_zh": "利西翠妲", "author": "Aristophanes", "author_zh": "阿里斯托芬", "country": "古希腊", "year": -411, "genre": "政治喜剧", "gutenberg_id": 7700}, {"id": 2, "title": "The Frogs", "title_zh": "蛙", "author": "Aristophanes", "author_zh": "阿里斯托芬", "country": "古希腊", "year": -405, "genre": "文学讽刺", "gutenberg_id": 7700}, {"id": 3, "title": "The Clouds", "title_zh": "云", "author": "Aristophanes", "author_zh": "阿里斯托芬", "country": "古希腊", "year": -423, "genre": "哲学讽刺", "gutenberg_id": 7700}, {"id": 4, "title": "The Wasps", "title_zh": "马蜂", "author": "Aristophanes", "author_zh": "阿里斯托芬", "country": "古希腊", "year": -422, "genre": "法庭讽刺", "gutenberg_id": 7700}, {"id": 5, "title": "Amphitryon", "title_zh": "安菲特律翁", "author": "Plautus", "author_zh": "普劳图斯", "country": "古罗马", "year": -186, "genre": "误会喜剧", "gutenberg_id": 7701}, {"id": 6, "title": "The Decameron", "title_zh": "十日谈（选）", "author": "Boccaccio", "author_zh": "薄伽丘", "country": "意大利", "year": 1353, "genre": "短篇喜剧", "gutenberg_id": 23700}, {"id": 7, "title": "The Canterbury Tales", "title_zh": "坎特伯雷故事集（选）", "author": "Chaucer", "author_zh": "乔叟", "country": "英国", "year": 1387, "genre": "短篇喜剧", "gutenberg_id": 22120}, {"id": 8, "title": "Don Quixote", "title_zh": "堂吉诃德", "author": "Cervantes", "author_zh": "塞万提斯", "country": "西班牙", "year": 1605, "genre": "讽刺喜剧", "gutenberg_id": 996}, {"id": 9, "title": "Gargantua and Pantagruel", "title_zh": "巨人传", "author": "Rabelais", "author_zh": "拉伯雷", "country": "法国", "year": 1534, "genre": "荒诞幽默", "gutenberg_id": 1200}, {"id": 10, "title": "The Taming of the Shrew", "title_zh": "驯悍记", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1592, "genre": "爱情喜剧", "gutenberg_id": 150}, {"id": 11, "title": "A Midsummer Night's Dream", "title_zh": "仲夏夜之梦", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1596, "genre": "奇幻喜剧", "gutenberg_id": 1514}, {"id": 12, "title": "The Merchant of Venice", "title_zh": "威尼斯商人", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1597, "genre": "问题喜剧", "gutenberg_id": 1514}, {"id": 13, "title": "Twelfth Night", "title_zh": "第十二夜", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1602, "genre": "爱情喜剧", "gutenberg_id": 150}, {"id": 14, "title": "Much Ado About Nothing", "title_zh": "无事生非", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1599, "genre": "爱情喜剧", "gutenberg_id": 1514}, {"id": 15, "title": "As You Like It", "title_zh": "皆大欢喜", "author": "Shakespeare", "author_zh": "莎士比亚", "country": "英国", "year": 1599, "genre": "田园喜剧", "gutenberg_id": 150}, {"id": 16, "title": "Tartuffe", "title_zh": "伪君子", "author": "Molière", "author_zh": "莫里哀", "country": "法国", "year": 1664, "genre": "性格喜剧", "gutenberg_id": 9095}, {"id": 17, "title": "The Miser", "title_zh": "悭吝人", "author": "Molière", "author_zh": "莫里哀", "country": "法国", "year": 1668, "genre": "性格喜剧", "gutenberg_id": 9095}, {"id": 18, "title": "Don Juan", "title_zh": "唐璜", "author": "Molière", "author_zh": "莫里哀", "country": "法国", "year": 1665, "genre": "讽刺喜剧", "gutenberg_id": 9095}, {"id": 19, "title": "The Imaginary Invalid", "title_zh": "无病呻吟", "author": "Molière", "author_zh": "莫里哀", "country": "法国", "year": 1673, "genre": "性格喜剧", "gutenberg_id": 9095}, {"id": 20, "title": "The Misanthrope", "title_zh": "愤世嫉俗", "author": "Molière", "author_zh": "莫里哀", "country": "法国", "year": 1666, "genre": "性格喜剧", "gutenberg_id": 9095}, {"id": 21, "title": "Candide", "title_zh": "老实人", "author": "Voltaire", "author_zh": "伏尔泰", "country": "法国", "year": 1759, "genre": "哲理讽刺", "gutenberg_id": 19942}, {"id": 22, "title": "The Life and Opinions of Tristram Shandy", "title_zh": "项狄传", "author": "Sterne", "author_zh": "斯特恩", "country": "英国", "year": 1759, "genre": "荒诞幽默", "gutenberg_id": 1079}, {"id": 23, "title": "The History of Tom Jones", "title_zh": "汤姆·琼斯", "author": "Fielding", "author_zh": "菲尔丁", "country": "英国", "year": 1749, "genre": "喜剧小说", "gutenberg_id": 6593}, {"id": 24, "title": "The Adventures of Roderick Random", "title_zh": "罗德里克·兰登历险记", "author": "Smollett", "author_zh": "斯摩莱特", "country": "英国", "year": 1748, "genre": "流浪喜剧", "gutenberg_id": 4085}, {"id": 25, "title": "Utopia", "title_zh": "乌托邦", "author": "Thomas More", "author_zh": "托马斯·莫尔", "country": "英国", "year": 1516, "genre": "讽刺寓言", "gutenberg_id": 2130}, {"id": 26, "title": "Pride and Prejudice", "title_zh": "傲慢与偏见", "author": "Jane Austen", "author_zh": "简·奥斯汀", "country": "英国", "year": 1813, "genre": "社会喜剧", "gutenberg_id": 1342}, {"id": 27, "title": "Emma", "title_zh": "爱玛", "author": "Jane Austen", "author_zh": "简·奥斯汀", "country": "英国", "year": 1815, "genre": "社会喜剧", "gutenberg_id": 158}, {"id": 28, "title": "Northanger Abbey", "title_zh": "诺桑觉寺", "author": "Jane Austen", "author_zh": "简·奥斯汀", "country": "英国", "year": 1817, "genre": "哥特讽刺", "gutenberg_id": 121}, {"id": 29, "title": "The Pickwick Papers", "title_zh": "匹克威克外传", "author": "Dickens", "author_zh": "狄更斯", "country": "英国", "year": 1836, "genre": "幽默小说", "gutenberg_id": 599}, {"id": 30, "title": "The Government Inspector", "title_zh": "钦差大臣", "author": "Gogol", "author_zh": "果戈理", "country": "俄国", "year": 1836, "genre": "官场讽刺", "gutenberg_id": 59008}, {"id": 31, "title": "Alice's Adventures in Wonderland", "title_zh": "爱丽丝漫游奇境记", "author": "Carroll", "author_zh": "刘易斯·卡罗尔", "country": "英国", "year": 1865, "genre": "荒诞童话", "gutenberg_id": 11}, {"id": 32, "title": "Three Men in a Boat", "title_zh": "三人同舟", "author": "Jerome K. Jerome", "author_zh": "杰罗姆", "country": "英国", "year": 1889, "genre": "幽默游记", "gutenberg_id": 308}, {"id": 33, "title": "The Diary of a Nobody", "title_zh": "小人物日记", "author": "Grossmith", "author_zh": "格罗史密斯", "country": "英国", "year": 1892, "genre": "幽默日记", "gutenberg_id": 6035}, {"id": 34, "title": "The Importance of Being Earnest", "title_zh": "不可儿戏", "author": "Oscar Wilde", "author_zh": "王尔德", "country": "英国/爱尔兰", "year": 1895, "genre": "社会喜剧", "gutenberg_id": 844}, {"id": 35, "title": "Lady Windermere's Fan", "title_zh": "温夫人的扇子", "author": "Oscar Wilde", "author_zh": "王尔德", "country": "英国/爱尔兰", "year": 1892, "genre": "社会喜剧", "gutenberg_id": 844}, {"id": 36, "title": "The Good Soldier Švejk", "title_zh": "好兵帅克", "author": "Hašek", "author_zh": "哈谢克", "country": "捷克", "year": 1923, "genre": "战争讽刺", "gutenberg_id": 47522}, {"id": 37, "title": "The Metamorphosis", "title_zh": "变形记", "author": "Kafka", "author_zh": "卡夫卡", "country": "奥地利/捷克", "year": 1915, "genre": "荒诞寓言", "gutenberg_id": 5200}, {"id": 38, "title": "My Man Jeeves", "title_zh": "我的仆人吉夫斯", "author": "P.G. Wodehouse", "author_zh": "沃德豪斯", "country": "英国", "year": 1919, "genre": "绅士喜剧", "gutenberg_id": 22496}, {"id": 39, "title": "The Man Who Was Thursday", "title_zh": "星期四的人", "author": "G.K. Chesterton", "author_zh": "切斯特顿", "country": "英国", "year": 1908, "genre": "哲理惊悚喜剧", "gutenberg_id": 1695}, {"id": 40, "title": "The Napoleon of Notting Hill", "title_zh": "诺丁山的拿破仑", "author": "G.K. Chesterton", "author_zh": "切斯特顿", "country": "英国", "year": 1904, "genre": "政治讽刺", "gutenberg_id": 20058}, {"id": 41, "title": "Baron Munchausen", "title_zh": "吹牛大王历险记", "author": "Raspe", "author_zh": "拉斯佩", "country": "德国", "year": 1785, "genre": "荒诞喜剧", "gutenberg_id": 3152}, {"id": 42, "title": "The Adventures of Sherlock Holmes (comic aspects)", "title_zh": "福尔摩斯短篇集", "author": "Conan Doyle", "author_zh": "柯南·道尔", "country": "英国", "year": 1892, "genre": "侦探喜剧", "gutenberg_id": 1661}, {"id": 43, "title": "Peregrine Pickle", "title_zh": "佩雷格林·皮克尔历险记", "author": "Smollett", "author_zh": "斯摩莱特", "country": "英国", "year": 1751, "genre": "流浪喜剧", "gutenberg_id": 4086}, {"id": 44, "title": "The Adventures of Ferdinand Count Fathom", "title_zh": "费迪南德伯爵历险记", "author": "Smollett", "author_zh": "斯摩莱特", "country": "英国", "year": 1753, "genre": "流浪喜剧", "gutenberg_id": 4087}, {"id": 45, "title": "Gil Blas", "title_zh": "吉尔·布拉斯", "author": "Le Sage", "author_zh": "勒萨日", "country": "法国", "year": 1715, "genre": "流浪喜剧", "gutenberg_id": 20340}, {"id": 46, "title": "The Playboy of the Western World", "title_zh": "西方世界的花花公子", "author": "Synge", "author_zh": "辛格", "country": "爱尔兰", "year": 1907, "genre": "民俗喜剧", "gutenberg_id": 12453}, {"id": 47, "title": "Arms and the Man", "title_zh": "武器与人", "author": "Bernard Shaw", "author_zh": "萧伯纳", "country": "英国/爱尔兰", "year": 1894, "genre": "反战喜剧", "gutenberg_id": 3328}, {"id": 48, "title": "Pygmalion", "title_zh": "卖花女", "author": "Bernard Shaw", "author_zh": "萧伯纳", "country": "英国/爱尔兰", "year": 1913, "genre": "社会喜剧", "gutenberg_id": 3825}, {"id": 49, "title": "The Cherry Orchard", "title_zh": "樱桃园", "author": "Chekhov", "author_zh": "契诃夫", "country": "俄国", "year": 1904, "genre": "悲喜剧", "gutenberg_id": 16018}, {"id": 50, "title": "The Nose and Other Stories", "title_zh": "鼻子（果戈理短篇）", "author": "Gogol", "author_zh": "果戈理", "country": "俄国", "year": 1836, "genre": "荒诞讽刺", "gutenberg_id": 59008}];
+const CE={"英国": "🇬🇧", "法国": "🇫🇷", "俄国": "🇷🇺", "美国": "🇺🇸", "德国": "🇩🇪", "古希腊": "🇬🇷", "古罗马": "🇮🇹", "意大利": "🇮🇹", "西班牙": "🇪🇸", "挪威": "🇳🇴", "日本": "🇯🇵", "中国": "🇨🇳", "爱尔兰": "🇮🇪", "奥地利": "🇦🇹", "奥地利/捷克": "🇦🇹", "英国/爱尔兰": "🇬🇧", "美国/英国": "🇺🇸", "英国/波兰": "🇬🇧", "英国/匈牙利": "🇬🇧", "英国/印度": "🇬🇧", "瑞典": "🇸🇪", "丹麦": "🇩🇰", "哥伦比亚": "🇨🇴", "阿根廷": "🇦🇷", "法国/阿尔及利亚": "🇫🇷", "波斯": "🇮🇷", "阿拉伯/波斯": "🇸🇦", "印度": "🇮🇳", "墨西哥": "🇲🇽", "尼日利亚": "🇳🇬", "南非": "🇿🇦", "捷克": "🇨🇿", "匈牙利": "🇭🇺", "罗马帝国": "🏛️", "波兰": "🇵🇱", "罗马尼亚": "🇷🇴"};
+const grid=document.getElementById('grid');
+function render(list){
+  grid.innerHTML='';
+  list.forEach(b=>{
+    const d=document.createElement('div');d.className='card';
+    const yr=b.year<0?Math.abs(b.year)+'BC':b.year;
+    const flag=CE[b.country]||'📚';
+    d.innerHTML=`<div class="flag">${flag}</div><div class="zh">${b.title_zh}</div><div class="en">${b.title}</div><div class="author">${b.author_zh} · ${yr}</div><span class="tag">${b.genre}</span>`;
+    grid.appendChild(d);
+  });
+}
+render(B);
+function filter(g,btn){
+  document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render(g==='all'?B:B.filter(b=>b.genre===g));
+}
+</script>
+</body>
+</html>

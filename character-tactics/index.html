@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>字阵 · 角色卡牌</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--surface:#f5f5f7;--text:#1d1d1f;--text2:#6e6e73;--accent:#ef4444;--border:#e5e5e5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.06);height:48px;display:flex;align-items:center;padding:0 20px;gap:16px}
+nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+nav .title{font-size:15px;font-weight:600}
+.filters{max-width:1200px;margin:24px auto 0;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap}
+.filters button{padding:6px 16px;border-radius:100px;border:1px solid var(--border);background:#fff;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
+.filters button:hover{border-color:#aaa}
+.filters button.active{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.stats-bar{max-width:1200px;margin:16px auto 0;padding:0 24px;font-size:13px;color:var(--text2)}
+.grid{max-width:1200px;margin:16px auto 0;padding:0 24px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.card{background:#fff;border-radius:16px;padding:20px 16px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.card .emoji{font-size:28px;margin-bottom:8px}
+.card .name{font-size:16px;font-weight:600;margin-bottom:4px}
+.card .novel-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:100px;margin-bottom:8px}
+.card .tier{font-size:11px;color:var(--text2);margin-bottom:8px}
+.card .stat-row{display:flex;flex-wrap:wrap;gap:4px}
+.card .stat{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--surface)}
+.card .skill-label{font-size:11px;color:var(--text2);margin-top:8px;line-height:1.4}
+footer{text-align:center;padding:40px;border-top:1px solid var(--border);color:var(--text2);font-size:13px}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="back">← Light Ideas</a>
+  <span class="title">🎴 字阵 · 角色卡牌</span>
+</nav>
+<div class="filters">
+  <button class="active" onclick="filter('all',this)">全部 268</button>
+  <button onclick="filter('hlm',this)">📖 红楼梦</button>
+  <button onclick="filter('sgy',this)">⚔️ 三国演义</button>
+  <button onclick="filter('shz',this)">🗡️ 水浒传</button>
+  <button onclick="filter('xyj',this)">🐵 西游记</button>
+</div>
+<div class="stats-bar" id="statsBar">共 268 张角色卡牌</div>
+<div class="grid" id="grid"></div>
+<footer><p>Light Ideas · 字阵 · 角色卡牌</p></footer>
+<script>
+const C=[
+  {"name":"贾宝玉","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"传说","skill":"灵核·因果链接者","stats":{"MAR":2, "INT":6, "BEN":7, "LOY":4, "SPI":8, "SPD":5}},
+  {"name":"林黛玉","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"灵法·焚稿反击","stats":{"MAR":1, "INT":8, "BEN":3, "LOY":3, "SPI":9, "SPD":4}},
+  {"name":"王熙凤","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"传说","skill":"计策·四界棋手","stats":{"MAR":3, "INT":9, "BEN":2, "LOY":5, "SPI":5, "SPD":7}},
+  {"name":"薛宝钗","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"辅助·冷香丸","stats":{"MAR":2, "INT":7, "BEN":6, "LOY":6, "SPI":3, "SPD":5}},
+  {"name":"贾母","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"辅助·家族庇护","stats":{"MAR":1, "INT":5, "BEN":8, "LOY":7, "SPI":2, "SPD":2}},
+  {"name":"刘姥姥","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"干扰·乱入奇兵","stats":{"MAR":2, "INT":3, "BEN":5, "LOY":4, "SPI":3, "SPD":6}},
+  {"name":"袭人","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"守护·忠心护主","stats":{"MAR":3, "INT":4, "BEN":7, "LOY":8, "SPI":2, "SPD":4}},
+  {"name":"晴雯","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"突袭·撕扇烈性","stats":{"MAR":5, "INT":4, "BEN":3, "LOY":4, "SPI":6, "SPD":7}},
+  {"name":"元春","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"增益·贵妃恩泽","stats":{"MAR":2, "INT":6, "BEN":6, "LOY":7, "SPI":5, "SPD":3}},
+  {"name":"探春","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"全能·改革图强","stats":{"MAR":4, "INT":7, "BEN":5, "LOY":6, "SPI":3, "SPD":6}},
+  {"name":"史湘云","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"灵活·醉眠芍药","stats":{"MAR":4, "INT":5, "BEN":5, "LOY":4, "SPI":5, "SPD":7}},
+  {"name":"妙玉","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"控制·栊翠清修","stats":{"MAR":2, "INT":6, "BEN":4, "LOY":3, "SPI":8, "SPD":5}},
+  {"name":"秦可卿","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"灵媒·太虚引路人","stats":{"MAR":2, "INT":8, "BEN":5, "LOY":4, "SPI":7, "SPD":5}},
+  {"name":"鸳鸯","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"守护·抗命护主","stats":{"MAR":3, "INT":6, "BEN":7, "LOY":9, "SPI":3, "SPD":4}},
+  {"name":"平儿","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"调停·息事宁人","stats":{"MAR":3, "INT":7, "BEN":8, "LOY":7, "SPI":2, "SPD":5}},
+  {"name":"紫鹃","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"守护·忠心护黛","stats":{"MAR":2, "INT":5, "BEN":7, "LOY":8, "SPI":3, "SPD":4}},
+  {"name":"香菱","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"学徒·苦吟诗人","stats":{"MAR":2, "INT":6, "BEN":5, "LOY":5, "SPI":4, "SPD":4}},
+  {"name":"贾政","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"威压·严父道学","stats":{"MAR":4, "INT":5, "BEN":3, "LOY":7, "SPI":2, "SPD":2}},
+  {"name":"贾琏","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"游走·纨绔穿梭","stats":{"MAR":4, "INT":4, "BEN":2, "LOY":4, "SPI":2, "SPD":6}},
+  {"name":"薛蟠","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"蛮力·呆霸王","stats":{"MAR":6, "INT":1, "BEN":1, "LOY":2, "SPI":1, "SPD":4}},
+  {"name":"邢夫人","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"暗算·继母心机","stats":{"MAR":2, "INT":4, "BEN":3, "LOY":5, "SPI":2, "SPD":3}},
+  {"name":"尤三姐","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"绝命·柳湘莲之恋","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":6, "SPI":4, "SPD":7}},
+  {"name":"惜春","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"遁世·出家为尼","stats":{"MAR":2, "INT":5, "BEN":4, "LOY":3, "SPI":6, "SPD":3}},
+  {"name":"甄士隐","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"觉醒·梦幻识通灵","stats":{"MAR":2, "INT":7, "BEN":6, "LOY":4, "SPI":8, "SPD":3}},
+  {"name":"贾赦","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"威压·袭爵奢欲","stats":{"MAR":3, "INT":5, "BEN":4, "LOY":5, "SPI":3, "SPD":3}},
+  {"name":"王夫人","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"控制·慈母铁腕","stats":{"MAR":2, "INT":6, "BEN":7, "LOY":6, "SPI":4, "SPD":3}},
+  {"name":"贾珍","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"腐化·宁府之主","stats":{"MAR":3, "INT":5, "BEN":4, "LOY":4, "SPI":3, "SPD":4}},
+  {"name":"贾蓉","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"附庸·纨绔附骥","stats":{"MAR":2, "INT":4, "BEN":3, "LOY":3, "SPI":2, "SPD":5}},
+  {"name":"贾环","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"暗算·庶子心机","stats":{"MAR":3, "INT":4, "BEN":3, "LOY":4, "SPI":3, "SPD":4}},
+  {"name":"贾兰","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"读书·寒窗苦读","stats":{"MAR":2, "INT":5, "BEN":4, "LOY":6, "SPI":3, "SPD":4}},
+  {"name":"柳湘莲","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"游侠·冷面冷心","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":6, "SPI":4, "SPD":7}},
+  {"name":"薛姨妈","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"辅助·慈母温情","stats":{"MAR":1, "INT":5, "BEN":7, "LOY":6, "SPI":3, "SPD":3}},
+  {"name":"小红","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"潜入·红玉灵巧","stats":{"MAR":2, "INT":6, "BEN":5, "LOY":6, "SPI":4, "SPD":6}},
+  {"name":"宝琴","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"传说","skill":"文采·海外奇女","stats":{"MAR":3, "INT":8, "BEN":6, "LOY":6, "SPI":6, "SPD":5}},
+  {"name":"岫烟","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"淡泊·清雅隐忍","stats":{"MAR":1, "INT":6, "BEN":5, "LOY":5, "SPI":4, "SPD":4}},
+  {"name":"尤二姐","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"柔弱·吞金自尽","stats":{"MAR":2, "INT":4, "BEN":4, "LOY":5, "SPI":3, "SPD":3}},
+  {"name":"秦钟","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"风流·智能之恋","stats":{"MAR":2, "INT":5, "BEN":3, "LOY":3, "SPI":4, "SPD":5}},
+  {"name":"焦大","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"忠仆·醉骂主子","stats":{"MAR":4, "INT":2, "BEN":4, "LOY":7, "SPI":1, "SPD":2}},
+  {"name":"贾瑞","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"妄念·风月宝鉴","stats":{"MAR":2, "INT":3, "BEN":3, "LOY":3, "SPI":2, "SPD":3}},
+  {"name":"水溶","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"贵交·北静王礼贤","stats":{"MAR":3, "INT":7, "BEN":6, "LOY":5, "SPI":5, "SPD":4}},
+  {"name":"龄官","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"戏梦·龄官画蔷","stats":{"MAR":2, "INT":6, "BEN":4, "LOY":5, "SPI":7, "SPD":5}},
+  {"name":"芳官","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"伶俏·戏台小旦","stats":{"MAR":3, "INT":4, "BEN":4, "LOY":4, "SPI":5, "SPD":6}},
+  {"name":"彩云","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"暗通·彩云赠帕","stats":{"MAR":2, "INT":4, "BEN":5, "LOY":6, "SPI":3, "SPD":4}},
+  {"name":"司棋","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"刚烈·大闹厨房","stats":{"MAR":3, "INT":4, "BEN":4, "LOY":5, "SPI":3, "SPD":5}},
+  {"name":"金钏","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"殉节·投井之悲","stats":{"MAR":2, "INT":4, "BEN":4, "LOY":6, "SPI":3, "SPD":4}},
+  {"name":"雪雁","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"守护·伴黛侍女","stats":{"MAR":2, "INT":4, "BEN":5, "LOY":7, "SPI":2, "SPD":5}},
+  {"name":"贾芸","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"精英","skill":"钻营·谋事求生","stats":{"MAR":3, "INT":6, "BEN":4, "LOY":5, "SPI":3, "SPD":6}},
+  {"name":"智能儿","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"凡心·佛门私情","stats":{"MAR":1, "INT":4, "BEN":4, "LOY":3, "SPI":5, "SPD":5}},
+  {"name":"红楼梦·扩展角色","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{"第二批":24}},
+  {"name":"# 贾赦","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 王夫人","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾珍","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾蓉","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾环","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾兰","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 柳湘莲","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 薛姨妈","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 小红","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 宝琴","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 岫烟","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 尤二姐","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 秦钟","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 焦大","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾瑞","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 水溶","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 龄官","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 芳官","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 彩云","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 司棋","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 金钏","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 雪雁","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 贾芸","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"# 智能儿","novel":"红楼梦","nk":"hlm","emoji":"📖","color":"#ef4444","tier":"普通","skill":"","stats":{}},
+  {"name":"关羽","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"武圣·义之化身","stats":{"MAR":10, "INT":5, "BEN":4, "LOY":10, "SPI":3, "SPD":6}},
+  {"name":"诸葛亮","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"军师·天罡八阵","stats":{"MAR":3, "INT":10, "BEN":6, "LOY":8, "SPI":7, "SPD":4}},
+  {"name":"曹操","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"霸主·四界棋局","stats":{"MAR":7, "INT":9, "BEN":3, "LOY":4, "SPI":5, "SPD":7}},
+  {"name":"刘备","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"领袖·桃园结义","stats":{"MAR":5, "INT":6, "BEN":8, "LOY":9, "SPI":3, "SPD":5}},
+  {"name":"赵云","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"突击·七进七出","stats":{"MAR":9, "INT":4, "BEN":5, "LOY":8, "SPI":2, "SPD":9}},
+  {"name":"周瑜","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"火攻·赤壁烈焰","stats":{"MAR":7, "INT":9, "BEN":3, "LOY":5, "SPI":4, "SPD":7}},
+  {"name":"张飞","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"猛攻·当阳怒吼","stats":{"MAR":9, "INT":2, "BEN":2, "LOY":7, "SPI":1, "SPD":6}},
+  {"name":"黄忠","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"远程·百步穿杨","stats":{"MAR":8, "INT":3, "BEN":3, "LOY":7, "SPI":2, "SPD":3}},
+  {"name":"司马懿","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"反制·鹰视狼顾","stats":{"MAR":4, "INT":9, "BEN":2, "LOY":3, "SPI":6, "SPD":5}},
+  {"name":"吕布","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"狂暴·天下无双","stats":{"MAR":10, "INT":2, "BEN":1, "LOY":1, "SPI":2, "SPD":8}},
+  {"name":"孙尚香","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"突袭·弓腰姬","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":5, "SPI":3, "SPD":8}},
+  {"name":"姜维","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"继承·遗志北伐","stats":{"MAR":7, "INT":7, "BEN":4, "LOY":8, "SPI":3, "SPD":6}},
+  {"name":"孙权","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"平衡·守成之主","stats":{"MAR":5, "INT":8, "BEN":5, "LOY":6, "SPI":3, "SPD":4}},
+  {"name":"庞统","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"奇谋·凤雏连环","stats":{"MAR":3, "INT":9, "BEN":3, "LOY":5, "SPI":7, "SPD":4}},
+  {"name":"马超","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"突击·锦马超","stats":{"MAR":9, "INT":3, "BEN":2, "LOY":4, "SPI":2, "SPD":8}},
+  {"name":"典韦","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"死守·古之恶来","stats":{"MAR":10, "INT":1, "BEN":2, "LOY":8, "SPI":1, "SPD":5}},
+  {"name":"许褚","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"肉盾·虎痴","stats":{"MAR":9, "INT":2, "BEN":2, "LOY":8, "SPI":1, "SPD":4}},
+  {"name":"徐庶","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"悲谋·走马荐诸葛","stats":{"MAR":4, "INT":8, "BEN":6, "LOY":8, "SPI":4, "SPD":3}},
+  {"name":"陆逊","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"火攻·火烧连营","stats":{"MAR":5, "INT":9, "BEN":4, "LOY":7, "SPI":3, "SPD":5}},
+  {"name":"魏延","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"反骨·子午谷奇谋","stats":{"MAR":8, "INT":4, "BEN":2, "LOY":4, "SPI":2, "SPD":7}},
+  {"name":"甘宁","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"突袭·锦帆贼","stats":{"MAR":8, "INT":3, "BEN":2, "LOY":5, "SPI":2, "SPD":8}},
+  {"name":"太史慈","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"决斗·神箭无双","stats":{"MAR":8, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":7}},
+  {"name":"张辽","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"威慑·逍遥津","stats":{"MAR":8, "INT":6, "BEN":3, "LOY":8, "SPI":2, "SPD":7}},
+  {"name":"董卓","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"暴政·祸乱天下","stats":{"MAR":7, "INT":3, "BEN":1, "LOY":1, "SPI":1, "SPD":3}},
+  {"name":"颜良","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"猛攻·河北先锋","stats":{"MAR":8, "INT":3, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"文丑","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"猛攻·延津骁将","stats":{"MAR":8, "INT":3, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"夏侯惇","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"狂战·拔矢啖睛","stats":{"MAR":8, "INT":5, "BEN":4, "LOY":8, "SPI":3, "SPD":6}},
+  {"name":"夏侯渊","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"神速·千里奔袭","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":8}},
+  {"name":"张郃","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"巧变·机变无双","stats":{"MAR":7, "INT":5, "BEN":3, "LOY":6, "SPI":2, "SPD":7}},
+  {"name":"于禁","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"统帅·军纪严明","stats":{"MAR":5, "INT":6, "BEN":4, "LOY":7, "SPI":2, "SPD":5}},
+  {"name":"曹仁","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"铁壁·守城之将","stats":{"MAR":7, "INT":5, "BEN":4, "LOY":8, "SPI":2, "SPD":4}},
+  {"name":"程昱","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"毒谋·十面埋伏","stats":{"MAR":3, "INT":9, "BEN":3, "LOY":7, "SPI":4, "SPD":4}},
+  {"name":"荀彧","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"王佐·吾之子房","stats":{"MAR":2, "INT":10, "BEN":5, "LOY":9, "SPI":4, "SPD":3}},
+  {"name":"荀攸","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"奇策·百出奇谋","stats":{"MAR":3, "INT":9, "BEN":4, "LOY":8, "SPI":3, "SPD":4}},
+  {"name":"黄盖","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"苦肉·赤壁老将","stats":{"MAR":7, "INT":4, "BEN":4, "LOY":8, "SPI":2, "SPD":5}},
+  {"name":"鲁肃","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"外交·榻上策","stats":{"MAR":3, "INT":8, "BEN":6, "LOY":8, "SPI":3, "SPD":4}},
+  {"name":"吕蒙","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"觉醒·白衣渡江","stats":{"MAR":7, "INT":8, "BEN":4, "LOY":7, "SPI":3, "SPD":6}},
+  {"name":"孟获","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"蛮王·南蛮之主","stats":{"MAR":6, "INT":2, "BEN":4, "LOY":5, "SPI":1, "SPD":4}},
+  {"name":"祝融夫人","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"火法·飞刀烈焰","stats":{"MAR":6, "INT":4, "BEN":3, "LOY":5, "SPI":3, "SPD":7}},
+  {"name":"陈宫","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"谋主·明智择主","stats":{"MAR":3, "INT":9, "BEN":3, "LOY":6, "SPI":3, "SPD":4}},
+  {"name":"袁绍","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"精英","skill":"名门·四世三公","stats":{"MAR":5, "INT":6, "BEN":5, "LOY":5, "SPI":3, "SPD":4}},
+  {"name":"公孙瓒","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"骑兵·白马将军","stats":{"MAR":6, "INT":4, "BEN":3, "LOY":5, "SPI":2, "SPD":6}},
+  {"name":"关平","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"义子·忠勇传承","stats":{"MAR":6, "INT":4, "BEN":4, "LOY":8, "SPI":2, "SPD":5}},
+  {"name":"关兴","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"传承·青龙后裔","stats":{"MAR":6, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":6}},
+  {"name":"张苞","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"猛攻·虎父之子","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":7, "SPI":2, "SPD":6}},
+  {"name":"马岱","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"暗杀·斩魏延","stats":{"MAR":6, "INT":4, "BEN":3, "LOY":6, "SPI":2, "SPD":7}},
+  {"name":"廖化","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"宿将·蜀中老兵","stats":{"MAR":5, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":5}},
+  {"name":"华佗","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"传说","skill":"医圣·妙手回春","stats":{"MAR":1, "INT":7, "BEN":10, "LOY":5, "SPI":5, "SPD":2}},
+  {"name":"三国演义·扩展角色","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{"第二批":24}},
+  {"name":"# 颜良","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 文丑","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 夏侯惇","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 夏侯渊","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 张郃","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 于禁","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 曹仁","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 程昱","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 荀彧","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 荀攸","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 黄盖","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 鲁肃","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 吕蒙","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 孟获","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 祝融夫人","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 陈宫","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 袁绍","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 公孙瓒","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 关平","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 关兴","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 张苞","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 马岱","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 廖化","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 华佗","novel":"三国演义","nk":"sgy","emoji":"⚔️","color":"#3b82f6","tier":"普通","skill":"","stats":{}},
+  {"name":"宋江","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"领袖·义旗招唤","stats":{"MAR":4, "INT":7, "BEN":6, "LOY":10, "SPI":4, "SPD":5}},
+  {"name":"武松","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"猛攻·景阳打虎","stats":{"MAR":9, "INT":4, "BEN":3, "LOY":8, "SPI":2, "SPD":7}},
+  {"name":"鲁智深","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"狂僧·倒拔垂柳","stats":{"MAR":9, "INT":3, "BEN":5, "LOY":9, "SPI":4, "SPD":5}},
+  {"name":"林冲","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"枪术·八十万禁军","stats":{"MAR":8, "INT":5, "BEN":4, "LOY":7, "SPI":3, "SPD":7}},
+  {"name":"公孙胜","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"道术·天罡五雷","stats":{"MAR":3, "INT":8, "BEN":4, "LOY":6, "SPI":10, "SPD":4}},
+  {"name":"吴用","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"军师·智多星","stats":{"MAR":2, "INT":9, "BEN":5, "LOY":7, "SPI":4, "SPD":5}},
+  {"name":"李逵","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"狂暴·黑旋风","stats":{"MAR":9, "INT":1, "BEN":1, "LOY":6, "SPI":1, "SPD":6}},
+  {"name":"花荣","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"远程·小李广","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":8}},
+  {"name":"时迁","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"潜入·鼓上蚤","stats":{"MAR":3, "INT":5, "BEN":2, "LOY":4, "SPI":2, "SPD":10}},
+  {"name":"燕青","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"全能·浪子","stats":{"MAR":6, "INT":6, "BEN":5, "LOY":7, "SPI":3, "SPD":9}},
+  {"name":"秦明","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"猛攻·霹雳火","stats":{"MAR":8, "INT":2, "BEN":2, "LOY":7, "SPI":2, "SPD":5}},
+  {"name":"扈三娘","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"突袭·一丈青","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":5, "SPI":3, "SPD":8}},
+  {"name":"卢俊义","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"武绝·玉麒麟","stats":{"MAR":10, "INT":5, "BEN":3, "LOY":6, "SPI":3, "SPD":7}},
+  {"name":"杨志","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"绝技·青面兽","stats":{"MAR":8, "INT":4, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"戴宗","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"神速·神行太保","stats":{"MAR":4, "INT":5, "BEN":3, "LOY":7, "SPI":3, "SPD":10}},
+  {"name":"张顺","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"水战·浪里白条","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":7, "SPI":2, "SPD":8}},
+  {"name":"史进","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"少年·九纹龙","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":5, "SPI":2, "SPD":7}},
+  {"name":"柴进","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"贵族·小旋风","stats":{"MAR":4, "INT":6, "BEN":7, "LOY":7, "SPI":3, "SPD":4}},
+  {"name":"关胜","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"传承·大刀","stats":{"MAR":9, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":6}},
+  {"name":"呼延灼","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"铁骑·双鞭","stats":{"MAR":8, "INT":4, "BEN":2, "LOY":6, "SPI":2, "SPD":5}},
+  {"name":"解珍","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"猎手·两头蛇","stats":{"MAR":7, "INT":2, "BEN":2, "LOY":6, "SPI":1, "SPD":6}},
+  {"name":"孙二娘","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"暗算·母夜叉","stats":{"MAR":6, "INT":4, "BEN":2, "LOY":5, "SPI":2, "SPD":6}},
+  {"name":"白胜","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"蛊惑·白日鼠","stats":{"MAR":3, "INT":3, "BEN":2, "LOY":3, "SPI":2, "SPD":7}},
+  {"name":"安道全","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"医术·神医","stats":{"MAR":1, "INT":6, "BEN":9, "LOY":5, "SPI":3, "SPD":2}},
+  {"name":"鲁达","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"狂僧·拳打镇关西","stats":{"MAR":9, "INT":3, "BEN":5, "LOY":9, "SPI":4, "SPD":5}},
+  {"name":"武大郎","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"悲弱·卖炊饼","stats":{"MAR":2, "INT":3, "BEN":3, "LOY":5, "SPI":1, "SPD":2}},
+  {"name":"潘金莲","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"毒谋·红颜祸水","stats":{"MAR":3, "INT":6, "BEN":3, "LOY":3, "SPI":5, "SPD":5}},
+  {"name":"西门庆","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"霸道·阳谷恶霸","stats":{"MAR":5, "INT":5, "BEN":3, "LOY":3, "SPI":4, "SPD":6}},
+  {"name":"王婆","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"牵线·茶坊撮合","stats":{"MAR":1, "INT":7, "BEN":3, "LOY":2, "SPI":3, "SPD":4}},
+  {"name":"高俅","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"权谋·踢球发迹","stats":{"MAR":3, "INT":8, "BEN":2, "LOY":2, "SPI":5, "SPD":5}},
+  {"name":"童贯","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"监军·太监误国","stats":{"MAR":4, "INT":6, "BEN":3, "LOY":3, "SPI":3, "SPD":4}},
+  {"name":"蔡京","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"权臣·书法误国","stats":{"MAR":2, "INT":8, "BEN":3, "LOY":3, "SPI":4, "SPD":3}},
+  {"name":"杨雄","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"刑名·刽子手","stats":{"MAR":7, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":6}},
+  {"name":"石秀","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"机警·拼命三郎","stats":{"MAR":7, "INT":5, "BEN":3, "LOY":8, "SPI":2, "SPD":8}},
+  {"name":"雷横","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"都头·插翅虎","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":6, "SPI":2, "SPD":5}},
+  {"name":"朱仝","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"义释·美髯公","stats":{"MAR":7, "INT":4, "BEN":4, "LOY":8, "SPI":3, "SPD":6}},
+  {"name":"穆弘","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"豪强·没遮拦","stats":{"MAR":6, "INT":4, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"李俊","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"水军·混江龙","stats":{"MAR":6, "INT":5, "BEN":4, "LOY":7, "SPI":3, "SPD":7}},
+  {"name":"阮小二","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"水战·立地太岁","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":7, "SPI":2, "SPD":6}},
+  {"name":"阮小五","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"水战·短命二郎","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"阮小七","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"水战·活阎罗","stats":{"MAR":7, "INT":3, "BEN":3, "LOY":6, "SPI":2, "SPD":7}},
+  {"name":"张青","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"暗算·菜园子","stats":{"MAR":5, "INT":4, "BEN":3, "LOY":5, "SPI":2, "SPD":5}},
+  {"name":"孙新","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"小尉迟·双鞭","stats":{"MAR":5, "INT":4, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"顾大嫂","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"母大虫·雌虎","stats":{"MAR":5, "INT":4, "BEN":3, "LOY":6, "SPI":2, "SPD":6}},
+  {"name":"索超","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"急先锋·金蘸斧","stats":{"MAR":8, "INT":3, "BEN":3, "LOY":7, "SPI":2, "SPD":7}},
+  {"name":"董平","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"精英","skill":"双枪·风流双枪将","stats":{"MAR":8, "INT":4, "BEN":3, "LOY":7, "SPI":2, "SPD":8}},
+  {"name":"张清","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"传说","skill":"远程·没羽箭","stats":{"MAR":6, "INT":5, "BEN":3, "LOY":7, "SPI":3, "SPD":8}},
+  {"name":"王英","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"色胆·矮脚虎","stats":{"MAR":5, "INT":2, "BEN":2, "LOY":5, "SPI":1, "SPD":6}},
+  {"name":"水浒传·扩展角色","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{"第二批":24}},
+  {"name":"# 鲁达","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 武大郎","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 潘金莲","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 西门庆","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 王婆","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 高俅","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 童贯","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 蔡京","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 杨雄","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 石秀","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 雷横","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 朱仝","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 穆弘","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 李俊","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 阮小二","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 阮小五","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 阮小七","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 张青","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 孙新","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 顾大嫂","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 索超","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 董平","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 张清","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"# 王英","novel":"水浒传","nk":"shz","emoji":"🗡️","color":"#f59e0b","tier":"普通","skill":"","stats":{}},
+  {"name":"孙悟空","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"传说","skill":"全能·齐天大圣","stats":{"MAR":9, "INT":6, "BEN":3, "LOY":4, "SPI":9, "SPD":10}},
+  {"name":"唐僧","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"传说","skill":"治愈·金蝉子","stats":{"MAR":1, "INT":7, "BEN":10, "LOY":9, "SPI":6, "SPD":3}},
+  {"name":"猪八戒","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"坦克·天蓬元帅","stats":{"MAR":7, "INT":3, "BEN":4, "LOY":5, "SPI":5, "SPD":4}},
+  {"name":"沙悟净","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"守护·卷帘大将","stats":{"MAR":6, "INT":3, "BEN":5, "LOY":8, "SPI":3, "SPD":5}},
+  {"name":"白龙马","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"坐骑·龙族变身","stats":{"MAR":5, "INT":3, "BEN":4, "LOY":7, "SPI":4, "SPD":9}},
+  {"name":"牛魔王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"巨兽·平天大圣","stats":{"MAR":9, "INT":3, "BEN":2, "LOY":3, "SPI":6, "SPD":5}},
+  {"name":"红孩儿","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"火法·三昧真火","stats":{"MAR":6, "INT":4, "BEN":2, "LOY":3, "SPI":8, "SPD":7}},
+  {"name":"铁扇公主","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"控制·芭蕉扇风","stats":{"MAR":5, "INT":6, "BEN":3, "LOY":4, "SPI":8, "SPD":5}},
+  {"name":"二郎神","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"猎神·天眼通","stats":{"MAR":8, "INT":6, "BEN":3, "LOY":7, "SPI":5, "SPD":8}},
+  {"name":"哪吒","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"突击·三头六臂","stats":{"MAR":8, "INT":4, "BEN":3, "LOY":6, "SPI":6, "SPD":9}},
+  {"name":"太上老君","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"炼器·八卦炉火","stats":{"MAR":2, "INT":8, "BEN":5, "LOY":5, "SPI":9, "SPD":3}},
+  {"name":"观音菩萨","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"传说","skill":"渡化·慈悲普度","stats":{"MAR":3, "INT":8, "BEN":10, "LOY":8, "SPI":8, "SPD":5}},
+  {"name":"如来佛祖","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"传说","skill":"至高·万佛之祖","stats":{"MAR":3, "INT":10, "BEN":8, "LOY":7, "SPI":10, "SPD":2}},
+  {"name":"菩提祖师","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"传说","skill":"传道·悟空之师","stats":{"MAR":4, "INT":10, "BEN":6, "LOY":5, "SPI":10, "SPD":3}},
+  {"name":"六耳猕猴","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"镜像·真假美猴王","stats":{"MAR":9, "INT":7, "BEN":2, "LOY":2, "SPI":8, "SPD":9}},
+  {"name":"白骨精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"幻术·三打白骨精","stats":{"MAR":3, "INT":8, "BEN":1, "LOY":2, "SPI":7, "SPD":7}},
+  {"name":"镇元大仙","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"地仙·人参果树","stats":{"MAR":6, "INT":8, "BEN":5, "LOY":6, "SPI":8, "SPD":3}},
+  {"name":"玉帝","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"天威·三界之主","stats":{"MAR":3, "INT":7, "BEN":4, "LOY":6, "SPI":5, "SPD":3}},
+  {"name":"蜘蛛精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"暗算·盘丝洞","stats":{"MAR":4, "INT":5, "BEN":2, "LOY":3, "SPI":5, "SPD":7}},
+  {"name":"黄眉大王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"伪装·小雷音寺","stats":{"MAR":7, "INT":6, "BEN":2, "LOY":3, "SPI":7, "SPD":5}},
+  {"name":"青牛精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"蛮力·独角兕大王","stats":{"MAR":8, "INT":3, "BEN":2, "LOY":4, "SPI":4, "SPD":5}},
+  {"name":"灵感大王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"冰冻·通天河","stats":{"MAR":6, "INT":4, "BEN":2, "LOY":3, "SPI":4, "SPD":6}},
+  {"name":"蝎子精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"精英","skill":"毒刺·琵琶洞","stats":{"MAR":7, "INT":5, "BEN":2, "LOY":3, "SPI":6, "SPD":7}},
+  {"name":"嫦娥","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"月华·广寒仙子","stats":{"MAR":2, "INT":6, "BEN":5, "LOY":4, "SPI":7, "SPD":5}},
+  {"name":"西游记·扩展角色","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{"第二批":24}},
+  {"name":"# 金角大王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 银角大王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 大鹏金翅","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 九头虫","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 黄风怪","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 黑熊精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 白象精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 青狮精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 虎力大仙","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 鹿力大仙","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 羊力大仙","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 红磷蟒","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 金鱼精","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 百眼魔君","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 黄袍怪","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 木吒","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 金吒","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 唐太宗","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 地藏王","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 弥勒佛","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 文殊菩萨","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 普贤菩萨","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 昴日星官","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+  {"name":"# 灵吉菩萨","novel":"西游记","nk":"xyj","emoji":"🐵","color":"#8b5cf6","tier":"普通","skill":"","stats":{}},
+];
+const grid=document.getElementById('grid');
+const STAT_NAMES={MAR:'武力',INT:'智力',BEN:'仁爱',LOY:'忠诚',SPI:'灵力',SPD:'速度'};
+function render(list){
+  grid.innerHTML='';
+  list.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='card';d.dataset.nk=c.nk;
+    d.style.setProperty('--c',c.color);
+    d.querySelector?.('::before')?.style;
+    let stats='';
+    Object.entries(c.stats).forEach(([k,v])=>{
+      stats+=`<span class="stat">${STAT_NAMES[k]||k} ${v}</span>`;
+    });
+    d.innerHTML=`
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${c.color};border-radius:16px 16px 0 0"></div>
+      <div class="emoji">${c.emoji}</div>
+      <div class="name">${c.name}</div>
+      <span class="novel-tag" style="background:${c.color}15;color:${c.color}">${c.novel}</span>
+      <div class="tier">${c.tier}</div>
+      <div class="stat-row">${stats}</div>
+      <div class="skill-label">${c.skill}</div>
+    `;
+    grid.appendChild(d);
+  });
+  document.getElementById('statsBar').textContent=`共 ${list.length} 张角色卡牌`;
+}
+render(C);
+function filter(nk,btn){
+  document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render(nk==='all'?C:C.filter(c=>c.nk===nk));
+}
+</script>
+</body>
+</html>

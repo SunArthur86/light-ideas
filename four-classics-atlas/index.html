@@ -93,6 +93,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 </head>
 <body>
 <div class="hdr">
+<a href="../index.html" style="color:var(--text);text-decoration:none;font-size:13px;margin-right:4px">← 首页</a>
 <div><h1>🗺️ 四梦归一 · 四大名著地理可视化</h1><div class="sub">真实地图 · 82地点 · 18路线 · 35人物 · 覆盖中国到印度</div></div>
 <div class="search-box"><span class="icon">🔍</span><input id="searchInput" placeholder="搜索地点..." oninput="searchLoc()"></div>
 <button class="share-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
@@ -288,7 +289,7 @@ const R=[
 {id:'drive-sgy',nm:'三国遗迹自驾',c:'#2ecc71',type:'drive',pts:['xudu','guandu','luoyang','chibi','jingzhou','yiling','baidicheng','hanzhong','wuzhangyuan'],desc:'许都→赤壁→五丈原',dist:'约2500km',days:'9天',icon:'🚗'},
 {id:'drive-silk',nm:'丝路取经自驾',c:'#f39c12',type:'drive',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','turfan','huoyanshan','kuche'],desc:'西安→嘉峪关→吐鲁番',dist:'约2500km',days:'10天',icon:'🚗'},
 {id:'drive-shz',nm:'水浒好汉自驾',c:'#3498db',type:'drive',pts:['yunchengxian','liangshan','dongjing','yanggu','jingyanggang','zhujiazhuang','jiangzhou'],desc:'郓城→梁山→开封→九江',dist:'约800km',days:'4天',icon:'🚗'},
-    id:'hike-qujing',nm:'玄奘之路徒步',c:'#e67e22',type:'hike',diff:'⭐⭐⭐⭐⭐',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','huoyanshan','turfan','kuche','lingshan'],desc:'重走玄奘西行',dist:'约12000km',days:'180天',icon:'🥾'},
+{id:'hike-qujing',nm:'玄奘之路徒步',c:'#e67e22',type:'hike',diff:'⭐⭐⭐⭐⭐',pts:['changanxyj','tianshui','lanzhou','jiayuguan','hami','huoyanshan','turfan','kuche','lingshan'],desc:'重走玄奘西行',dist:'约12000km',days:'180天',icon:'🥾'},
 {id:'hike-chibi',nm:'赤壁古道徒步',c:'#e74c3c',type:'hike',diff:'⭐⭐',pts:['chibi','jingzhou','yiling'],desc:'赤壁→夷陵',dist:'约180km',days:'5天',icon:'🥾'},
 {id:'hike-liangshan',nm:'梁山泊徒步',c:'#1abc9c',type:'hike',diff:'⭐',pts:['yunchengxian','liangshan','jingyanggang','yanggu','zhujiazhuang'],desc:'郓城→梁山→祝家庄',dist:'约120km',days:'3天',icon:'🥾'},
 {id:'bike-sgy',nm:'三国征战骑行',c:'#9b59b6',type:'bike',diff:'⭐⭐⭐',pts:['xudu','luoyang','chibi','jingzhou','baidicheng','hanzhong'],desc:'许都→赤壁→汉中',dist:'约800km',days:'6天',icon:'🚴'},
@@ -724,7 +725,7 @@ function showDetail(id){
   if(l.img)h+=`<img class="detail-img" src="${l.img}" alt="${l.nm}" onerror="this.style.display='none'">`;
   if(l.ev&&l.ev.length){h+=`<div class="section"><h4>重大事件</h4>`;l.ev.forEach(e=>h+=`<div style="font-size:11px;color:var(--text2)">· ${e}</div>`);h+='</div>'}
   if(l.ch&&l.ch.length){h+=`<div class="section"><h4>出场人物</h4>`;l.ch.forEach(c=>h+=`<span class="char-tag">${c}</span>`);h+='</div>'}
-rongguofu:'满纸荒唐言，一把辛酸泪',chibi:'大江东去，浪淘尽，千古风流人物',liangshan:'替天行道，忠义双全',huaguoshan:'俺老孙来也！',lingshan:'色不异空，空不异色',wuzhangyuan:'出师未捷身先死',daguan:'花谢花飞花满天',huoyanshan:'八百里火焰，寸草不生',guandu:'兵贵神速，出奇制胜',changbanpo:'子龙一身都是胆',baidicheng:'勿以善小而不为',longzhong:'三分天下，联吴抗曹',jingyanggang:'三碗不过冈',chengdu:'天府之国，沃野千里',jianye:'钟山龙蟠，石城虎踞',xiaoxiangguan:'秋阴不散霜飞晚',yihongyuan:'千红一窟，万艳同杯',wuxingshan:'五行山下定心猿',tianting:'齐天大圣，与天齐寿'
+const Q={rongguofu:'满纸荒唐言，一把辛酸泪',chibi:'大江东去，浪淘尽，千古风流人物',liangshan:'替天行道，忠义双全',huaguoshan:'俺老孙来也！',lingshan:'色不异空，空不异色',wuzhangyuan:'出师未捷身先死',daguan:'花谢花飞花满天',huoyanshan:'八百里火焰，寸草不生',guandu:'兵贵神速，出奇制胜',changbanpo:'子龙一身都是胆',baidicheng:'勿以善小而不为',longzhong:'三分天下，联吴抗曹',jingyanggang:'三碗不过冈',chengdu:'天府之国，沃野千里',jianye:'钟山龙蟠，石城虎踞',xiaoxiangguan:'秋阴不散霜飞晚',yihongyuan:'千红一窟，万艳同杯',wuxingshan:'五行山下定心猿',tianting:'齐天大圣，与天齐寿'};
   if(Q[id])h+=`<div class="quote">${Q[id]}</div>`;
   if(l.xr)h+=`<div class="section"><h4>四梦归一</h4><div style="font-size:11px;color:#9b59b6">${l.xr}</div></div>`;
   $('#detailPanel').innerHTML=h;$('#detailBg').classList.add('show');
