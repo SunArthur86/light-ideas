@@ -90,7 +90,35 @@ body{font-family:Georgia,'Noto Serif SC',serif;background:var(--bg);color:var(--
 .kbd-hint.show{opacity:1}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
-@media(max-width:768px){.sb{width:100%;position:fixed;bottom:46px;left:0;right:0;height:40vh;border-right:none;border-top:1px solid var(--bd);border-radius:14px 14px 0 0;transform:translateY(calc(100% - 40px));transition:.3s;z-index:90}.sb.open{transform:translateY(0)}.ct{padding:16px 12px}.mh{display:flex!important}}.mh{display:none;padding:6px;text-align:center;cursor:pointer}.mh::after{content:'···';font-size:16px;color:var(--tx3)}
+@media(max-width:768px){
+  .sb{width:100%;position:fixed;bottom:46px;left:0;right:0;height:45vh;border-right:none;border-top:1px solid var(--bd);border-radius:14px 14px 0 0;transform:translateY(calc(100% - 40px));transition:.3s;z-index:90;background:var(--bg)}
+  .sb.open{transform:translateY(0)}
+  .ct{padding:16px 12px;margin-bottom:56px}
+  .ct h2{font-size:18px}
+  .ct h3{font-size:13px}
+  .ly{font-size:12px;padding:12px 14px;max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .ly.expanded{max-height:none}
+  .mh{display:flex!important}
+  /* Player bar fixed at bottom on mobile */
+  .pl{display:flex!important;padding:6px 12px}
+  .pl .info{min-width:0}
+  .pl .info .pt{font-size:11px}
+  .pl .info .ps{display:none}
+  .pb{width:28px;height:28px;font-size:10px}
+  .pb.py{width:34px;height:34px;font-size:12px}
+  .wv{display:none}
+  /* Header tweaks */
+  .hdr h1{font-size:14px}
+  .sts{display:none}
+  .main{height:calc(100vh - 46px - 48px)}
+}
+@media(max-width:480px){
+  .ct{padding:12px 8px}
+  .ct h2{font-size:16px}
+  .ly{font-size:11.5px;padding:10px 12px}
+  .sb{height:50vh}
+}
+.mh{display:none;padding:6px;text-align:center;cursor:pointer}.mh::after{content:'···';font-size:16px;color:var(--tx3)}
 </style>
 </head>
 <body>
@@ -188,6 +216,15 @@ function st(i){
   const th=t.tags.split(',').map(g=>'<span class="tg">'+g.trim()+'</span>').join('');
   const html=`<h2 style="color:${nv.color}">${nv.icon} ${t.title}</h2><div class="sc">${t.scene}</div><h3>歌词</h3><div class="ly">${lh}</div><h3>🎛️ Suno AI Prompt</h3><div class="sb2">${t.suno}</div><h3>🏷️ 标签</h3><div class="tgs">${th}</div><h3>📝 创作笔记</h3><ul class="nt">${nh}</ul>`;
   setContentWithFade(html);
+  // Make lyrics expandable on mobile
+  setTimeout(()=>{
+    const lyEl=document.querySelector('.ct .ly');
+    if(lyEl && window.innerWidth<=768){
+      lyEl.style.cursor='pointer';
+      lyEl.title='点击展开/收起歌词';
+      lyEl.addEventListener('click',function(){this.classList.toggle('expanded')});
+    }
+  },200);
   document.getElementById('pl').style.display='flex';
   document.getElementById('pt').textContent=t.title;
   document.getElementById('ps').textContent=t.scene;

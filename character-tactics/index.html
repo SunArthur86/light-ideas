@@ -52,10 +52,35 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .rank-传说{background:linear-gradient(135deg,#ff6b35,#ff8f5e)!important}
 .rank-精英{background:linear-gradient(135deg,#8b5cf6,#a78bfa)!important}
 .rank-普通{background:linear-gradient(135deg,#6b7280,#9ca3af)!important}
-@media(max-width:600px){
- .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:10px}
- .top{padding:10px 12px}
- .modal{padding:20px;margin:10px}
+/* === Responsive @media === */
+@media(max-width:768px){
+  .top{padding:10px 12px;gap:8px}
+  .top h1{font-size:15px}
+  .filters{margin-left:0;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;padding-bottom:4px}
+  .filters .fbtn{flex-shrink:0}
+  .stats-bar{padding:6px 12px;font-size:11px;gap:8px;flex-wrap:wrap}
+  .faction-bar{position:sticky;top:auto;z-index:40;padding:6px 12px}
+  .faction-bar .fb{min-width:50px;font-size:11px;padding:6px 4px 4px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:12px}
+  .card{padding:12px 8px 8px}
+  .card .cname{font-size:13px}
+  .card .cfrom{font-size:10px}
+  .card .mini-stats span{font-size:9px}
+  .mo.show{padding:0;align-items:flex-end}
+  .modal{max-width:100%;width:100%;border-radius:20px 20px 0 0;padding:24px 20px 32px;max-height:90vh;overflow-y:auto}
+  .modal .detail-stats{grid-template-columns:repeat(3,1fr);gap:6px}
+  .card-wrap:hover .card-inner{transform:none}
+}
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr;gap:8px;padding:8px}
+  .top h1{font-size:14px}
+  .filters{gap:4px}
+  .fbtn{padding:4px 8px;font-size:11px}
+  .faction-bar .fb{min-width:44px;font-size:10px;padding:5px 2px 3px}
+  .modal{padding:20px 16px 28px}
+  .modal .mhead h2{font-size:18px}
+  .modal .detail-stats .st .sv{font-size:17px}
+  .card .radar-mini svg{width:50px;height:50px}
 }
 
 /* === 3D Flip Card === */
