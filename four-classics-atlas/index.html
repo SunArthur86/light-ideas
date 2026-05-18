@@ -460,9 +460,10 @@ function locById(id){return LOCS.find(l=>l.id===id)}
 function filtered(){return(filter==='all'||filter==='smy'?LOCS:LOCS.filter(l=>l.nv===filter)).filter(l=>isLocThemed(l))}
 
 // === MAP ===
-const map=L.map('map',{zoomControl:false,attributionControl:false}).setView([34,108],5);
-L.control.zoom({position:'topleft'}).addTo(map);
-let currentTile=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,minZoom:2}).addTo(map);
+if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-family:sans-serif;font-size:16px;text-align:center;padding:40px">地图库加载失败<br><small>请检查网络连接后刷新页面</small></div>';}
+const map=typeof L!=='undefined'?L.map('map',{zoomControl:false,attributionControl:false}).setView([34,108],5):null;
+if(map)L.control.zoom({position:'topleft'}).addTo(map);
+let currentTile=map?L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,minZoom:2,errorTileUrl:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect fill="%23222" width="256" height="256"/></svg>'}).addTo(map):null;
 
 // === MARKERS ===
 function updateMarkers(){
