@@ -6,65 +6,281 @@
 <title>喜剧精读 · 50本</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#fafafa;--card:#fff;--text:#1d1d1f;--dim:#86868b;--border:#e5e5e5;--accent:#1d1d1f}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;min-height:100vh}
-.top{position:sticky;top:0;z-index:50;background:rgba(250,250,250,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:16px}
-.top a{color:var(--dim);text-decoration:none;font-size:13px}
+:root{--bg:#fafafa;--card:#fff;--text:#1d1d1f;--dim:#86868b;--border:#e5e5e5;--accent:#e6a817;--accent-light:#f5c842;--glow:rgba(230,168,23,.18)}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;min-height:100vh}
+
+/* ── Top Bar ── */
+.top{position:sticky;top:0;z-index:50;background:rgba(250,250,250,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:16px}
+.top a{color:var(--dim);text-decoration:none;font-size:13px;white-space:nowrap}
 .top h1{font-size:20px;font-weight:700;flex:1}
-.search{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:14px;width:200px;outline:none}
-.search:focus{border-color:#e6a817}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:14px;width:220px;outline:none;font-family:inherit;transition:border-color .2s,box-shadow .2s}
+.search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.search-count{position:absolute;right:12px;font-size:11px;color:var(--dim);background:var(--bg);padding:0 4px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .2s}
+.search-count.show{opacity:1}
+
+/* ── Tabs ── */
 .tabs{padding:12px 24px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:#fff}
 .tab{padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:none;font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit}
 .tab:hover{background:#f5f5f7}
-.tab.on{background:#e6a817;color:#fff;border-color:#e6a817}
+.tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── Stats ── */
 .stats{padding:16px 24px;font-size:13px;color:var(--dim)}
 .stats b{color:var(--text)}
+
+/* ── Grid ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:16px 24px 40px}
-.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;transition:all .3s;cursor:pointer;border-left:4px solid #e6a817}
-.card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
-.card .num{font-size:11px;color:#e6a817;font-weight:700;margin-bottom:4px}
-.card .title{font-size:16px;font-weight:600;margin-bottom:2px}
-.card .en{font-size:12px;color:var(--dim);margin-bottom:8px}
+
+/* ── Card ── */
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px 20px 20px 24px;transition:border-color .3s,box-shadow .3s,transform .3s,opacity .4s;cursor:pointer;border-left:4px solid var(--accent);opacity:0;transform:translateY(16px)}
+.card.show{opacity:1;transform:translateY(0)}
+.card:hover{border-left-color:var(--accent-light);box-shadow:0 4px 20px rgba(230,168,23,.12);transform:translateY(-2px)}
+.card .num{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .type-icon{font-size:15px}
+.card .title{font-size:16px;font-weight:600;margin-bottom:2px;line-height:1.4}
+.card .en{font-size:12px;color:var(--dim);margin-bottom:8px;font-style:italic}
 .card .meta{font-size:12px;color:var(--dim);display:flex;gap:6px;flex-wrap:wrap}
-.card .meta span{background:#fef9e7;padding:2px 8px;border-radius:8px}
+.card .meta span{background:#fef9e7;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.card .st-badge{display:inline-flex;align-items:center;gap:3px;background:#fff8e1!important;color:#b8860b;font-weight:500}
+
+/* ── Modal Overlay ── */
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{background:#fff;border-radius:16px;max-width:560px;width:92%;max-height:85vh;overflow-y:auto;padding:32px;position:relative;transform:translateY(24px) scale(.97);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-overlay.active .modal{transform:translateY(0) scale(1)}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:#f5f5f7;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--dim);transition:background .2s,color .2s}
+.modal-close:hover{background:#e5e5e5;color:var(--text)}
+.modal .m-icon{font-size:36px;margin-bottom:12px}
+.modal .m-title{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:4px}
+.modal .m-en{font-size:14px;color:var(--dim);font-style:italic;margin-bottom:16px}
+.modal .m-fields{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14px;margin-bottom:16px}
+.modal .m-fields .label{color:var(--dim);font-weight:500;white-space:nowrap}
+.modal .m-fields .value{color:var(--text)}
+.modal .m-divider{height:1px;background:var(--border);margin:16px 0}
+.modal .m-summary{font-size:14px;line-height:1.7;color:#444}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .top{padding:12px 16px;gap:10px;flex-wrap:wrap}
+  .top h1{font-size:17px}
+  .search{width:160px}
+  .tabs{padding:10px 16px}
+  .grid{grid-template-columns:1fr;padding:12px 16px 32px;gap:12px}
+  .modal{padding:24px}
+}
+
+/* ── Scrollbar ── */
+.modal::-webkit-scrollbar{width:6px}
+.modal::-webkit-scrollbar-thumb{background:#ddd;border-radius:3px}
 </style>
 </head>
 <body>
+
+<!-- Top Bar -->
 <div class="top">
 <a href="../index.html">← 返回</a>
 <h1>😂 喜剧精读</h1>
-<input class="search" placeholder="搜索书名、作者..." oninput="render()">
+<div class="search-wrap">
+<input class="search" id="searchInput" placeholder="搜索书名、作者..." oninput="render()">
+<span class="search-count" id="searchCount"></span>
 </div>
+</div>
+
+<!-- Tabs -->
 <div class="tabs" id="ttabs"></div>
+
+<!-- Stats -->
 <div class="stats" id="stats"></div>
+
+<!-- Grid -->
 <div class="grid" id="grid"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+<button class="modal-close" onclick="closeModal()">✕</button>
+<div id="modalBody"></div>
+</div>
+</div>
+
 <script>
-var B=[{"t": "利西翠妲（Lysistrata）", "e": "Lysistrata", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 411, "tp": "旧喜剧（Old Comedy）/ 反战性罢工喜剧", "f": "01_利西翠妲.md"}, {"t": "蛙（The Frogs）", "e": "The Frogs", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 405, "tp": "旧喜剧（Old Comedy）/ 文学讽刺喜剧", "f": "02_蛙.md"}, {"t": "云（The Clouds）", "e": "The Clouds", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 423, "tp": "旧喜剧（Old Comedy）/ 哲学讽刺喜剧", "f": "03_云.md"}, {"t": "马蜂（The Wasps）", "e": "The Wasps", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 422, "tp": "旧喜剧（Old Comedy）/ 政治讽刺喜剧", "f": "04_马蜂.md"}, {"t": "安菲特律翁（Amphitryon）", "e": "Amphitryon", "a": "普劳图斯（Titus Maccius Plautus）", "c": "古罗马", "y": 206, "tp": "罗马新喜剧（Fabula Palliata）/ 身份错位喜剧", "f": "05_安菲特律翁.md"}, {"t": "十日谈（The Decameron）", "e": "The Decameron", "a": "乔万尼·薄伽丘（Giovanni Boccaccio）", "c": "意大利（佛罗伦萨）", "y": 1348, "tp": "短篇小说集 / 框架叙事（Frame Tale）/ 市井喜剧", "f": "06_十日谈.md"}, {"t": "坎特伯雷故事集（The Canterbury Tales）", "e": "The Canterbury Tales", "a": "杰弗里·乔叟（Geoffrey Chaucer）", "c": "英格兰", "y": 1387, "tp": "框架叙事 / 诗体短篇小说集 / 市井喜剧与讽刺", "f": "07_坎特伯雷故事集.md"}, {"t": "堂吉诃德（Don Quixote）", "e": "Don Quixote", "a": "米格尔·德·塞万提斯·萨阿维德拉（Miguel de Cervantes Saavedra）", "c": "西班牙", "y": 1605, "tp": "反骑士传奇（Parody of Chivalric Romance）/ 散文小说 / 哲理性喜剧", "f": "08_堂吉诃德.md"}, {"t": "巨人传（Gargantua and Pantagruel）", "e": "Gargantua and Pantagruel", "a": "", "c": "", "y": 0, "tp": "", "f": "09_巨人传.md"}, {"t": "驯悍记（The Taming of the Shrew）", "e": "The Taming of the Shrew", "a": "", "c": "", "y": 0, "tp": "", "f": "10_驯悍记.md"}, {"t": "仲夏夜之梦 (A Midsummer Night's Dream) 精读笔记", "e": "A Midsummer Night's Dream", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1595, "tp": "浪漫喜剧 / 神仙喜剧", "f": "11_仲夏夜之梦.md"}, {"t": "威尼斯商人 (The Merchant of Venice) 精读笔记", "e": "The Merchant of Venice", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1596, "tp": "浪漫喜剧 / 问题喜剧（problem comedy）", "f": "12_威尼斯商人.md"}, {"t": "第十二夜 (Twelfth Night, or What You Will) 精读笔记", "e": "Twelfth Night, or What You Will", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1601, "tp": "浪漫喜剧 / 跨性别喜剧", "f": "13_第十二夜.md"}, {"t": "无事生非 (Much Ado About Nothing) 精读笔记", "e": "Much Ado About Nothing", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1598, "tp": "浪漫喜剧 / 风俗喜剧（comedy of manners）", "f": "14_无事生非.md"}, {"t": "皆大欢喜 (As You Like It) 精读笔记", "e": "As You Like It", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1599, "tp": "田园喜剧 / 牧歌喜剧（pastoral comedy）", "f": "15_皆大欢喜.md"}, {"t": "伪君子 (Tartuffe) 精读笔记", "e": "Tartuffe", "a": "莫里哀 (Molière)，原名让-巴蒂斯特·波克兰 (Jean-Baptiste Poquelin)", "c": "法国", "y": 1664, "tp": "性格喜剧 / 社会讽刺喜剧（comédie de caractère）", "f": "16_伪君子.md"}, {"t": "悭吝人 (L'Avare) 精读笔记", "e": "L'Avare", "a": "莫里哀 (Molière)", "c": "法国", "y": 1668, "tp": "性格喜剧（comédie de caractère）", "f": "17_悭吝人.md"}, {"t": "唐璜 (Dom Juan) 精读笔记", "e": "Dom Juan", "a": "莫里哀 (Molière)", "c": "法国", "y": 1665, "tp": "性格喜剧 / 哲学喜剧 / 传奇喜剧（comédie héroïque）", "f": "18_唐璜.md"}, {"t": "无病呻吟（The Imaginary Invalid / Le Malade Imaginaire）", "e": "The Imaginary Invalid / Le Malade Imaginaire", "a": "", "c": "", "y": 0, "tp": "", "f": "19_无病呻吟.md"}, {"t": "愤世嫉俗（The Misanthrope / Le Misanthrope）", "e": "The Misanthrope / Le Misanthrope", "a": "", "c": "", "y": 0, "tp": "", "f": "20_愤世嫉俗.md"}, {"t": "《老实人》（Candide）精读笔记", "e": "Candide", "a": "伏尔泰（Voltaire，本名 François-Marie Arouet）", "c": "法国", "y": 1759, "tp": "哲理讽刺故事（Conte philosophique）", "f": "21_老实人_笔记.md"}, {"t": "《项狄传》（The Life and Opinions of Tristram Shandy, Gentleman）精读笔记", "e": "The Life and Opinions of Tristram Shandy, Gentleman", "a": "劳伦斯·斯特恩（Laurence Sterne）", "c": "英国", "y": 1759, "tp": "元小说/实验喜剧小说", "f": "22_项狄传_笔记.md"}, {"t": "《汤姆·琼斯》（The History of Tom Jones, a Foundling）精读笔记", "e": "The History of Tom Jones, a Foundling", "a": "亨利·菲尔丁（Henry Fielding）", "c": "英国", "y": 1749, "tp": "喜剧小说/流浪汉传奇（Comic Epic in Prose）", "f": "23_汤姆琼斯_笔记.md"}, {"t": "《罗德里克·兰登历险记》（The Adventures of Roderick Random）精读笔记", "e": "The Adventures of Roderick Random", "a": "托比亚斯·斯莫莱特（Tobias Smollett）", "c": "英国（苏格兰裔）", "y": 1748, "tp": "流浪汉小说（Picaresque novel）", "f": "24_罗德里克兰登历险记_笔记.md"}, {"t": "《乌托邦》（Utopia）精读笔记", "e": "Utopia", "a": "托马斯·莫尔（Thomas More）", "c": "英国", "y": 1516, "tp": "政治讽刺/理想国对话录", "f": "25_乌托邦_笔记.md"}, {"t": "《傲慢与偏见》（Pride and Prejudice）精读笔记", "e": "Pride and Prejudice", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1796, "tp": "世态喜剧小说（Comedy of manners）", "f": "26_傲慢与偏见_笔记.md"}, {"t": "《爱玛》（Emma）精读笔记", "e": "Emma", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1815, "tp": "世态喜剧小说（Comedy of manners）", "f": "27_爱玛_笔记.md"}, {"t": "《诺桑觉寺》（Northanger Abbey）精读笔记", "e": "Northanger Abbey", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1803, "tp": "哥特小说讽刺/世态喜剧（Parody of Gothic novel / Comedy of manners）", "f": "28_诺桑觉寺_笔记.md"}, {"t": "匹克威克外传（The Pickwick Papers）", "e": "The Pickwick Papers", "a": "", "c": "", "y": 0, "tp": "", "f": "29_匹克威克外传.md"}, {"t": "钦差大臣（The Government Inspector / Ревизор）", "e": "The Government Inspector / Ревизор", "a": "", "c": "", "y": 0, "tp": "", "f": "30_钦差大臣.md"}, {"t": "爱丽丝漫游奇境记（Alice's Adventures in Wonderland）", "e": "Alice's Adventures in Wonderland", "a": "", "c": "", "y": 0, "tp": "", "f": "31_爱丽丝漫游奇境记.md"}, {"t": "三人同舟（Three Men in a Boat）", "e": "Three Men in a Boat", "a": "", "c": "", "y": 0, "tp": "", "f": "32_三人同舟.md"}, {"t": "小人物日记（The Diary of a Nobody）", "e": "The Diary of a Nobody", "a": "", "c": "", "y": 0, "tp": "", "f": "33_小人物日记.md"}, {"t": "不可儿戏（The Importance of Being Earnest）", "e": "The Importance of Being Earnest", "a": "", "c": "", "y": 0, "tp": "", "f": "34_不可儿戏.md"}, {"t": "温夫人的扇子（Lady Windermere's Fan）", "e": "Lady Windermere's Fan", "a": "", "c": "", "y": 0, "tp": "", "f": "35_温夫人的扇子.md"}, {"t": "好兵帅克（The Good Soldier Švejk / Osudy dobrého vojáka Švejka）", "e": "The Good Soldier Švejk / Osudy dobrého vojáka Švejka", "a": "", "c": "", "y": 0, "tp": "", "f": "36_好兵帅克.md"}, {"t": "变形记（The Metamorphosis / Die Verwandlung）", "e": "The Metamorphosis / Die Verwandlung", "a": "", "c": "", "y": 0, "tp": "", "f": "37_变形记.md"}, {"t": "我的仆人吉夫斯（My Man Jeeves）", "e": "My Man Jeeves", "a": "", "c": "", "y": 0, "tp": "", "f": "38_我的仆人吉夫斯.md"}, {"t": "星期四的人（The Man Who Was Thursday）", "e": "The Man Who Was Thursday", "a": "", "c": "", "y": 0, "tp": "", "f": "39_星期四的人.md"}, {"t": "诺丁山的拿破仑（The Napoleon of Notting Hill）", "e": "The Napoleon of Notting Hill", "a": "", "c": "", "y": 0, "tp": "", "f": "40_诺丁山的拿破仑.md"}, {"t": "吹牛大王历险记（Baron Munchausen's Narrative）", "e": "Baron Munchausen's Narrative", "a": "", "c": "", "y": 0, "tp": "", "f": "41_吹牛大王历险记.md"}, {"t": "福尔摩斯短篇集（The Adventures of Sherlock Holmes）", "e": "The Adventures of Sherlock Holmes", "a": "", "c": "", "y": 0, "tp": "", "f": "42_福尔摩斯短篇集.md"}, {"t": "佩雷格林·皮克尔历险记（The Adventures of Peregrine Pickle）", "e": "The Adventures of Peregrine Pickle", "a": "", "c": "", "y": 0, "tp": "", "f": "43_佩雷格林·皮克尔历险记.md"}, {"t": "费迪南德伯爵历险记（The Adventures of Ferdinand Count Fathom）", "e": "The Adventures of Ferdinand Count Fathom", "a": "", "c": "", "y": 0, "tp": "", "f": "44_费迪南德伯爵历险记.md"}, {"t": "吉尔·布拉斯（Gil Blas）", "e": "Gil Blas", "a": "", "c": "", "y": 0, "tp": "", "f": "45_吉尔·布拉斯.md"}, {"t": "西方世界的花花公子（The Playboy of the Western World）", "e": "The Playboy of the Western World", "a": "", "c": "", "y": 0, "tp": "", "f": "46_西方世界的花花公子.md"}, {"t": "武器与人（Arms and the Man）", "e": "Arms and the Man", "a": "", "c": "", "y": 0, "tp": "", "f": "47_武器与人.md"}, {"t": "卖花女（Pygmalion）", "e": "Pygmalion", "a": "", "c": "", "y": 0, "tp": "", "f": "48_卖花女.md"}, {"t": "樱桃园（The Cherry Orchard / Вишнёвый сад）", "e": "The Cherry Orchard / Вишнёвый сад", "a": "", "c": "", "y": 0, "tp": "", "f": "49_樱桃园.md"}, {"t": "鼻子（The Nose / Нос）", "e": "The Nose / Нос", "a": "", "c": "", "y": 0, "tp": "", "f": "50_鼻子（果戈理短篇）.md"}];
-var types=["世态喜剧", "其他", "反骑士", "哲理讽刺", "喜剧小说", "性格喜剧", "政治讽刺", "旧喜剧", "框架叙事", "流浪汉小说", "浪漫喜剧", "田园喜剧", "罗马新喜剧"];
+// ── Type-to-icon mapping ──
+var ICONS={
+'讽刺':'🎭','荒诞':'🤪','黑色':'💀','浪漫':'💕','闹剧':'🎪',
+'讽刺喜剧':'🎯','市井':'🍻','政治讽刺':'🏛️','哲理':'📖','反战':'✌️',
+'身份错位':'🔄','文学讽刺':'📝','哲学讽刺':'🧠','旧喜剧':'🏺',
+'流浪汉':'🚶','田园':'🌿','问题喜剧':'❓','性格':'😄','世态':'🏘️',
+'喜剧':'😂','框架叙事':'📚','反骑士':'⚔️','罗马新喜剧':'🏛️',
+'骑士':'🐴','风俗':'🏠','风俗喜剧':'🏡','神仙':'✨','传奇':'🌟',
+'传奇剧':'🌟','悲喜剧':'🎭','传奇喜剧':'🌟','正剧':'📜',
+'情节':'🎭','佳构':'🏗️','散文':'📝','诗体':'🖊️','短篇':'📖',
+'小说':'📖','诗体短篇':'🖊️','道德':'⚖️','散文小说':'📝',
+'反英雄':'🦸','无政府':'🌋','超现实':'🌀','荒诞派':'🌀',
+'荒诞主义':'🌀','存在主义':'💭','新喜剧':'🏺','复仇':'⚔️',
+'乌托邦':'🌈','中篇':'📖','哥特':'🦇','散文诗':'🌸',
+'韵文':'📜','韵文传奇':'📜','诗体寓言':'寓言'
+};
+
+function getIcon(tp){
+  if(!tp)return '📖';
+  for(var k in ICONS){if(tp.indexOf(k)!==-1)return ICONS[k]}
+  return '📖';
+}
+
+// ── Extract short type (st) from tp field ──
+var typeSet={};
+B.forEach(function(b){
+  if(!b.tp)return;
+  // Split by "/" and "（）" and "与" to get individual tags
+  var tags=b.tp.replace(/（[^）]*）/g,'').split(/[\/、与]/);
+  tags.forEach(function(tag){
+    tag=tag.replace(/[（）\s]/g,'').trim();
+    if(tag)typeSet[tag]=1;
+  });
+});
+
+// ── Build type list from data's st field if present, else from tp ──
+var stSet={};
+B.forEach(function(b){
+  if(b.st){stSet[b.st]=1;}
+});
+var types=Object.keys(stSet);
+if(types.length<3){
+  // Fallback: extract from tp
+  var tpSet={};
+  B.forEach(function(b){
+    if(!b.tp)return;
+    b.tp.replace(/（[^）]*）/g,'').split(/[\/、]/).forEach(function(s){
+      s=s.replace(/[（）\s]/g,'').trim();
+      if(s&&s.length<8)tpSet[s]=1;
+    });
+  });
+  types=Object.keys(tpSet);
+}
+
 var curT='全部';
+
 function init(){
   var el=document.getElementById('ttabs');
   var h='<button class="tab on" onclick="setT(this)">全部</button>';
   types.forEach(function(t){h+='<button class="tab" onclick="setT(this)">'+t+'</button>'});
-  el.innerHTML=h;render();
+  el.innerHTML=h;
+  render();
 }
+
 function setT(el){
   curT=el.textContent.trim();
   el.parentNode.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
-  el.classList.add('on');render();
+  el.classList.add('on');
+  render();
 }
+
 function render(){
   var q=document.querySelector('.search').value.toLowerCase();
   var list=B.filter(function(b){
-    if(curT!=='全部'&&b.st!==curT)return false;
-    if(q&&!((b.t+b.e+b.a+b.c).toLowerCase().indexOf(q)>=0))return false;
+    if(curT!=='全部'){
+      // Match against st or tp
+      var matchST=b.st===curT;
+      var matchTP=b.tp&&b.tp.indexOf(curT)!==-1;
+      if(!matchST&&!matchTP)return false;
+    }
+    if(q&&!((b.t+b.e+b.a+b.c+(b.tp||'')).toLowerCase().indexOf(q)>=0))return false;
     return true;
   });
+
+  // Stats
   document.getElementById('stats').innerHTML='共 <b>'+list.length+'</b> 本喜剧名著';
+
+  // Search count
+  var countEl=document.getElementById('searchCount');
+  if(q){
+    countEl.textContent=list.length+' 结果';
+    countEl.classList.add('show');
+  }else{
+    countEl.classList.remove('show');
+  }
+
   var g=document.getElementById('grid');
-  if(!list.length){g.innerHTML='<div style="text-align:center;padding:60px;color:#86868b">没有匹配的书籍</div>';return}
-  g.innerHTML=list.map(function(b,i){return '<div class="card"><div class="num">#'+(i+1)+'</div><div class="title">'+b.t+'</div><div class="en">'+b.e+'</div><div class="meta"><span>'+b.a+'</span><span>'+b.c+'</span><span>'+(b.y?'约'+b.y+'年':'')+'</span><span>'+b.st+'</span></div></div>'}).join('');
+  if(!list.length){
+    g.innerHTML='<div style="text-align:center;padding:60px;color:#86868b;grid-column:1/-1">没有匹配的书籍 😅</div>';
+    return;
+  }
+
+  g.innerHTML=list.map(function(b,i){
+    var icon=getIcon(b.tp||b.st||'');
+    var stLabel=b.st||(b.tp?b.tp.split('/')[0].trim():'');
+    var stIcon=getIcon(stLabel);
+    return '<div class="card" style="transition-delay:'+(i*40)+'ms" onclick="openModal('+B.indexOf(b)+')">'
+      +'<div class="num"><span>'+stIcon+' #'+(i+1)+'</span></div>'
+      +'<div class="title">'+b.t+'</div>'
+      +'<div class="en">'+(b.e||'')+'</div>'
+      +'<div class="meta">'
+        +(b.a?'<span>'+b.a+'</span>':'')
+        +(b.c?'<span>'+b.c+'</span>':'')
+        +(b.y?'<span>约'+b.y+'年</span>':'')
+        +(stLabel?'<span class="st-badge">'+stIcon+' '+stLabel+'</span>':'')
+      +'</div></div>';
+  }).join('');
+
+  // Staggered entrance animation
+  requestAnimationFrame(function(){
+    var cards=g.querySelectorAll('.card');
+    cards.forEach(function(c,i){
+      setTimeout(function(){c.classList.add('show')},i*40+10);
+    });
+  });
 }
+
+// ── Modal ──
+function openModal(idx){
+  var b=B[idx];
+  if(!b)return;
+  var icon=getIcon(b.tp||b.st||'');
+  var stLabel=b.st||'';
+  var tpFull=b.tp||'';
+
+  var fields='';
+  if(b.a)fields+='<span class="label">作者</span><span class="value">'+b.a+'</span>';
+  if(b.y)fields+='<span class="label">年代</span><span class="value">约 '+b.y+' 年</span>';
+  if(b.c)fields+='<span class="label">国家/地区</span><span class="value">'+b.c+'</span>';
+  if(stLabel)fields+='<span class="label">类型</span><span class="value">'+getIcon(stLabel)+' '+stLabel+'</span>';
+  if(tpFull&&tpFull!==stLabel)fields+='<span class="label">详细分类</span><span class="value">'+tpFull+'</span>';
+
+  // Build summary from available data
+  var summaryParts=[];
+  if(b.a)summaryParts.push(b.a);
+  if(b.c)summaryParts.push(b.c);
+  if(b.y)summaryParts.push('约'+b.y+'年');
+  var summary='本作品收录于「喜剧精读」系列，由'+(b.a||'佚名')+'创作'
+    +(b.c?'，来自'+b.c:'')
+    +(b.y?'，创作年代约在 '+b.y+' 年左右':'')
+    +'。'
+    +(tpFull?'作品类型为：'+tpFull+'。':'');
+
+  document.getElementById('modalBody').innerHTML=
+    '<div class="m-icon">'+icon+'</div>'
+    +'<div class="m-title">'+b.t+'</div>'
+    +'<div class="m-en">'+(b.e||'')+'</div>'
+    +'<div class="m-divider"></div>'
+    +'<div class="m-fields">'+fields+'</div>'
+    +'<div class="m-divider"></div>'
+    +'<div class="m-summary">'+summary+'</div>';
+
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// Close on Escape
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeModal();
+});
+
 init();
 </script>
 </body>

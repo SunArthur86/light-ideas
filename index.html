@@ -16,12 +16,12 @@ nav .logo{font-size:17px;font-weight:600;letter-spacing:-.3px;color:#1d1d1f;text
 .hero .divider{width:40px;height:1px;background:#d2d2d7;margin:32px auto}
 .stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
 .stats .s{text-align:center}
-.stats .n{font-size:36px;font-weight:700;letter-spacing:-1px;color:#1d1d1f}
+.stats .n{font-size:36px;font-weight:700;letter-spacing:-1px;color:#1d1d1f;font-variant-numeric:tabular-nums}
 .stats .l{font-size:11px;color:#86868b;margin-top:2px;letter-spacing:1px}
 .grid{max-width:1120px;margin:0 auto;padding:60px 24px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{background:#fff;border-radius:20px;padding:32px 28px;border:1px solid #e8e8ed;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden;opacity:0;transform:translateY(16px);transition:transform .4s cubic-bezier(0,0,.2,1),box-shadow .4s,opacity .6s}
-.card.vis{opacity:1;transform:translateY(0)}
-.card:hover{transform:translateY(-6px)!important;box-shadow:0 8px 30px rgba(0,0,0,.1);border-color:transparent}
+.card{background:#fff;border-radius:20px;padding:32px 28px;border:1px solid #e8e8ed;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden;opacity:0;transform:scale(.96) translateY(20px);transition:transform .4s cubic-bezier(0,0,.2,1),box-shadow .4s,opacity .6s,border-color .4s;will-change:transform}
+.card.vis{opacity:1;transform:scale(1) translateY(0)}
+.card:hover{box-shadow:0 8px 30px rgba(0,0,0,.1);border-color:transparent}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0}
 .card .emoji{font-size:40px;margin-bottom:16px}
 .card h2{font-size:20px;font-weight:600;letter-spacing:-.2px}
@@ -39,8 +39,12 @@ nav .logo{font-size:17px;font-weight:600;letter-spacing:-.3px;color:#1d1d1f;text
 .card.blank::before{background:linear-gradient(90deg,#6b7280,#4b5563)}.card.blank .tag{background:#f3f4f6;color:#4b5563}
 .card.comedy::before{background:linear-gradient(90deg,#eab308,#ca8a04)}.card.comedy .tag{background:#fefce8;color:#ca8a04}
 footer{text-align:center;padding:40px 24px;border-top:1px solid #e5e5e5;color:#86868b;font-size:13px}
+#btt{position:fixed;bottom:28px;right:28px;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s,background .2s,transform .2s;z-index:99;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#btt.show{opacity:1;pointer-events:auto}
+#btt:hover{background:rgba(0,0,0,.1);transform:scale(1.1)}
+#btt svg{width:18px;height:18px;stroke:#1d1d1f;stroke-width:2;fill:none}
 @media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.hero h1{font-size:38px}.hero .sub{font-size:17px}.grid{grid-template-columns:1fr;padding:40px 16px 60px}.stats{gap:24px}.stats .n{font-size:28px}}
+@media(max-width:640px){.hero h1{font-size:38px}.hero .sub{font-size:17px}.grid{grid-template-columns:1fr;padding:40px 16px 60px}.stats{gap:24px}.stats .n{font-size:28px}#btt{bottom:20px;right:20px;width:38px;height:38px}}
 </style>
 </head>
 <body>
@@ -50,11 +54,11 @@ footer{text-align:center;padding:40px 24px;border-top:1px solid #e5e5e5;color:#8
   <div class="sub">文学创意孵化器</div>
   <div class="divider"></div>
   <div class="stats">
-    <div class="s"><div class="n">9</div><div class="l">项目</div></div>
-    <div class="s"><div class="n">150</div><div class="l">名著精读</div></div>
-    <div class="s"><div class="n">120</div><div class="l">回小说</div></div>
-    <div class="s"><div class="n">192</div><div class="l">角色</div></div>
-    <div class="s"><div class="n">52</div><div class="l">歌曲</div></div>
+    <div class="s"><div class="n" data-target="9">0</div><div class="l">项目</div></div>
+    <div class="s"><div class="n" data-target="150">0</div><div class="l">名著精读</div></div>
+    <div class="s"><div class="n" data-target="120">0</div><div class="l">回小说</div></div>
+    <div class="s"><div class="n" data-target="192">0</div><div class="l">角色</div></div>
+    <div class="s"><div class="n" data-target="52">0</div><div class="l">歌曲</div></div>
   </div>
 </div>
 <div class="grid">
@@ -113,10 +117,74 @@ footer{text-align:center;padding:40px 24px;border-top:1px solid #e5e5e5;color:#8
     <div class="go">进入喜剧殿堂 →</div>
   </a>
 </div>
-<footer><p>Light Ideas · 文学创意孵化器 · 2025</p></footer>
+<footer><p>Light Ideas · 文学创意孵化器 · <span id="yr"></span></p></footer>
+<button id="btt" aria-label="返回顶部"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
 <script>
-const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}})},{threshold:.05});
-document.querySelectorAll('.card').forEach((c,i)=>{c.style.transitionDelay=i*60+'ms';obs.observe(c)});
+/* 1) 统计数字滚动动画 */
+(function(){
+  var els=document.querySelectorAll('.stats .n[data-target]');
+  function ease(t){return t===1?1:1-Math.pow(2,-10*t)}
+  function run(){
+    var dur=1400,st=performance.now();
+    function tick(now){
+      var p=Math.min((now-st)/dur,1),ep=ease(p);
+      els.forEach(function(el){
+        el.textContent=Math.round(+el.dataset.target*ep);
+      });
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  setTimeout(run,1000);
+})();
+
+/* 2) 卡片hover微视差 */
+(function(){
+  var cards=document.querySelectorAll('.card');
+  var MAX=8; // max tilt degrees
+  cards.forEach(function(c){
+    c.addEventListener('mousemove',function(e){
+      var r=c.getBoundingClientRect();
+      var x=(e.clientX-r.left)/r.width-.5;
+      var y=(e.clientY-r.top)/r.height-.5;
+      var rx=-y*MAX,ry=x*MAX;
+      c.style.transform='perspective(600px) rotateX('+rx+'deg) rotateY('+ry+'deg) scale(1.02)';
+    });
+    c.addEventListener('mouseleave',function(){
+      c.style.transform='';
+    });
+  });
+})();
+
+/* 3) 返回顶部 */
+(function(){
+  var b=document.getElementById('btt');
+  window.addEventListener('scroll',function(){
+    b.classList.toggle('show',window.scrollY>500);
+  },{passive:true});
+  b.addEventListener('click',function(){
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+})();
+
+/* 4) 卡片入场 - staggered fade+scale via IntersectionObserver */
+(function(){
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('vis');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:.05});
+  document.querySelectorAll('.card').forEach(function(c,i){
+    c.style.transitionDelay=i*70+'ms';
+    obs.observe(c);
+  });
+})();
+
+/* 5) Footer年份 */
+document.getElementById('yr').textContent=new Date().getFullYear();
 </script>
 </body>
 </html>
