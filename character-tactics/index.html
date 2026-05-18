@@ -57,6 +57,34 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
  .top{padding:10px 12px}
  .modal{padding:20px;margin:10px}
 }
+
+/* === 3D Flip Card === */
+.card-wrap{perspective:800px}
+.card-inner{position:relative;width:100%;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-wrap:hover .card-inner{transform:rotateY(180deg)}
+.card-face{backface-visibility:hidden}
+.card-back{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotateY(180deg);background:var(--card);border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:4px;overflow:hidden}
+.card-back .bk-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.card-back .bk-skill{font-size:11px;color:var(--dim);line-height:1.4;max-height:80px;overflow:hidden}
+.card-back .bk-total{font-size:24px;font-weight:800;margin-top:6px}
+.card-back .bk-label{font-size:10px;color:var(--dim)}
+.card{overflow:visible}
+.card:hover{transform:none;box-shadow:0 12px 40px rgba(0,0,0,.1)}
+/* === Faction Filter Bar === */
+.faction-bar{display:flex;gap:0;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:72px;z-index:40;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.faction-bar .fb{flex:1;min-width:60px;text-align:center;padding:8px 4px 6px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;user-select:none}
+.faction-bar .fb:hover{background:rgba(0,0,0,.03)}
+.faction-bar .fb.on{border-bottom-width:3px}
+.fb[data-f="hlm"].on,.fb[data-f="hlm"]:hover{color:#e74c3c;border-bottom-color:#e74c3c}
+.fb[data-f="sgy"].on,.fb[data-f="sgy"]:hover{color:#f39c12;border-bottom-color:#f39c12}
+.fb[data-f="shz"].on,.fb[data-f="shz"]:hover{color:#3498db;border-bottom-color:#3498db}
+.fb[data-f="xyj"].on,.fb[data-f="xyj"]:hover{color:#27ae60;border-bottom-color:#27ae60}
+.fb[data-f="other"].on,.fb[data-f="other"]:hover{color:#8b5cf6;border-bottom-color:#8b5cf6}
+.fb[data-f="all"].on{color:var(--accent);border-bottom-color:var(--accent)}
+/* === Staggered fade-in === */
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card-wrap{opacity:0;animation:cardIn .4s ease-out forwards}
+
 </style>
 </head>
 <body>
@@ -76,6 +104,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </div>
 </div>
 <div class="stats-bar"><span id="count">显示 168 张卡牌</span><span>总战力范围: 15-42</span></div>
+<div class="faction-bar">
+<div class="fb on" data-f="all" onclick="factionFilter('all',this)">全部</div>
+<div class="fb" data-f="hlm" onclick="factionFilter('hlm',this)">📕 红楼梦</div>
+<div class="fb" data-f="sgy" onclick="factionFilter('sgy',this)">📙 三国演义</div>
+<div class="fb" data-f="shz" onclick="factionFilter('shz',this)">📘 水浒传</div>
+<div class="fb" data-f="xyj" onclick="factionFilter('xyj',this)">📗 西游记</div>
+<div class="fb" data-f="other" onclick="factionFilter('other',this)">🔮 其他</div>
+</div>
 <div class="grid" id="grid"></div>
 <div class="mo" id="ov" onclick="if(event.target===this)close_()">
 <div class="modal">
@@ -102,7 +138,11 @@ function render(list){
     for(var j=0;j<sk.length;j++){
       statsHtml+='<span>'+SL[sk[j]]+c.stats[sk[j]]+'</span>';
     }
-    html+='<div class="card" data-novel="'+c.nk+'" onclick="detail('+i+')">'
+    var delay=Math.min(i*25,800);
+    html+='<div class="card-wrap" style="animation-delay:'+delay+'ms" onclick="detail('+i+')">'
+      +'<div class="card-inner">'
+      +'<div class="card-face">'
+      +'<div class="card" data-novel="'+c.nk+'">'
       +'<div class="rank-badge rank-'+c.rank+'">'+c.rank+'</div>'
       +'<div class="elem">'+c.emoji+'</div>'
       +'<div class="cname">'+c.name+'</div>'
@@ -110,10 +150,30 @@ function render(list){
       +'<div class="radar-mini">'+c.mr+'</div>'
       +'<div class="mini-stats">'+statsHtml+'</div>'
       +'<div class="total">总战力 '+c.total+'</div>'
+      +'</div>'
+      +'</div>'
+      +'<div class="card-back" style="border:2px solid '+c.color+'">'
+      +'<div class="bk-name" style="color:'+c.color+'">'+c.emoji+' '+c.name+'</div>'
+      +'<div class="bk-skill">💡 '+c.skill+'</div>'
+      +'<div class="bk-total" style="color:'+c.color+'">'+c.total+'</div>'
+      +'<div class="bk-label">总战力 · '+c.rank+'</div>'
+      +'</div>'
+      +'</div>'
       +'</div>';
   }
   g.innerHTML=html;
   window._list=list;
+}
+
+function factionFilter(f,el){
+  document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on')});
+  el.classList.add('on');
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on')});
+  var base=f==='all'?D:D.filter(function(c){
+    if(f==='other')return['hlm','sgy','shz','xyj'].indexOf(c.nk)<0;
+    return c.nk===f;
+  });
+  render(base);
 }
 
 render(D);

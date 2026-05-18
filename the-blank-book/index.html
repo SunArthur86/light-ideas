@@ -8,36 +8,59 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#fff;--surface:#f5f5f7;--text:#1d1d1f;--text2:#6e6e73;--accent:#4b5563;--border:#e5e5e5}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.06);height:48px;display:flex;align-items:center;padding:0 20px;gap:16px}
+:root{
+  --bg:#fff;--surface:#f5f5f7;--text:#1d1d1f;--text2:#6e6e73;
+  --accent:#4b5563;--border:#e5e5e5;--nav-bg:rgba(255,255,255,.78);
+  --sidebar-bg:#fff;--content-p:#333
+}
+[data-theme="dark"]{
+  --bg:#1a1a1a;--surface:#2a2a2a;--text:#e5e5e5;--text2:#999;
+  --accent:#9ca3af;--border:#333;--nav-bg:rgba(26,26,26,.85);
+  --sidebar-bg:#1a1a1a;--content-p:#ccc
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);height:48px;display:flex;align-items:center;padding:0 20px;gap:12px;transition:background .3s}
 nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
 nav .title{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.progress{position:fixed;top:48px;left:0;height:2px;background:var(--accent);z-index:101;transition:width .1s}
-.layout{display:flex;margin-top:48px;min-height:calc(100vh - 48px)}
-.sidebar{width:260px;border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 48px);position:sticky;top:48px;padding:12px 0}
+.toolbar{margin-left:auto;display:flex;align-items:center;gap:8px}
+.toolbar button{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;color:var(--text);font-weight:500;transition:all .2s}
+.toolbar button:hover{background:var(--accent);color:#fff}
+.toolbar button.active{background:var(--accent);color:#fff}
+.toolbar .theme-btn{font-size:16px;padding:2px 8px}
+.progress-wrap{position:fixed;top:48px;left:0;right:0;z-index:101;height:2px;background:var(--border)}
+.progress{height:100%;background:var(--accent);width:0;transition:width .15s}
+.progress-text{position:fixed;top:52px;right:16px;font-size:11px;color:var(--text2);z-index:101;font-weight:500;transition:color .3s}
+.layout{display:flex;margin-top:50px;min-height:calc(100vh - 50px)}
+.sidebar{width:260px;border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 50px);position:sticky;top:50px;padding:12px 0;background:var(--sidebar-bg);transition:background .3s}
 .sidebar .sec{padding:8px 20px 4px;font-size:11px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase}
 .sidebar .ch{display:block;padding:8px 20px;font-size:13px;color:var(--text2);text-decoration:none;transition:background .15s;cursor:pointer}
 .sidebar .ch:hover{background:var(--surface)}
 .sidebar .ch.active{background:rgba(75,85,99,.08);color:var(--accent);font-weight:600}
-.content{flex:1;max-width:700px;margin:0 auto;padding:48px 24px 120px}
+.content{flex:1;max-width:700px;margin:0 auto;padding:48px 24px 120px;transition:opacity .25s ease,transform .25s ease}
+.content.fade-out{opacity:0;transform:translateY(8px)}
+.content.fade-in{opacity:1;transform:translateY(0)}
 .content h1{font-family:'Noto Serif SC',Georgia,serif;font-size:26px;font-weight:700;margin-bottom:24px;line-height:1.3}
-.content p,.content li{font-family:'Noto Serif SC',Georgia,serif;font-size:17px;line-height:1.9;color:#333}
+.content p,.content li{font-family:'Noto Serif SC',Georgia,serif;line-height:1.9;color:var(--content-p);transition:font-size .2s}
+.content.size-s p,.content.size-s li{font-size:14px}
+.content.size-m p,.content.size-m li{font-size:17px}
+.content.size-l p,.content.size-l li{font-size:21px}
 .content h2{font-size:19px;margin:32px 0 16px;color:var(--text)}
 .welcome{text-align:center;padding:120px 24px}
 .welcome .emoji{font-size:64px;margin-bottom:24px}
 .welcome h2{font-size:24px;font-weight:600;margin-bottom:8px}
 .welcome p{color:var(--text2);margin-bottom:24px;line-height:1.7}
-.welcome .start{display:inline-block;padding:12px 28px;background:var(--accent);color:#fff;border-radius:100px;text-decoration:none;font-weight:500;font-size:15px}
+.welcome .start{display:inline-block;padding:12px 28px;background:var(--accent);color:#fff;border-radius:100px;text-decoration:none;font-weight:500;font-size:15px;transition:transform .15s}
+.welcome .start:hover{transform:scale(1.04)}
 .nav-btns{display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--border)}
-.nav-btns a{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+.nav-btns a{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500;transition:opacity .2s}
+.nav-btns a:hover{opacity:.7}
 .loading{text-align:center;padding:80px;color:var(--text2)}
 @media(max-width:860px){
-  .sidebar{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;width:100%;z-index:99;background:#fff}
+  .sidebar{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;width:100%;z-index:99;background:var(--sidebar-bg)}
   .sidebar.open{display:block}
   .menu-btn{display:block!important}
 }
-.menu-btn{display:none;background:none;border:none;font-size:20px;cursor:pointer;padding:4px}
+.menu-btn{display:none;background:none;border:none;font-size:20px;cursor:pointer;padding:4px;color:var(--text)}
 </style>
 </head>
 <body>
@@ -45,8 +68,15 @@ nav .title{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis
   <button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
   <a href="../index.html" class="back">← Light Ideas</a>
   <span class="title" id="navTitle">空白书</span>
+  <div class="toolbar">
+    <button class="size-btn" data-size="s" onclick="setFontSize('s')">小</button>
+    <button class="size-btn active" data-size="m" onclick="setFontSize('m')">中</button>
+    <button class="size-btn" data-size="l" onclick="setFontSize('l')">大</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
 </nav>
-<div class="progress" id="prog"></div>
+<div class="progress-wrap"><div class="progress" id="prog"></div></div>
+<div class="progress-text" id="progText">0%</div>
 <div class="layout">
   <div class="sidebar" id="sidebar">
     <div class="sec">🔹 遗忘篇</div>
@@ -56,7 +86,7 @@ nav .title{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis
     <div class="sec">⚪ 空白篇</div>
     <div id="sec3"></div>
   </div>
-  <div class="content" id="content">
+  <div class="content fade-in" id="content">
     <div class="welcome">
       <div class="emoji">📖</div>
       <h2>空白书</h2>
@@ -85,6 +115,26 @@ sections.forEach(s=>{
 });
 const content=document.getElementById('content');
 const cache={};
+/* --- Font Size --- */
+let currentSize='m';
+function setFontSize(size){
+  currentSize=size;
+  content.classList.remove('size-s','size-m','size-l');
+  content.classList.add('size-'+size);
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===size));
+  try{localStorage.setItem('bb-font-size',size)}catch(e){}
+}
+(function(){try{const s=localStorage.getItem('bb-font-size');if(s)setFontSize(s)}catch(e){}})();
+/* --- Theme --- */
+let darkMode=false;
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'');
+  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+  try{localStorage.setItem('bb-dark',darkMode?'1':'0')}catch(e){}
+}
+(function(){try{if(localStorage.getItem('bb-dark')==='1'){darkMode=true;toggleTheme()}}catch(e){}})();
+/* --- Load Chapter --- */
 async function loadCh(n){
   const pad=String(n).padStart(2,'0');
   if(cache[n])return cache[n];
@@ -93,7 +143,10 @@ async function loadCh(n){
   const t=await r.text();cache[n]=t;return t;
 }
 async function showCh(n){
-  content.innerHTML='<div class="loading">加载中...</div>';
+  /* fade out */
+  content.classList.remove('fade-in');
+  content.classList.add('fade-out');
+  await new Promise(r=>setTimeout(r,250));
   try{
     const md=await loadCh(n);
     content.innerHTML=marked.parse(md);
@@ -103,18 +156,30 @@ async function showCh(n){
     nav+=next?'<a href="#'+next+'">第'+next+'章 →</a>':'<span></span>';
     nav+='</div>';
     content.innerHTML+=nav;
+    /* restore font size class */
+    content.classList.remove('size-s','size-m','size-l');
+    content.classList.add('size-'+currentSize);
     document.getElementById('navTitle').textContent='第'+n+'章';
     document.querySelectorAll('.sidebar .ch').forEach(a=>a.classList.toggle('active',a.dataset.idx==n));
     window.scrollTo(0,0);
   }catch(e){content.innerHTML='<p style="color:red;text-align:center;padding:80px">章节加载失败</p>';}
+  /* fade in */
+  requestAnimationFrame(()=>{
+    content.classList.remove('fade-out');
+    content.classList.add('fade-in');
+  });
 }
 window.onhashchange=()=>{const h=location.hash;if(h&&h.length>1)showCh(parseInt(h.slice(1)));};
 if(location.hash&&location.hash.length>1)showCh(parseInt(location.hash.slice(1)));
-window.addEventListener('scroll',()=>{
+/* --- Progress --- */
+function updateProgress(){
   const s=document.documentElement.scrollTop;
   const h=document.documentElement.scrollHeight-window.innerHeight;
-  document.getElementById('prog').style.width=(h>0?s/h*100:0)+'%';
-});
+  const pct=h>0?Math.round(s/h*100):0;
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('progText').textContent=pct+'%';
+}
+window.addEventListener('scroll',updateProgress);
 </script>
 </body>
 </html>

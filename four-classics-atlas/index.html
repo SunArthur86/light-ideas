@@ -62,9 +62,32 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 .tl-year{font-size:10px;color:var(--text3)}.tl-text{font-size:11px;color:var(--text2);margin-top:1px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;z-index:2000;display:none}
 .toast.show{display:block}
-.leaflet-popup-content-wrapper{background:#1a1a1a!important;color:#e0e0e0!important;border-radius:8px!important;border:1px solid #333!important}
+.leaflet-popup-content-wrapper{background:#1a1a1a!important;color:#e0e0e0!important;border-radius:8px!important;border:1px solid #333!important;box-shadow:0 4px 20px rgba(0,0,0,.6)!important}
 .leaflet-popup-tip{background:#1a1a1a!important}
-.leaflet-popup-content{margin:8px 12px!important;font-size:12px!important}
+.leaflet-popup-content{margin:10px 14px!important;font-size:12px!important}
+.custom-popup{min-width:180px}
+.custom-popup .popup-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.custom-popup .popup-novel{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;color:#fff;margin-bottom:4px}
+.custom-popup .popup-desc{font-size:11px;color:#bbb;line-height:1.6;margin-top:6px}
+.custom-popup .popup-divider{height:1px;background:#333;margin:6px 0}
+/* === Map floating filter panel === */
+.map-filter-panel{position:absolute;top:10px;left:10px;z-index:400;display:flex;flex-direction:column;gap:3px;pointer-events:auto}
+.map-filter-btn{padding:5px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(15,15,15,.88);color:#aaa;font-size:11px;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:all .2s;font-family:'Noto Sans SC',sans-serif;white-space:nowrap;text-align:left;display:flex;align-items:center;gap:5px}
+.map-filter-btn:hover{background:rgba(30,30,30,.95);border-color:rgba(255,255,255,.25);color:#fff;transform:translateX(2px)}
+.map-filter-btn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.3)}
+.map-filter-btn.active{color:#fff;border-color:rgba(255,255,255,.35);font-weight:600}
+.map-filter-btn.active[data-nv="hlm"]{background:rgba(192,57,43,.8);border-color:#c0392b}.map-filter-btn.active[data-nv="hlm"] .dot{background:#e74c3c;border-color:#e74c3c}
+.map-filter-btn.active[data-nv="sgy"]{background:rgba(39,174,96,.8);border-color:#27ae60}.map-filter-btn.active[data-nv="sgy"] .dot{background:#2ecc71;border-color:#2ecc71}
+.map-filter-btn.active[data-nv="shz"]{background:rgba(41,128,185,.8);border-color:#2980b9}.map-filter-btn.active[data-nv="shz"] .dot{background:#3498db;border-color:#3498db}
+.map-filter-btn.active[data-nv="xyj"]{background:rgba(212,160,23,.8);border-color:#d4a017}.map-filter-btn.active[data-nv="xyj"] .dot{background:#f1c40f;border-color:#f1c40f}
+.map-filter-btn.active[data-nv="all"]{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.45);color:#fff}
+/* === Map floating stats panel === */
+.map-stats-panel{position:absolute;bottom:10px;right:10px;z-index:400;background:rgba(15,15,15,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;font-size:11px;color:#888;pointer-events:none}
+.map-stats-panel .num{color:#fff;font-weight:700;font-size:13px}
+.map-stats-panel .sep{margin:0 4px;color:#444}
+/* === Animated fly line === */
+.fly-line-animated{animation:flyDash .8s linear infinite}
+@keyframes flyDash{to{stroke-dashoffset:-30}}
 @media(max-width:768px){
   .sidebar{display:none;position:fixed;bottom:0;left:0;right:0;height:55vh;border-radius:16px 16px 0 0;border-left:none;border-top:1px solid var(--border);z-index:800;transform:translateY(100%);transition:transform .3s ease}
   .sidebar.open{display:flex;transform:translateY(0)}
@@ -103,7 +126,16 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text
 </div>
 <div class="filters" id="filters"></div>
 <div class="main">
-<div id="map"></div>
+<div id="map">
+<div class="map-filter-panel" id="mapFilterPanel">
+<button class="map-filter-btn active" data-nv="all" onclick="setMapFilter('all',this)"><span class="dot" style="background:linear-gradient(135deg,#c0392b,#27ae60,#2980b9,#d4a017);border:none"></span>全部名著</button>
+<button class="map-filter-btn" data-nv="hlm" onclick="setMapFilter('hlm',this)"><span class="dot"></span>红楼梦</button>
+<button class="map-filter-btn" data-nv="sgy" onclick="setMapFilter('sgy',this)"><span class="dot"></span>三国演义</button>
+<button class="map-filter-btn" data-nv="shz" onclick="setMapFilter('shz',this)"><span class="dot"></span>水浒传</button>
+<button class="map-filter-btn" data-nv="xyj" onclick="setMapFilter('xyj',this)"><span class="dot"></span>西游记</button>
+</div>
+<div class="map-stats-panel" id="mapStatsPanel"></div>
+</div>
 <div class="sidebar">
 <div class="stats" id="stats"></div>
 <div class="tabs">
@@ -478,7 +510,7 @@ function updateMarkers(){
     });
     const m=L.marker([l.lat,l.lng],{icon}).addTo(map);
     m.on('click',()=>showDetail(l.id));
-    m.bindPopup(`<b style="color:${nv.c}">${l.nm}</b><br><span style="color:#999">${nv.n}</span>`);
+    m.bindPopup(`<div class="custom-popup"><div class="popup-title" style="color:${nv.c}">${l.nm}</div><div class="popup-novel" style="background:${nv.c}">${nv.n}</div><div class="popup-divider"></div><div class="popup-desc">${l.desc||''}</div></div>`,{maxWidth:280,minWidth:200,className:'custom-popup-wrapper'});
     markers[l.id]=m;
   });
 }
@@ -508,23 +540,64 @@ function updateRoutes(){
 }
 
 // === CROSS CONNECTIONS ===
+let flyLineAnimFrame=null;
 function updateCross(){
   crossLayers.forEach(l=>map.removeLayer(l));crossLayers=[];
+  if(flyLineAnimFrame){cancelAnimationFrame(flyLineAnimFrame);flyLineAnimFrame=null;}
   if(filter!=='smy'&&filter!=='all')return;
   C.forEach(c=>{
     const f=locById(c.f),t=locById(c.t);if(!f||!t)return;
+    // Create SVG overlay for animated red dashed fly-line
     const line=L.polyline([[f.lat,f.lng],[t.lat,t.lng]],{
-      color:'#9b59b6',weight:1.5,opacity:.5,dashArray:'6 4'
+      color:'red',weight:2,opacity:.6,dashArray:'10 8',
+      className:'fly-line-leaflet'
     }).addTo(map);
-    line.bindPopup(`<b style="color:#9b59b6">${c.d}</b>`);
+    line.bindPopup(`<b style="color:#e74c3c">${c.d}</b>`);
     crossLayers.push(line);
+    // Create animated moving dot along the line
+    const dotIcon=L.divIcon({className:'',iconSize:[10,10],iconAnchor:[5,5],
+      html:'<div style="width:10px;height:10px;background:#ff4444;border-radius:50%;box-shadow:0 0 8px #ff4444,0 0 16px rgba(255,68,68,.4)"></div>'});
+    const dot=L.marker([f.lat,f.lng],{icon:dotIcon,interactive:false}).addTo(map);
+    crossLayers.push(dot);
+    // Animate the dot from start to end
+    let progress=0;
+    const speed=0.004+Math.random()*0.003; // varied speed per line
+    function animateDot(){
+      progress+=speed;
+      if(progress>1)progress=0;
+      const lat=f.lat+(t.lat-f.lat)*progress;
+      const lng=f.lng+(t.lng-f.lng)*progress;
+      dot.setLatLng([lat,lng]);
+      flyLineAnimFrame=requestAnimationFrame(animateDot);
+    }
+    animateDot();
   });
 }
 
 // === FILTER ===
 function setFilter(el){
   $$('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');
-  filter=el.dataset.f;updateMarkers();updateCross();renderStats();renderTabContent();
+  filter=el.dataset.f;updateMarkers();updateCross();renderStats();renderTabContent();updateMapStats();syncMapFilterBtns();
+}
+
+// === MAP OVERLAY FILTER ===
+function setMapFilter(nv,btn){
+  // Sync the sidebar filter
+  filter=nv;
+  $$('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f===nv));
+  $$('.map-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.nv===nv));
+  updateMarkers();updateCross();renderStats();renderTabContent();updateMapStats();
+}
+function syncMapFilterBtns(){
+  $$('.map-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.nv===filter));
+}
+
+// === MAP OVERLAY STATS ===
+function updateMapStats(){
+  const shown=filtered().filter(l=>isLocThemed(l)).length;
+  const total=LOCS.length;
+  const panel=document.getElementById('mapStatsPanel');
+  if(panel)panel.innerHTML=`📍 <span class="num">${shown}</span><span class="sep">/</span><span class="num">${total}</span> 地点`;
 }
 
 // === STATS ===
@@ -542,7 +615,7 @@ function renderStats(){
   }).join('');
 }
 let heatFilter='all';
-function setHeatFilter(k){heatFilter=k;updateMarkers();renderFilters();renderStats();renderTabContent();}
+function setHeatFilter(k){heatFilter=k;updateMarkers();renderFilters();renderStats();renderTabContent();updateMapStats();}
 function isLocThemed(l){
   if(heatFilter==='all')return true;
   const themes={
@@ -576,7 +649,7 @@ function renderLocList(){
 function flyTo(id){
   const l=locById(id);if(!l)return;
   selLoc=id;map.flyTo([l.lat,l.lng],8,{duration:1.5});
-  if(markers[id])markers[id].openPopup();
+  setTimeout(()=>{if(markers[id])markers[id].openPopup();},600);
   renderTabContent();
 }
 
@@ -758,7 +831,7 @@ function loadParams(){
 function showToast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
 
 // === INIT ===
-renderFilters();updateMarkers();updateCross();renderStats();renderTabContent();loadParams();
+renderFilters();updateMarkers();updateCross();renderStats();renderTabContent();updateMapStats();loadParams();
 
 // === CHARACTER TRAVEL ANIMATION ===
 let travelInterval=null,travelMarker=null,travelLine=null,travelDots=[];
