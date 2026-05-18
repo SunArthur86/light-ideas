@@ -406,7 +406,7 @@ function toggleTheme(){
   if(terrainMode)url='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',maxZ=17;
   else if(satMode)url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maxZ=18;
   else url=darkMode?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  currentTile=L.tileLayer(url,{maxZoom:maxZ,minZoom:2}).addTo(map);
+  currentTile=L.tileLayer(url,{maxZoom:maxZ,minZoom:2,errorTileUrl:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect fill="%23111" width="256" height="256"/></svg>'}).addTo(map);
   document.getElementById('themeBtn').textContent=terrainMode?'⛰️':satMode?'🛰️':darkMode?'🌙':'☀️';
   document.getElementById('themeBtn').title=terrainMode?'地形模式':satMode?'卫星模式':darkMode?'暗色模式':'亮色模式';
 }

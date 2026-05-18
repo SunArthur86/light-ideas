@@ -3,105 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>😂 喜剧精读</title>
+<title>喜剧精读 · 50本</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#faf8f5;--card:#fff;--text:#1a1a1a;--dim:#999;--border:#e8e4df;--accent:#333}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.top{position:sticky;top:0;z-index:50;background:rgba(250,248,245,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px}
-.top-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+:root{--bg:#fafafa;--card:#fff;--text:#1d1d1f;--dim:#86868b;--border:#e5e5e5;--accent:#1d1d1f}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;min-height:100vh}
+.top{position:sticky;top:0;z-index:50;background:rgba(250,250,250,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:16px}
 .top a{color:var(--dim);text-decoration:none;font-size:13px}
-.top h1{font-size:18px;font-weight:700}
-.stats{font-size:12px;color:var(--dim);margin-left:auto}
-.filters{padding:8px 20px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap}
-.fbtn{background:var(--card);border:1px solid var(--border);padding:4px 10px;border-radius:14px;cursor:pointer;font-size:11px;transition:all .2s;font-family:inherit}
-.fbtn:hover,.fbtn.on{border-color:var(--accent);background:var(--accent);color:#fff}
-.search-box{padding:12px 20px;border-bottom:1px solid var(--border)}
-.search-box input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--card);outline:none}
-.search-box input:focus{border-color:var(--accent)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:20px;max-width:1200px;margin:0 auto}
-.bcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
-.bcard:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.08)}
-.bcard .flag{font-size:28px;float:right;margin:-4px -4px 0 0}
-.bcard .btitle{font-size:16px;font-weight:700;margin-bottom:4px;line-height:1.4}
-.bcard .bauthor{font-size:13px;color:var(--dim);margin-bottom:8px}
-.bcard .bmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.bcard .bmeta span{font-size:11px;background:#f5f3f0;padding:2px 8px;border-radius:4px}
-.bcard .stars{color:#f0a500;font-size:13px}
-.bcard .indicators{display:flex;gap:6px;margin-top:8px}
-.bcard .ind{font-size:10px;padding:2px 8px;border-radius:10px}
-.bcard .ind.has{background:#e8f5e9;color:#2e7d32}
-.bcard .ind.no{background:#f5f5f5;color:#bbb}
-.empty{text-align:center;padding:60px;color:var(--dim);font-size:14px}
-@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.top h1{font-size:20px;font-weight:700;flex:1}
+.search{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:14px;width:200px;outline:none}
+.search:focus{border-color:#e6a817}
+.tabs{padding:12px 24px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:#fff}
+.tab{padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:none;font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit}
+.tab:hover{background:#f5f5f7}
+.tab.on{background:#e6a817;color:#fff;border-color:#e6a817}
+.stats{padding:16px 24px;font-size:13px;color:var(--dim)}
+.stats b{color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:16px 24px 40px}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;transition:all .3s;cursor:pointer;border-left:4px solid #e6a817}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.card .num{font-size:11px;color:#e6a817;font-weight:700;margin-bottom:4px}
+.card .title{font-size:16px;font-weight:600;margin-bottom:2px}
+.card .en{font-size:12px;color:var(--dim);margin-bottom:8px}
+.card .meta{font-size:12px;color:var(--dim);display:flex;gap:6px;flex-wrap:wrap}
+.card .meta span{background:#fef9e7;padding:2px 8px;border-radius:8px}
 </style>
 </head>
 <body>
 <div class="top">
-<div class="top-row">
-<a href="../index.html">← 首页</a>
+<a href="../index.html">← 返回</a>
 <h1>😂 喜剧精读</h1>
-<span class="stats" id="stats">50本 · 12国 · 2400年·6大类型</span>
+<input class="search" placeholder="搜索书名、作者..." oninput="render()">
 </div>
-</div>
-<div class="search-box"><input id="search" placeholder="搜索书名或作者..." oninput="doSearch()"></div>
-<div class="filters">
-<button class="fbtn on" onclick="resetFilter(this)">全部(50)</button>
-<button class="fbtn" onclick="filterCountry('俄国',this)">🇷🇺 俄国</button><button class="fbtn" onclick="filterCountry('古希腊',this)">🇬🇷 古希腊</button><button class="fbtn" onclick="filterCountry('古罗马',this)">📚 古罗马</button><button class="fbtn" onclick="filterCountry('奥地利/捷克',this)">📚 奥地利/捷克</button><button class="fbtn" onclick="filterCountry('德国',this)">🇩🇪 德国</button><button class="fbtn" onclick="filterCountry('意大利',this)">🇮🇹 意大利</button><button class="fbtn" onclick="filterCountry('捷克',this)">🇨🇿 捷克</button><button class="fbtn" onclick="filterCountry('法国',this)">🇫🇷 法国</button><button class="fbtn" onclick="filterCountry('爱尔兰',this)">🇮🇪 爱尔兰</button><button class="fbtn" onclick="filterCountry('英国',this)">🇬🇧 英国</button><button class="fbtn" onclick="filterCountry('英国/爱尔兰',this)">📚 英国/爱尔兰</button><button class="fbtn" onclick="filterCountry('西班牙',this)">🇪🇸 西班牙</button>
-</div>
-<div class="filters" style="border-bottom:1px solid var(--border)">
-<button class="fbtn on" onclick="resetFilter(this)">全部类型</button>
-<button class="fbtn" onclick="filterGenre('侦探喜剧',this)">侦探喜剧</button><button class="fbtn" onclick="filterGenre('反战喜剧',this)">反战喜剧</button><button class="fbtn" onclick="filterGenre('哥特讽刺',this)">哥特讽刺</button><button class="fbtn" onclick="filterGenre('哲学讽刺',this)">哲学讽刺</button><button class="fbtn" onclick="filterGenre('哲理惊悚喜剧',this)">哲理惊悚喜剧</button><button class="fbtn" onclick="filterGenre('哲理讽刺',this)">哲理讽刺</button><button class="fbtn" onclick="filterGenre('喜剧小说',this)">喜剧小说</button><button class="fbtn" onclick="filterGenre('奇幻喜剧',this)">奇幻喜剧</button><button class="fbtn" onclick="filterGenre('官场讽刺',this)">官场讽刺</button><button class="fbtn" onclick="filterGenre('幽默小说',this)">幽默小说</button><button class="fbtn" onclick="filterGenre('幽默日记',this)">幽默日记</button><button class="fbtn" onclick="filterGenre('幽默游记',this)">幽默游记</button><button class="fbtn" onclick="filterGenre('性格喜剧',this)">性格喜剧</button><button class="fbtn" onclick="filterGenre('悲喜剧',this)">悲喜剧</button><button class="fbtn" onclick="filterGenre('战争讽刺',this)">战争讽刺</button><button class="fbtn" onclick="filterGenre('政治喜剧',this)">政治喜剧</button><button class="fbtn" onclick="filterGenre('政治讽刺',this)">政治讽刺</button><button class="fbtn" onclick="filterGenre('文学讽刺',this)">文学讽刺</button><button class="fbtn" onclick="filterGenre('民俗喜剧',this)">民俗喜剧</button><button class="fbtn" onclick="filterGenre('法庭讽刺',this)">法庭讽刺</button><button class="fbtn" onclick="filterGenre('流浪喜剧',this)">流浪喜剧</button><button class="fbtn" onclick="filterGenre('爱情喜剧',this)">爱情喜剧</button><button class="fbtn" onclick="filterGenre('田园喜剧',this)">田园喜剧</button><button class="fbtn" onclick="filterGenre('短篇喜剧',this)">短篇喜剧</button><button class="fbtn" onclick="filterGenre('社会喜剧',this)">社会喜剧</button><button class="fbtn" onclick="filterGenre('绅士喜剧',this)">绅士喜剧</button><button class="fbtn" onclick="filterGenre('荒诞喜剧',this)">荒诞喜剧</button><button class="fbtn" onclick="filterGenre('荒诞寓言',this)">荒诞寓言</button><button class="fbtn" onclick="filterGenre('荒诞幽默',this)">荒诞幽默</button><button class="fbtn" onclick="filterGenre('荒诞童话',this)">荒诞童话</button><button class="fbtn" onclick="filterGenre('荒诞讽刺',this)">荒诞讽刺</button><button class="fbtn" onclick="filterGenre('讽刺喜剧',this)">讽刺喜剧</button><button class="fbtn" onclick="filterGenre('讽刺寓言',this)">讽刺寓言</button><button class="fbtn" onclick="filterGenre('误会喜剧',this)">误会喜剧</button><button class="fbtn" onclick="filterGenre('问题喜剧',this)">问题喜剧</button>
-</div>
+<div class="tabs" id="ttabs"></div>
+<div class="stats" id="stats"></div>
 <div class="grid" id="grid"></div>
 <script>
-const B=[{"title": "利西翠妲", "author": "Aristophanes", "country": "古希腊", "flag": "🇬🇷", "year": "-411", "genre": "政治喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "蛙", "author": "Aristophanes", "country": "古希腊", "flag": "🇬🇷", "year": "-405", "genre": "文学讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "云", "author": "Aristophanes", "country": "古希腊", "flag": "🇬🇷", "year": "-423", "genre": "哲学讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "马蜂", "author": "Aristophanes", "country": "古希腊", "flag": "🇬🇷", "year": "-422", "genre": "法庭讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "安菲特律翁", "author": "Plautus", "country": "古罗马", "flag": "📚", "year": "-186", "genre": "误会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "十日谈（选）", "author": "Boccaccio", "country": "意大利", "flag": "🇮🇹", "year": "1353", "genre": "短篇喜剧", "stars": "★★★★★", "importance": 5, "has_note": false, "has_text": true}, {"title": "坎特伯雷故事集（选）", "author": "Chaucer", "country": "英国", "flag": "🇬🇧", "year": "1387", "genre": "短篇喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "堂吉诃德", "author": "Cervantes", "country": "西班牙", "flag": "🇪🇸", "year": "1605", "genre": "讽刺喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "巨人传", "author": "Rabelais", "country": "法国", "flag": "🇫🇷", "year": "1534", "genre": "荒诞幽默", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "驯悍记", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1592", "genre": "爱情喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "仲夏夜之梦", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1596", "genre": "奇幻喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "威尼斯商人", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1597", "genre": "问题喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "第十二夜", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1602", "genre": "爱情喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "无事生非", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1599", "genre": "爱情喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "皆大欢喜", "author": "Shakespeare", "country": "英国", "flag": "🇬🇧", "year": "1599", "genre": "田园喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "伪君子", "author": "Molière", "country": "法国", "flag": "🇫🇷", "year": "1664", "genre": "性格喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "悭吝人", "author": "Molière", "country": "法国", "flag": "🇫🇷", "year": "1668", "genre": "性格喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "唐璜", "author": "Molière", "country": "法国", "flag": "🇫🇷", "year": "1665", "genre": "讽刺喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "无病呻吟", "author": "Molière", "country": "法国", "flag": "🇫🇷", "year": "1673", "genre": "性格喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "愤世嫉俗", "author": "Molière", "country": "法国", "flag": "🇫🇷", "year": "1666", "genre": "性格喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "老实人", "author": "Voltaire", "country": "法国", "flag": "🇫🇷", "year": "1759", "genre": "哲理讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "项狄传", "author": "Sterne", "country": "英国", "flag": "🇬🇧", "year": "1759", "genre": "荒诞幽默", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "汤姆·琼斯", "author": "Fielding", "country": "英国", "flag": "🇬🇧", "year": "1749", "genre": "喜剧小说", "stars": "★★★★★", "importance": 5, "has_note": false, "has_text": true}, {"title": "罗德里克·兰登历险记", "author": "Smollett", "country": "英国", "flag": "🇬🇧", "year": "1748", "genre": "流浪喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "乌托邦", "author": "Thomas More", "country": "英国", "flag": "🇬🇧", "year": "1516", "genre": "讽刺寓言", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "傲慢与偏见", "author": "Jane Austen", "country": "英国", "flag": "🇬🇧", "year": "1813", "genre": "社会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "爱玛", "author": "Jane Austen", "country": "英国", "flag": "🇬🇧", "year": "1815", "genre": "社会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "诺桑觉寺", "author": "Jane Austen", "country": "英国", "flag": "🇬🇧", "year": "1817", "genre": "哥特讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "匹克威克外传", "author": "Dickens", "country": "英国", "flag": "🇬🇧", "year": "1836", "genre": "幽默小说", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "钦差大臣", "author": "Gogol", "country": "俄国", "flag": "🇷🇺", "year": "1836", "genre": "官场讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "爱丽丝漫游奇境记", "author": "Carroll", "country": "英国", "flag": "🇬🇧", "year": "1865", "genre": "荒诞童话", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "三人同舟", "author": "Jerome K. Jerome", "country": "英国", "flag": "🇬🇧", "year": "1889", "genre": "幽默游记", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "小人物日记", "author": "Grossmith", "country": "英国", "flag": "🇬🇧", "year": "1892", "genre": "幽默日记", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "不可儿戏", "author": "Oscar Wilde", "country": "英国/爱尔兰", "flag": "📚", "year": "1895", "genre": "社会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "温夫人的扇子", "author": "Oscar Wilde", "country": "英国/爱尔兰", "flag": "📚", "year": "1892", "genre": "社会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "好兵帅克", "author": "Hašek", "country": "捷克", "flag": "🇨🇿", "year": "1923", "genre": "战争讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "变形记", "author": "Kafka", "country": "奥地利/捷克", "flag": "📚", "year": "1915", "genre": "荒诞寓言", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "我的仆人吉夫斯", "author": "P.G. Wodehouse", "country": "英国", "flag": "🇬🇧", "year": "1919", "genre": "绅士喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "星期四的人", "author": "G.K. Chesterton", "country": "英国", "flag": "🇬🇧", "year": "1908", "genre": "哲理惊悚喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "诺丁山的拿破仑", "author": "G.K. Chesterton", "country": "英国", "flag": "🇬🇧", "year": "1904", "genre": "政治讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "吹牛大王历险记", "author": "Raspe", "country": "德国", "flag": "🇩🇪", "year": "1785", "genre": "荒诞喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "福尔摩斯短篇集", "author": "Conan Doyle", "country": "英国", "flag": "🇬🇧", "year": "1892", "genre": "侦探喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "佩雷格林·皮克尔历险记", "author": "Smollett", "country": "英国", "flag": "🇬🇧", "year": "1751", "genre": "流浪喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "费迪南德伯爵历险记", "author": "Smollett", "country": "英国", "flag": "🇬🇧", "year": "1753", "genre": "流浪喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "吉尔·布拉斯", "author": "Le Sage", "country": "法国", "flag": "🇫🇷", "year": "1715", "genre": "流浪喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "西方世界的花花公子", "author": "Synge", "country": "爱尔兰", "flag": "🇮🇪", "year": "1907", "genre": "民俗喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "武器与人", "author": "Bernard Shaw", "country": "英国/爱尔兰", "flag": "📚", "year": "1894", "genre": "反战喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "卖花女", "author": "Bernard Shaw", "country": "英国/爱尔兰", "flag": "📚", "year": "1913", "genre": "社会喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "樱桃园", "author": "Chekhov", "country": "俄国", "flag": "🇷🇺", "year": "1904", "genre": "悲喜剧", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}, {"title": "鼻子（果戈理短篇）", "author": "Gogol", "country": "俄国", "flag": "🇷🇺", "year": "1836", "genre": "荒诞讽刺", "stars": "★★★★★", "importance": 5, "has_note": true, "has_text": true}];
-let curCountry='',curGenre='',curSearch='';
-function render(list){
-const g=document.getElementById('grid');
-if(!list.length){g.innerHTML='<div class="empty">没有匹配的书籍</div>';return}
-g.innerHTML=list.map(b=>`<div class="bcard">
-<div class="flag">${b.flag}</div>
-<div class="btitle">${b.title}</div>
-<div class="bauthor">${b.author} · ${b.year}</div>
-<div class="bmeta"><span>${b.country}</span>${b.genre?`<span>${b.genre}</span>`:''}
-</div>
-<div class="stars">${b.stars}</div>
-<div class="indicators">
-<span class="ind ${b.has_text?'has':'no'}">${b.has_text?'📖 原文':'无原文'}</span>
-<span class="ind ${b.has_note?'has':'no'}">${b.has_note?'📝 笔记':'无笔记'}</span>
-</div>
-</div>`).join('');
-document.getElementById('stats').textContent=`${list.length}/${B.length}本 · 2400年·6大类型`;
+var B=[{"t": "利西翠妲（Lysistrata）", "e": "Lysistrata", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 411, "tp": "旧喜剧（Old Comedy）/ 反战性罢工喜剧", "f": "01_利西翠妲.md"}, {"t": "蛙（The Frogs）", "e": "The Frogs", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 405, "tp": "旧喜剧（Old Comedy）/ 文学讽刺喜剧", "f": "02_蛙.md"}, {"t": "云（The Clouds）", "e": "The Clouds", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 423, "tp": "旧喜剧（Old Comedy）/ 哲学讽刺喜剧", "f": "03_云.md"}, {"t": "马蜂（The Wasps）", "e": "The Wasps", "a": "阿里斯托芬（Aristophanes）", "c": "古希腊（雅典）", "y": 422, "tp": "旧喜剧（Old Comedy）/ 政治讽刺喜剧", "f": "04_马蜂.md"}, {"t": "安菲特律翁（Amphitryon）", "e": "Amphitryon", "a": "普劳图斯（Titus Maccius Plautus）", "c": "古罗马", "y": 206, "tp": "罗马新喜剧（Fabula Palliata）/ 身份错位喜剧", "f": "05_安菲特律翁.md"}, {"t": "十日谈（The Decameron）", "e": "The Decameron", "a": "乔万尼·薄伽丘（Giovanni Boccaccio）", "c": "意大利（佛罗伦萨）", "y": 1348, "tp": "短篇小说集 / 框架叙事（Frame Tale）/ 市井喜剧", "f": "06_十日谈.md"}, {"t": "坎特伯雷故事集（The Canterbury Tales）", "e": "The Canterbury Tales", "a": "杰弗里·乔叟（Geoffrey Chaucer）", "c": "英格兰", "y": 1387, "tp": "框架叙事 / 诗体短篇小说集 / 市井喜剧与讽刺", "f": "07_坎特伯雷故事集.md"}, {"t": "堂吉诃德（Don Quixote）", "e": "Don Quixote", "a": "米格尔·德·塞万提斯·萨阿维德拉（Miguel de Cervantes Saavedra）", "c": "西班牙", "y": 1605, "tp": "反骑士传奇（Parody of Chivalric Romance）/ 散文小说 / 哲理性喜剧", "f": "08_堂吉诃德.md"}, {"t": "巨人传（Gargantua and Pantagruel）", "e": "Gargantua and Pantagruel", "a": "", "c": "", "y": 0, "tp": "", "f": "09_巨人传.md"}, {"t": "驯悍记（The Taming of the Shrew）", "e": "The Taming of the Shrew", "a": "", "c": "", "y": 0, "tp": "", "f": "10_驯悍记.md"}, {"t": "仲夏夜之梦 (A Midsummer Night's Dream) 精读笔记", "e": "A Midsummer Night's Dream", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1595, "tp": "浪漫喜剧 / 神仙喜剧", "f": "11_仲夏夜之梦.md"}, {"t": "威尼斯商人 (The Merchant of Venice) 精读笔记", "e": "The Merchant of Venice", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1596, "tp": "浪漫喜剧 / 问题喜剧（problem comedy）", "f": "12_威尼斯商人.md"}, {"t": "第十二夜 (Twelfth Night, or What You Will) 精读笔记", "e": "Twelfth Night, or What You Will", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1601, "tp": "浪漫喜剧 / 跨性别喜剧", "f": "13_第十二夜.md"}, {"t": "无事生非 (Much Ado About Nothing) 精读笔记", "e": "Much Ado About Nothing", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1598, "tp": "浪漫喜剧 / 风俗喜剧（comedy of manners）", "f": "14_无事生非.md"}, {"t": "皆大欢喜 (As You Like It) 精读笔记", "e": "As You Like It", "a": "威廉·莎士比亚 (William Shakespeare)", "c": "英国", "y": 1599, "tp": "田园喜剧 / 牧歌喜剧（pastoral comedy）", "f": "15_皆大欢喜.md"}, {"t": "伪君子 (Tartuffe) 精读笔记", "e": "Tartuffe", "a": "莫里哀 (Molière)，原名让-巴蒂斯特·波克兰 (Jean-Baptiste Poquelin)", "c": "法国", "y": 1664, "tp": "性格喜剧 / 社会讽刺喜剧（comédie de caractère）", "f": "16_伪君子.md"}, {"t": "悭吝人 (L'Avare) 精读笔记", "e": "L'Avare", "a": "莫里哀 (Molière)", "c": "法国", "y": 1668, "tp": "性格喜剧（comédie de caractère）", "f": "17_悭吝人.md"}, {"t": "唐璜 (Dom Juan) 精读笔记", "e": "Dom Juan", "a": "莫里哀 (Molière)", "c": "法国", "y": 1665, "tp": "性格喜剧 / 哲学喜剧 / 传奇喜剧（comédie héroïque）", "f": "18_唐璜.md"}, {"t": "无病呻吟（The Imaginary Invalid / Le Malade Imaginaire）", "e": "The Imaginary Invalid / Le Malade Imaginaire", "a": "", "c": "", "y": 0, "tp": "", "f": "19_无病呻吟.md"}, {"t": "愤世嫉俗（The Misanthrope / Le Misanthrope）", "e": "The Misanthrope / Le Misanthrope", "a": "", "c": "", "y": 0, "tp": "", "f": "20_愤世嫉俗.md"}, {"t": "《老实人》（Candide）精读笔记", "e": "Candide", "a": "伏尔泰（Voltaire，本名 François-Marie Arouet）", "c": "法国", "y": 1759, "tp": "哲理讽刺故事（Conte philosophique）", "f": "21_老实人_笔记.md"}, {"t": "《项狄传》（The Life and Opinions of Tristram Shandy, Gentleman）精读笔记", "e": "The Life and Opinions of Tristram Shandy, Gentleman", "a": "劳伦斯·斯特恩（Laurence Sterne）", "c": "英国", "y": 1759, "tp": "元小说/实验喜剧小说", "f": "22_项狄传_笔记.md"}, {"t": "《汤姆·琼斯》（The History of Tom Jones, a Foundling）精读笔记", "e": "The History of Tom Jones, a Foundling", "a": "亨利·菲尔丁（Henry Fielding）", "c": "英国", "y": 1749, "tp": "喜剧小说/流浪汉传奇（Comic Epic in Prose）", "f": "23_汤姆琼斯_笔记.md"}, {"t": "《罗德里克·兰登历险记》（The Adventures of Roderick Random）精读笔记", "e": "The Adventures of Roderick Random", "a": "托比亚斯·斯莫莱特（Tobias Smollett）", "c": "英国（苏格兰裔）", "y": 1748, "tp": "流浪汉小说（Picaresque novel）", "f": "24_罗德里克兰登历险记_笔记.md"}, {"t": "《乌托邦》（Utopia）精读笔记", "e": "Utopia", "a": "托马斯·莫尔（Thomas More）", "c": "英国", "y": 1516, "tp": "政治讽刺/理想国对话录", "f": "25_乌托邦_笔记.md"}, {"t": "《傲慢与偏见》（Pride and Prejudice）精读笔记", "e": "Pride and Prejudice", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1796, "tp": "世态喜剧小说（Comedy of manners）", "f": "26_傲慢与偏见_笔记.md"}, {"t": "《爱玛》（Emma）精读笔记", "e": "Emma", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1815, "tp": "世态喜剧小说（Comedy of manners）", "f": "27_爱玛_笔记.md"}, {"t": "《诺桑觉寺》（Northanger Abbey）精读笔记", "e": "Northanger Abbey", "a": "简·奥斯汀（Jane Austen）", "c": "英国", "y": 1803, "tp": "哥特小说讽刺/世态喜剧（Parody of Gothic novel / Comedy of manners）", "f": "28_诺桑觉寺_笔记.md"}, {"t": "匹克威克外传（The Pickwick Papers）", "e": "The Pickwick Papers", "a": "", "c": "", "y": 0, "tp": "", "f": "29_匹克威克外传.md"}, {"t": "钦差大臣（The Government Inspector / Ревизор）", "e": "The Government Inspector / Ревизор", "a": "", "c": "", "y": 0, "tp": "", "f": "30_钦差大臣.md"}, {"t": "爱丽丝漫游奇境记（Alice's Adventures in Wonderland）", "e": "Alice's Adventures in Wonderland", "a": "", "c": "", "y": 0, "tp": "", "f": "31_爱丽丝漫游奇境记.md"}, {"t": "三人同舟（Three Men in a Boat）", "e": "Three Men in a Boat", "a": "", "c": "", "y": 0, "tp": "", "f": "32_三人同舟.md"}, {"t": "小人物日记（The Diary of a Nobody）", "e": "The Diary of a Nobody", "a": "", "c": "", "y": 0, "tp": "", "f": "33_小人物日记.md"}, {"t": "不可儿戏（The Importance of Being Earnest）", "e": "The Importance of Being Earnest", "a": "", "c": "", "y": 0, "tp": "", "f": "34_不可儿戏.md"}, {"t": "温夫人的扇子（Lady Windermere's Fan）", "e": "Lady Windermere's Fan", "a": "", "c": "", "y": 0, "tp": "", "f": "35_温夫人的扇子.md"}, {"t": "好兵帅克（The Good Soldier Švejk / Osudy dobrého vojáka Švejka）", "e": "The Good Soldier Švejk / Osudy dobrého vojáka Švejka", "a": "", "c": "", "y": 0, "tp": "", "f": "36_好兵帅克.md"}, {"t": "变形记（The Metamorphosis / Die Verwandlung）", "e": "The Metamorphosis / Die Verwandlung", "a": "", "c": "", "y": 0, "tp": "", "f": "37_变形记.md"}, {"t": "我的仆人吉夫斯（My Man Jeeves）", "e": "My Man Jeeves", "a": "", "c": "", "y": 0, "tp": "", "f": "38_我的仆人吉夫斯.md"}, {"t": "星期四的人（The Man Who Was Thursday）", "e": "The Man Who Was Thursday", "a": "", "c": "", "y": 0, "tp": "", "f": "39_星期四的人.md"}, {"t": "诺丁山的拿破仑（The Napoleon of Notting Hill）", "e": "The Napoleon of Notting Hill", "a": "", "c": "", "y": 0, "tp": "", "f": "40_诺丁山的拿破仑.md"}, {"t": "吹牛大王历险记（Baron Munchausen's Narrative）", "e": "Baron Munchausen's Narrative", "a": "", "c": "", "y": 0, "tp": "", "f": "41_吹牛大王历险记.md"}, {"t": "福尔摩斯短篇集（The Adventures of Sherlock Holmes）", "e": "The Adventures of Sherlock Holmes", "a": "", "c": "", "y": 0, "tp": "", "f": "42_福尔摩斯短篇集.md"}, {"t": "佩雷格林·皮克尔历险记（The Adventures of Peregrine Pickle）", "e": "The Adventures of Peregrine Pickle", "a": "", "c": "", "y": 0, "tp": "", "f": "43_佩雷格林·皮克尔历险记.md"}, {"t": "费迪南德伯爵历险记（The Adventures of Ferdinand Count Fathom）", "e": "The Adventures of Ferdinand Count Fathom", "a": "", "c": "", "y": 0, "tp": "", "f": "44_费迪南德伯爵历险记.md"}, {"t": "吉尔·布拉斯（Gil Blas）", "e": "Gil Blas", "a": "", "c": "", "y": 0, "tp": "", "f": "45_吉尔·布拉斯.md"}, {"t": "西方世界的花花公子（The Playboy of the Western World）", "e": "The Playboy of the Western World", "a": "", "c": "", "y": 0, "tp": "", "f": "46_西方世界的花花公子.md"}, {"t": "武器与人（Arms and the Man）", "e": "Arms and the Man", "a": "", "c": "", "y": 0, "tp": "", "f": "47_武器与人.md"}, {"t": "卖花女（Pygmalion）", "e": "Pygmalion", "a": "", "c": "", "y": 0, "tp": "", "f": "48_卖花女.md"}, {"t": "樱桃园（The Cherry Orchard / Вишнёвый сад）", "e": "The Cherry Orchard / Вишнёвый сад", "a": "", "c": "", "y": 0, "tp": "", "f": "49_樱桃园.md"}, {"t": "鼻子（The Nose / Нос）", "e": "The Nose / Нос", "a": "", "c": "", "y": 0, "tp": "", "f": "50_鼻子（果戈理短篇）.md"}];
+var types=["世态喜剧", "其他", "反骑士", "哲理讽刺", "喜剧小说", "性格喜剧", "政治讽刺", "旧喜剧", "框架叙事", "流浪汉小说", "浪漫喜剧", "田园喜剧", "罗马新喜剧"];
+var curT='全部';
+function init(){
+  var el=document.getElementById('ttabs');
+  var h='<button class="tab on" onclick="setT(this)">全部</button>';
+  types.forEach(function(t){h+='<button class="tab" onclick="setT(this)">'+t+'</button>'});
+  el.innerHTML=h;render();
 }
-function filterCountry(c,btn){
-curCountry=c;curGenre='';curSearch='';
-document.querySelectorAll('.filters').forEach(f=>f.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on')));
-btn.classList.add('on');
-render(B.filter(b=>b.country===c));
+function setT(el){
+  curT=el.textContent.trim();
+  el.parentNode.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
+  el.classList.add('on');render();
 }
-function filterGenre(g,btn){
-curGenre=g;curCountry='';curSearch='';
-document.querySelectorAll('.filters').forEach(f=>f.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on')));
-btn.classList.add('on');
-render(B.filter(b=>b.genre===g));
+function render(){
+  var q=document.querySelector('.search').value.toLowerCase();
+  var list=B.filter(function(b){
+    if(curT!=='全部'&&b.st!==curT)return false;
+    if(q&&!((b.t+b.e+b.a+b.c).toLowerCase().indexOf(q)>=0))return false;
+    return true;
+  });
+  document.getElementById('stats').innerHTML='共 <b>'+list.length+'</b> 本喜剧名著';
+  var g=document.getElementById('grid');
+  if(!list.length){g.innerHTML='<div style="text-align:center;padding:60px;color:#86868b">没有匹配的书籍</div>';return}
+  g.innerHTML=list.map(function(b,i){return '<div class="card"><div class="num">#'+(i+1)+'</div><div class="title">'+b.t+'</div><div class="en">'+b.e+'</div><div class="meta"><span>'+b.a+'</span><span>'+b.c+'</span><span>'+(b.y?'约'+b.y+'年':'')+'</span><span>'+b.st+'</span></div></div>'}).join('');
 }
-function resetFilter(btn){
-curCountry='';curGenre='';curSearch='';
-document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-btn.classList.add('on');
-document.getElementById('search').value='';
-render(B);
-}
-function doSearch(){
-curSearch=document.getElementById('search').value.toLowerCase();
-let list=B;
-if(curCountry)list=list.filter(b=>b.country===curCountry);
-if(curGenre)list=list.filter(b=>b.genre===curGenre);
-if(curSearch)list=list.filter(b=>b.title.toLowerCase().includes(curSearch)||b.author.toLowerCase().includes(curSearch));
-render(list);
-}
-render(B);
+init();
 </script>
 </body>
 </html>
