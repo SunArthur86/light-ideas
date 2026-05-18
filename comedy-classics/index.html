@@ -87,6 +87,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <input class="search" id="searchInput" placeholder="搜索书名、作者..." oninput="render()">
 <span class="search-count" id="searchCount"></span>
 </div>
+<button onclick="randomBook()" style="background:var(--card);border:1px solid var(--border);color:var(--accent);padding:7px 14px;border-radius:20px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap">🎲 随机一本</button>
 </div>
 
 <!-- Tabs -->
@@ -282,6 +283,21 @@ function closeModal(){
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape')closeModal();
 });
+
+// 随机推荐
+function randomBook(){
+  var idx=Math.floor(Math.random()*B.length);
+  openModal(idx);
+}
+
+// 阅读进度 (localStorage)
+var comedyRead=JSON.parse(localStorage.getItem('comedy-read')||'[]');
+function markComedyRead(idx){
+  if(comedyRead.indexOf(idx)<0){comedyRead.push(idx);localStorage.setItem('comedy-read',JSON.stringify(comedyRead))}
+}
+// 在openModal中标记已读
+var _origOpen=openModal;
+openModal=function(idx){markComedyRead(idx);_origOpen(idx)};
 
 init();
 </script>

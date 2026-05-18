@@ -116,6 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <a href="../index.html">← 返回</a>
 <h1>📚 世界名著精读</h1>
 <input class="search" placeholder="搜索书名、作者..." oninput="render()">
+<button onclick="randomClassic()" style="background:#fff;border:1px solid #e5e5e5;color:var(--blue);padding:7px 14px;border-radius:20px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap">🎲 随机一本</button>
 </div>
 <div class="tabs" id="ctabs"></div>
 <div class="stats" id="stats"></div>
@@ -303,6 +304,20 @@ function closeModal(e){
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape') closeModal();
 });
+
+/* 随机推荐 */
+function randomClassic(){
+  var idx=Math.floor(Math.random()*B.length);
+  openModal(B[idx]);
+}
+
+/* 阅读进度持久化 */
+var wcRead=JSON.parse(localStorage.getItem('wc-read')||'[]');
+function markWcRead(title){
+  if(wcRead.indexOf(title)<0){wcRead.push(title);localStorage.setItem('wc-read',JSON.stringify(wcRead))}
+}
+var _origOM=openModal;
+openModal=function(b){markWcRead(b.t||'');_origOM(b)};
 
 init();
 </script>

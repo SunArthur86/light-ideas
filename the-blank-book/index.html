@@ -73,6 +73,7 @@ nav .title{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis
     <button class="size-btn active" data-size="m" onclick="setFontSize('m')">中</button>
     <button class="size-btn" data-size="l" onclick="setFontSize('l')">大</button>
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <button class="theme-btn" onclick="toggleBookmark()" id="bmBtn" title="书签">🔖</button>
   </div>
 </nav>
 <div class="progress-wrap"><div class="progress" id="prog"></div></div>
@@ -180,6 +181,26 @@ function updateProgress(){
   document.getElementById('progText').textContent=pct+'%';
 }
 window.addEventListener('scroll',updateProgress);
+/* --- 书签功能 --- */
+var bookmarks=JSON.parse(localStorage.getItem('bb-bookmarks')||'[]');
+function toggleBookmark(){
+  var ch=parseInt((location.hash||'').slice(1))||0;
+  if(!ch)return;
+  var idx=bookmarks.indexOf(ch);
+  if(idx>=0){bookmarks.splice(idx,1);document.getElementById('bmBtn').style.opacity='0.5'}
+  else{bookmarks.push(ch);document.getElementById('bmBtn').style.opacity='1'}
+  localStorage.setItem('bb-bookmarks',JSON.stringify(bookmarks));
+  updateSidebar();
+}
+function updateSidebar(){
+  document.querySelectorAll('.sidebar .ch-link').forEach(function(a){
+    var n=parseInt(a.getAttribute('href').slice(1));
+    if(bookmarks.indexOf(n)>=0)a.style.borderLeft='3px solid var(--accent)';
+    else a.style.borderLeft='';
+  });
+}
+/* 初始化：高亮已有书签 */
+setTimeout(updateSidebar,500);
 </script>
 </body>
 </html>

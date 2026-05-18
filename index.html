@@ -194,6 +194,27 @@ footer{text-align:center;padding:40px 24px;border-top:1px solid #e5e5e5;color:#8
 
 /* 5) Footer年份 */
 document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* 6) 快速跳转搜索 */
+(function(){
+  var names={'四梦':0,'小说':0,'atlas':1,'地图':1,'字阵':2,'卡牌':2,'声音':3,'音乐':3,'名著':4,'经典':4,'星图':5,'关系':5,'咖啡':6,'对话':6,'空白':7,'书':7,'喜剧':8,'搞笑':8,'时间轴':9,'timeline':9};
+  var input=document.createElement('input');
+  input.placeholder='🔍 快速跳转...';
+  input.style.cssText='position:fixed;top:8px;right:70px;z-index:1000;width:180px;padding:6px 14px;border:1px solid #e8e8ed;border-radius:20px;font-size:13px;outline:none;opacity:0;transition:opacity .3s;background:#fff;font-family:inherit';
+  document.body.appendChild(input);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();input.style.opacity='1';input.focus()}
+    if(e.key==='Escape'){input.style.opacity='0';input.blur();input.value=''}
+  });
+  input.addEventListener('blur',function(){input.style.opacity='0';input.value=''});
+  input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+      var v=input.value.toLowerCase().trim();
+      for(var k in names){if(v.indexOf(k)>=0||k.indexOf(v)>=0){document.querySelectorAll('.card')[names[k]].click();break}}
+      input.blur();
+    }
+  });
+})();
 </script>
 </body>
 </html>

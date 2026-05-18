@@ -57,7 +57,7 @@ canvas{display:block;cursor:grab}canvas:active{cursor:grabbing}
 <button class="fbtn" onclick="setFilter('response',this)">↩ 回应</button>
 </div>
 </div>
-<div class="search"><input id="sq" placeholder="搜索书名、作者..." oninput="doSearch()"></div>
+<div class="search"><input id="sq" placeholder="搜索书名、作者..." oninput="doSearch()"><button onclick="randomStar()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ccc;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer;margin-left:4px;font-family:inherit">🎲</button></div>
 <canvas id="c"></canvas>
 <div class="tip" id="tip"><div id="tt" style="font-size:14px;font-weight:700;margin-bottom:4px"></div><div id="ta" style="font-size:12px;color:#8888aa;margin-bottom:4px"></div><div id="ts" style="color:#f0a500;font-size:11px"></div><div id="tm" style="font-size:11px;color:#666;margin-top:4px"></div></div>
 <div class="legend" id="leg"></div>
@@ -207,6 +207,8 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape')showDetail(null);
   if(e.key==='/'&&document.activeElement!==document.getElementById('sq')){e.preventDefault();document.getElementById('sq').focus()}
 });
+/* 随机星星 */
+function randomStar(){var b=B[Math.floor(Math.random()*B.length)];flyTo(b.id)}
 window.addEventListener('DOMContentLoaded',rsz);window.addEventListener('load',rsz);rsz();
 </script>
 </body>
