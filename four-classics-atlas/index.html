@@ -416,14 +416,21 @@ function svgIcon(nv,c,nm){
 }
 
 // === THEME ===
-let darkMode=true,terrainMode=false,satMode=false;
+let darkMode=true,terrainMode=false,satMode=false,osmMode=false;
+function getTileUrl(){
+  if(osmMode)return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  if(terrainMode)return 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
+  if(satMode)return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+  // Use OSM as base (100% coverage) + CSS filter for dark mode
+  return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+}
 function toggleTheme(){
-  // Cycle: dark → light → terrain → satellite → dark
-  if(!terrainMode&&!satMode&&!darkMode){terrainMode=true}
+  // Cycle: dark → light → terrain → satellite → OSM → dark
+  if(!terrainMode&&!satMode&&!osmMode&&darkMode){darkMode=false}
+  else if(!terrainMode&&!satMode&&!osmMode&&!darkMode){terrainMode=true}
   else if(terrainMode){terrainMode=false;satMode=true}
-  else if(satMode){satMode=false;darkMode=true}
-  else{darkMode=false}
-  // Update CSS vars
+  else if(satMode){satMode=false;osmMode=true;darkMode=true}
+  else if(osmMode){osmMode=false;darkMode=true}
   const light=!darkMode;
   document.body.style.setProperty('--bg',darkMode?'#0a0a0a':'#f5f5f0');
   document.body.style.setProperty('--surface',darkMode?'#141414':'#fff');
@@ -431,16 +438,23 @@ function toggleTheme(){
   document.body.style.setProperty('--text2',darkMode?'#999':'#666');
   document.body.style.setProperty('--text3',darkMode?'#555':'#aaa');
   document.body.style.setProperty('--border',darkMode?'#222':'#ddd');
+  // Apply CSS filter to tile layer for dark mode
+  const tilePane=document.querySelector('.leaflet-tile-pane');
+  if(tilePane){
+    if(darkMode&&!satMode){
+      tilePane.style.filter='invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1)';
+    }else{
+      tilePane.style.filter='none';
+    }
+  }
   document.getElementById('map').style.background=darkMode?'#0d1117':'#e8e4df';
   // Swap tile layer
   map.removeLayer(currentTile);
-  let url,maxZ=18;
-  if(terrainMode)url='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',maxZ=17;
-  else if(satMode)url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maxZ=18;
-  else url=darkMode?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  currentTile=L.tileLayer(url,{maxZoom:maxZ,minZoom:2,errorTileUrl:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect fill="%23111" width="256" height="256"/></svg>'}).addTo(map);
-  document.getElementById('themeBtn').textContent=terrainMode?'⛰️':satMode?'🛰️':darkMode?'🌙':'☀️';
-  document.getElementById('themeBtn').title=terrainMode?'地形模式':satMode?'卫星模式':darkMode?'暗色模式':'亮色模式';
+  currentTile=makeTile(getTileUrl()).addTo(map);
+  const icon=osmMode?'🗺️':terrainMode?'⛰️':satMode?'🛰️':darkMode?'🌙':'☀️';
+  const title=osmMode?'标准地图':terrainMode?'地形模式':satMode?'卫星模式':darkMode?'暗色模式':'亮色模式';
+  document.getElementById('themeBtn').textContent=icon;
+  document.getElementById('themeBtn').title=title;
 }
 
 // === DASHBOARD ===
@@ -495,7 +509,24 @@ function filtered(){return(filter==='all'||filter==='smy'?LOCS:LOCS.filter(l=>l.
 if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-family:sans-serif;font-size:16px;text-align:center;padding:40px">地图库加载失败<br><small>请检查网络连接后刷新页面</small></div>';}
 const map=typeof L!=='undefined'?L.map('map',{zoomControl:false,attributionControl:false}).setView([34,108],5):null;
 if(map)L.control.zoom({position:'topleft'}).addTo(map);
-let currentTile=map?L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,minZoom:2,errorTileUrl:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect fill="%23222" width="256" height="256"/></svg>'}).addTo(map):null;
+let fallbackTile=null;
+function makeTile(url,opts){
+  const tl=L.tileLayer(url,Object.assign({maxZoom:18,minZoom:2,subdomains:'abc'},opts));
+  // When a tile fails, replace with OSM fallback
+  tl.on('tileerror',function(e){
+    const src=e.tile.src;
+    const m=src.match(/\/(\d+)\/(\d+)\/(\d+)/);
+    if(m){
+      const z=m[1],x=m[2],y=m[3];
+      e.tile.src='https://tile.openstreetmap.org/'+z+'/'+x+'/'+y+'.png';
+      e.tile.onerror=function(){this.style.display='none'};
+    }
+  });
+  return tl;
+}
+let currentTile=map?makeTile('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map):null;
+// Apply dark CSS filter on initial load
+if(map){const tp=document.querySelector('.leaflet-tile-pane');if(tp)tp.style.filter='invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1)';}
 
 // === MARKERS ===
 function updateMarkers(){
