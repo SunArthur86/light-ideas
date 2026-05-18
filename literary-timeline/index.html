@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⏳ 世界文学时间轴</title>
+<title>⏳ 世界文学时间轴 · 4100年</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#fafafa;--fg:#1d1d1f;--muted:#86868b;--accent:#0071e3;--card:#fff;--border:rgba(0,0,0,.08);--shadow:0 2px 12px rgba(0,0,0,.06)}
@@ -18,6 +18,7 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .ctrl{display:flex;align-items:center;gap:6px;margin-left:auto}
 .ctrl button{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--fg);transition:all .2s;white-space:nowrap}
 .ctrl button:hover{border-color:var(--accent);color:var(--accent)}
+.ctrl button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .sch input{width:160px;padding:6px 12px;border:1px solid var(--border);border-radius:16px;font-size:12px;font-family:inherit;outline:none;background:var(--card);color:var(--fg);transition:all .2s}
 .sch input:focus{border-color:var(--accent);width:200px}
 .zoom{display:flex;align-items:center;gap:2px}
@@ -31,7 +32,16 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .ebtn:hover{background:rgba(0,0,0,.04);color:var(--fg)}
 [data-theme="dark"] .ebtn:hover{background:rgba(255,255,255,.06)}
 .ebtn.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+.gfbar{position:fixed;top:90px;left:0;right:0;z-index:98;background:rgba(250,250,250,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);height:32px;display:none;align-items:center;padding:0 16px;gap:3px;overflow-x:auto;scrollbar-width:none;transition:background .3s}
+.gfbar.show{display:flex}
+[data-theme="dark"] .gfbar{background:rgba(26,26,26,.9)}
+.gfbar::-webkit-scrollbar{display:none}
+.gbtn{background:transparent;border:1px solid transparent;border-radius:10px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit;color:var(--muted);white-space:nowrap;transition:all .15s}
+.gbtn:hover{background:rgba(0,0,0,.04);color:var(--fg)}
+[data-theme="dark"] .gbtn:hover{background:rgba(255,255,255,.06)}
+.gbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .vp{position:fixed;top:90px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
+.vp.gfbar-on{top:122px}
 .vp:active{cursor:grabbing}
 .tl{position:absolute;top:0;left:0;height:100%;user-select:none}
 .ecol{position:absolute;top:0;bottom:0;border-right:1px solid var(--border)}
@@ -39,6 +49,8 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .ym{position:absolute;bottom:30px;font-size:9px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
 .bn{position:absolute;border-radius:50%;cursor:pointer;transition:transform .15s,box-shadow .15s;z-index:10}
 .bn:hover{transform:translate(-50%,-50%) scale(2.2)!important;z-index:20;box-shadow:0 0 0 4px rgba(0,113,227,.25)}
+.bn.highlighted{animation:bpulse 1s ease-in-out 3}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(0,113,227,.4)}50%{box-shadow:0 0 0 8px rgba(0,113,227,0)}}
 .bn .bl{position:absolute;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s}
 .bn:hover .bl{opacity:1}
 .bn .bl.ab{bottom:calc(100% + 4px)}.bn .bl.be{top:calc(100% + 4px)}
@@ -47,16 +59,17 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .ms-line{width:1px;height:24px;background:linear-gradient(rgba(0,113,227,.25),transparent);margin:0 auto}
 .ms-txt{font-size:8px;color:var(--accent);white-space:nowrap;text-align:center;margin-top:1px;max-width:70px;overflow:hidden;text-overflow:ellipsis;margin-left:-25px}
 @keyframes msp{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.3);opacity:1}}
-.tip{display:none;position:fixed;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.12);pointer-events:none}
+.tip{display:none;position:fixed;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,.12);pointer-events:none}
 .tip.show{display:block}
 .tip h3{font-size:13px;font-weight:600;margin-bottom:2px}
 .tip .ta{font-size:11px;color:var(--muted);margin-bottom:4px}
 .tip .tg{display:inline-block;font-size:9px;background:rgba(0,0,0,.05);padding:2px 6px;border-radius:6px;color:var(--muted);margin-right:3px}
 [data-theme="dark"] .tip .tg{background:rgba(255,255,255,.08)}
 .tip .ty{font-size:10px;color:var(--accent);margin-top:4px;font-weight:500}
+.tip .desc{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.5;border-top:1px solid var(--border);padding-top:6px}
 .mo{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
 .mo.show{display:flex;align-items:center;justify-content:center}
-.md{background:var(--card);border-radius:16px;padding:28px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.15);position:relative;animation:mi .3s ease}
+.md{background:var(--card);border-radius:16px;padding:28px;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.15);position:relative;animation:mi .3s ease;max-height:85vh;overflow-y:auto}
 @keyframes mi{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
 .md .cx{position:absolute;top:10px;right:14px;font-size:18px;cursor:pointer;color:var(--muted);background:none;border:none;line-height:1}
 .md .cx:hover{color:var(--fg)}
@@ -67,6 +80,7 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .my{font-size:26px;font-weight:700;color:var(--accent);margin:12px 0 6px;letter-spacing:-.5px}
 .my span{font-size:13px;font-weight:400;color:var(--muted)}
 .md .mc{font-size:12px;line-height:1.7;color:var(--muted)}
+.md .desc-box{font-size:11px;line-height:1.7;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .leg{position:fixed;bottom:60px;left:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:10px;box-shadow:var(--shadow);z-index:50;transition:background .3s;max-height:calc(100vh - 160px);overflow-y:auto}
 .leg h4{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:6px}
 .leg h4:first-child{margin-top:0}
@@ -77,17 +91,17 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .li .dt{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .mm{position:fixed;bottom:60px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:var(--shadow);z-index:50;cursor:pointer;transition:background .3s}
 .mm canvas{display:block;border-radius:6px}
-.sp{position:fixed;top:90px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:11px;box-shadow:var(--shadow);z-index:50;width:220px;transition:all .3s;max-height:calc(100vh - 120px);overflow-y:auto}
+.sp{position:fixed;top:90px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:11px;box-shadow:var(--shadow);z-index:50;width:220px;transition:all .3s;max-height:calc(100vh - 120px);overflow-y:auto;display:none}
+.sp.show{display:block}
 .sp .sh{display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px}
 .sp .sh h3{font-size:12px;font-weight:600}
 .sp .sh span{font-size:14px;color:var(--muted);transition:transform .2s}
-.sp.hide .sb{display:none}
 .sp .row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
 .sp .row .lb{width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:var(--muted);flex-shrink:0}
 .sp .row .bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
 .sp .row .bar div{height:100%;border-radius:3px;transition:width .4s ease}
 .sp .row .ct{font-size:9px;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
-.rb{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50}
+.rb{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px}
 .rb button{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:5px 16px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--muted);box-shadow:var(--shadow);transition:all .2s}
 .rb button:hover{border-color:var(--accent);color:var(--accent)}
 .ld{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;transition:background .3s}
@@ -95,9 +109,13 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .ld .bar{width:180px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
 .ld .bar div{height:100%;background:var(--accent);border-radius:1px;animation:lb 1.2s ease-in-out infinite}
 @keyframes lb{0%{width:0;margin-left:0}50%{width:60%}100%{width:0;margin-left:100%}}
-@media(max-width:768px){.nav{padding:0 10px;gap:6px}.nav h1{font-size:13px}.sch input{width:120px}.sch input:focus{width:150px}.ctrl button{padding:3px 6px;font-size:10px}.sp{width:180px;padding:10px 12px}.mm{bottom:50px;right:8px}.leg{bottom:50px;left:8px;padding:8px 10px}.rb{bottom:50px}}
-@media(max-width:640px){.nav h1{display:none}.sp{display:none}.leg{max-height:40vh}.eras{height:34px}.ebtn{padding:2px 8px;font-size:10px}.sch input{width:90px}.sch input:focus{width:120px}}
-@media(max-width:420px){.ctrl .tbtn:not(.theme-btn){display:none}.leg{bottom:8px;left:8px;max-height:30vh;font-size:9px}.mm{display:none}.rb{bottom:8px}}
+.kb-hint{position:fixed;bottom:16px;right:16px;z-index:50;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:9px;color:var(--muted);box-shadow:var(--shadow);line-height:1.8;opacity:.7;transition:opacity .2s}
+.kb-hint:hover{opacity:1}
+.kb-hint kbd{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-family:inherit;font-size:9px}
+[data-theme="dark"] .kb-hint kbd{background:rgba(255,255,255,.1)}
+@media(max-width:768px){.nav{padding:0 10px;gap:6px}.nav h1{font-size:13px}.sch input{width:120px}.sch input:focus{width:150px}.ctrl button{padding:3px 6px;font-size:10px}.sp{width:180px;padding:10px 12px}.mm{bottom:50px;right:8px}.leg{bottom:50px;left:8px;padding:8px 10px}.rb{bottom:50px}.kb-hint{display:none}}
+@media(max-width:640px){.nav h1{display:none}.sp{display:none!important}.leg{max-height:40vh}.eras{height:34px}.ebtn{padding:2px 8px;font-size:10px}.sch input{width:90px}.sch input:focus{width:120px}.gfbar{top:86px}.vp{top:86px}.vp.gfbar-on{top:118px}}
+@media(max-width:420px){.ctrl .tbtn:not(.theme-btn):not(.random-btn){display:none}.leg{bottom:8px;left:8px;max-height:30vh;font-size:9px}.mm{display:none}.rb{bottom:8px}.gfbar{height:28px}.gbtn{font-size:9px;padding:1px 6px}}
 </style>
 </head>
 <body>
@@ -108,425 +126,27 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 <span class="stat" id="stat"></span>
 <div class="ctrl">
 <div class="sch"><input id="sq" placeholder="搜索书名/作者..."></div>
-<div class="zoom"><button onclick="zI()" title="放大">+</button><span id="zl">100%</span><button onclick="zO()" title="缩小">−</button></div>
-<button class="tbtn" onclick="resetView()" title="重置视图">⌂</button>
-<button class="tbtn theme-btn" onclick="toggleTheme()" id="thb" title="切换主题">🌙</button>
-<button class="tbtn" onclick="toggleStats()" title="统计面板">📊</button>
+<div class="zoom"><button onclick="zI()" title="放大 (+)">+</button><span id="zl">100%</span><button onclick="zO()" title="缩小 (-)">−</button></div>
+<button class="tbtn" onclick="resetView()" title="重置视图 (0)">⌂</button>
+<button class="tbtn theme-btn" onclick="toggleTheme()" id="thb" title="切换主题 (D)">🌙</button>
+<button class="tbtn random-btn" onclick="randomBook()" title="随机探索 (R)">🎲</button>
+<button class="tbtn" onclick="toggleGenre()" id="gb" title="类型筛选 (G)">🏷️</button>
+<button class="tbtn" onclick="toggleStats()" id="sb2" title="统计面板 (S)">📊</button>
 </div>
 </nav>
 <div class="eras" id="ebar"></div>
+<div class="gfbar" id="gbar"></div>
 <div class="vp" id="vp"><div class="tl" id="tl"></div></div>
 <div class="leg" id="leg"></div>
 <div class="mm" id="mm" title="点击跳转"><canvas id="mc" width="180" height="50"></canvas></div>
 <div class="sp" id="sp"><div class="sh" onclick="toggleStatsBody()"><h3>📊 统计</h3><span id="spA">▼</span></div><div class="sb" id="sb"></div></div>
-<div class="rb"><button onclick="resetView()">重置视图</button></div>
+<div class="rb"><button onclick="resetView()">⌂ 重置视图</button><button onclick="randomBook()">🎲 随机探索</button></div>
 <div class="tip" id="tip"></div>
 <div class="mo" id="mo"><div class="md" id="md"></div></div>
+<div class="kb-hint" id="kbh">
+<kbd>+</kbd><kbd>-</kbd> 缩放 · <kbd>0</kbd> 重置 · <kbd>D</kbd> 主题 · <kbd>R</kbd> 随机<br>
+<kbd>G</kbd> 类型 · <kbd>S</kbd> 统计 · <kbd>/</kbd> 搜索 · <kbd>Esc</kbd> 关闭
+</div>
 
 <script>
 var B=[
-{id:1,t:"傲慢与偏见",a:"简·奥斯汀",c:"英国",g:"世态小说",imp:5,col:"#4A90D9",y:1813},
-{id:2,t:"远大前程",a:"狄更斯",c:"英国",g:"成长小说",imp:4,col:"#4A90D9",y:1861},
-{id:3,t:"简·爱",a:"勃朗特",c:"英国",g:"哥特浪漫",imp:5,col:"#4A90D9",y:1847},
-{id:4,t:"呼啸山庄",a:"勃朗特",c:"英国",g:"哥特小说",imp:5,col:"#4A90D9",y:1847},
-{id:5,t:"弗兰肯斯坦",a:"雪莱",c:"英国",g:"科幻鼻祖",imp:5,col:"#4A90D9",y:1818},
-{id:6,t:"米德尔马契",a:"艾略特",c:"英国",g:"社会全景",imp:4,col:"#4A90D9",y:1872},
-{id:7,t:"德伯家的苔丝",a:"哈代",c:"英国",g:"悲剧小说",imp:4,col:"#4A90D9",y:1891},
-{id:8,t:"道林·格雷的画像",a:"王尔德",c:"英国",g:"哥特哲学",imp:4,col:"#4A90D9",y:1890},
-{id:9,t:"鲁滨逊漂流记",a:"笛福",c:"英国",g:"冒险小说",imp:4,col:"#4A90D9",y:1719},
-{id:10,t:"格列佛游记",a:"斯威夫特",c:"英国",g:"讽刺寓言",imp:5,col:"#4A90D9",y:1726},
-{id:11,t:"悲惨世界",a:"雨果",c:"法国",g:"社会史诗",imp:5,col:"#9B59B6",y:1862},
-{id:12,t:"包法利夫人",a:"福楼拜",c:"法国",g:"现实主义",imp:5,col:"#9B59B6",y:1857},
-{id:13,t:"基督山伯爵",a:"大仲马",c:"法国",g:"复仇冒险",imp:4,col:"#9B59B6",y:1844},
-{id:14,t:"三个火枪手",a:"大仲马",c:"法国",g:"历史冒险",imp:3,col:"#9B59B6",y:1844},
-{id:15,t:"老实人",a:"伏尔泰",c:"法国",g:"哲学讽刺",imp:4,col:"#9B59B6",y:1759},
-{id:16,t:"巴黎圣母院",a:"雨果",c:"法国",g:"历史浪漫",imp:4,col:"#9B59B6",y:1831},
-{id:17,t:"红与黑",a:"司汤达",c:"法国",g:"心理现实主义",imp:4,col:"#9B59B6",y:1830},
-{id:18,t:"战争与和平",a:"托尔斯泰",c:"俄国",g:"历史史诗",imp:5,col:"#F39C12",y:1869},
-{id:19,t:"安娜·卡列尼娜",a:"托尔斯泰",c:"俄国",g:"心理小说",imp:5,col:"#F39C12",y:1877},
-{id:20,t:"罪与罚",a:"陀思妥耶夫斯基",c:"俄国",g:"心理犯罪",imp:5,col:"#F39C12",y:1866},
-{id:21,t:"卡拉马佐夫兄弟",a:"陀思妥耶夫斯基",c:"俄国",g:"哲学小说",imp:5,col:"#F39C12",y:1880},
-{id:22,t:"父与子",a:"屠格涅夫",c:"俄国",g:"社会小说",imp:4,col:"#F39C12",y:1862},
-{id:23,t:"死魂灵",a:"果戈理",c:"俄国",g:"讽刺小说",imp:4,col:"#F39C12",y:1842},
-{id:24,t:"叶甫盖尼·奥涅金",a:"普希金",c:"俄国",g:"诗体小说",imp:3,col:"#F39C12",y:1833},
-{id:25,t:"白鲸",a:"梅尔维尔",c:"美国",g:"哲学冒险",imp:5,col:"#E74C3C",y:1851},
-{id:26,t:"哈克贝利·费恩历险记",a:"马克·吐温",c:"美国",g:"冒险讽刺",imp:5,col:"#E74C3C",y:1884},
-{id:27,t:"红字",a:"霍桑",c:"美国",g:"道德寓言",imp:4,col:"#E74C3C",y:1850},
-{id:28,t:"小妇人",a:"奥尔科特",c:"美国",g:"家庭小说",imp:3,col:"#E74C3C",y:1868},
-{id:29,t:"汤姆叔叔的小屋",a:"斯托夫人",c:"美国",g:"废奴小说",imp:4,col:"#E74C3C",y:1852},
-{id:30,t:"野性的呼唤",a:"杰克·伦敦",c:"美国",g:"动物小说",imp:4,col:"#E74C3C",y:1903},
-{id:31,t:"浮士德",a:"歌德",c:"德国",g:"哲学诗剧",imp:5,col:"#2ECC71",y:1808},
-{id:32,t:"变形记",a:"卡夫卡",c:"奥地利",g:"存在主义",imp:5,col:"#CDDC39",y:1915},
-{id:34,t:"伊利亚特",a:"荷马",c:"古希腊",g:"史诗",imp:5,col:"#E67E22",y:-800},
-{id:35,t:"奥德赛",a:"荷马",c:"古希腊",g:"史诗",imp:5,col:"#E67E22",y:-700},
-{id:36,t:"神曲",a:"但丁",c:"意大利",g:"寓言史诗",imp:5,col:"#1ABC9C",y:1320},
-{id:37,t:"堂吉诃德",a:"塞万提斯",c:"西班牙",g:"讽刺冒险",imp:5,col:"#F1C40F",y:1605},
-{id:38,t:"浮士德博士的悲剧",a:"马洛",c:"英国",g:"诗剧",imp:4,col:"#4A90D9",y:1604},
-{id:39,t:"玩偶之家",a:"易卜生",c:"挪威",g:"戏剧",imp:5,col:"#3498DB",y:1879},
-{id:41,t:"孙子兵法",a:"孙武",c:"中国",g:"兵法哲学",imp:5,col:"#FF5722",y:-500},
-{id:42,t:"道德经",a:"老子",c:"中国",g:"哲学",imp:5,col:"#FF5722",y:-500},
-{id:43,t:"红楼梦",a:"曹雪芹",c:"中国",g:"世情小说",imp:5,col:"#FF5722",y:1791},
-{id:45,t:"源氏物语",a:"紫式部",c:"日本",g:"宫廷文学",imp:5,col:"#E91E63",y:1008},
-{id:46,t:"天路历程",a:"班扬",c:"英国",g:"寓言",imp:4,col:"#4A90D9",y:1678},
-{id:48,t:"海底两万里",a:"凡尔纳",c:"法国",g:"科幻冒险",imp:4,col:"#9B59B6",y:1870},
-{id:49,t:"时间机器",a:"威尔斯",c:"英国",g:"科幻小说",imp:4,col:"#4A90D9",y:1895},
-{id:50,t:"查拉图斯特拉如是说",a:"尼采",c:"德国",g:"哲学文学",imp:5,col:"#2ECC71",y:1885},
-{id:51,t:"爱玛",a:"奥斯汀",c:"英国",g:"世态小说",imp:4,col:"#4A90D9",y:1815},
-{id:52,t:"理智与情感",a:"奥斯汀",c:"英国",g:"世态小说",imp:4,col:"#4A90D9",y:1811},
-{id:53,t:"双城记",a:"狄更斯",c:"英国",g:"历史小说",imp:5,col:"#4A90D9",y:1859},
-{id:54,t:"大卫·科波菲尔",a:"狄更斯",c:"英国",g:"成长小说",imp:4,col:"#4A90D9",y:1850},
-{id:55,t:"黑暗的心",a:"康拉德",c:"英国",g:"中篇小说",imp:5,col:"#4A90D9",y:1899},
-{id:58,t:"失乐园",a:"弥尔顿",c:"英国",g:"史诗",imp:5,col:"#4A90D9",y:1667},
-{id:59,t:"爱丽丝漫游奇境记",a:"卡罗尔",c:"英国",g:"幻想文学",imp:5,col:"#4A90D9",y:1865},
-{id:61,t:"坎特伯雷故事集",a:"乔叟",c:"英国",g:"故事集",imp:5,col:"#4A90D9",y:1400},
-{id:62,t:"贝奥武夫",a:"匿名",c:"英国",g:"史诗",imp:4,col:"#4A90D9",y:1000},
-{id:67,t:"瓦尔登湖",a:"梭罗",c:"美国",g:"散文哲学",imp:5,col:"#E74C3C",y:1854},
-{id:70,t:"草叶集",a:"惠特曼",c:"美国",g:"诗歌",imp:5,col:"#E74C3C",y:1855},
-{id:73,t:"萌芽",a:"左拉",c:"法国",g:"自然主义",imp:4,col:"#9B59B6",y:1885},
-{id:74,t:"情感教育",a:"福楼拜",c:"法国",g:"现实主义",imp:4,col:"#9B59B6",y:1869},
-{id:78,t:"白痴",a:"陀思妥耶夫斯基",c:"俄国",g:"心理小说",imp:4,col:"#F39C12",y:1869},
-{id:79,t:"复活",a:"托尔斯泰",c:"俄国",g:"社会小说",imp:4,col:"#F39C12",y:1899},
-{id:80,t:"奥勃洛莫夫",a:"冈察洛夫",c:"俄国",g:"现实主义",imp:4,col:"#F39C12",y:1859},
-{id:81,t:"好兵帅克",a:"哈谢克",c:"捷克",g:"讽刺小说",imp:4,col:"#FF9800",y:1923},
-{id:82,t:"世界大战",a:"威尔斯",c:"英国",g:"科幻小说",imp:4,col:"#4A90D9",y:1898},
-{id:84,t:"八十天环游地球",a:"凡尔纳",c:"法国",g:"冒险小说",imp:4,col:"#9B59B6",y:1873},
-{id:86,t:"金银岛",a:"史蒂文森",c:"英国",g:"冒险小说",imp:4,col:"#4A90D9",y:1883},
-{id:88,t:"埃涅阿斯纪",a:"维吉尔",c:"古罗马",g:"史诗",imp:5,col:"#D35400",y:-19},
-{id:89,t:"理想国",a:"柏拉图",c:"古希腊",g:"哲学对话",imp:5,col:"#E67E22",y:-380},
-{id:90,t:"沉思录",a:"奥勒留",c:"古罗马",g:"哲学日记",imp:5,col:"#D35400",y:170},
-{id:91,t:"君主论",a:"马基雅维利",c:"意大利",g:"政治学",imp:5,col:"#1ABC9C",y:1532},
-{id:92,t:"忏悔录",a:"奥古斯丁",c:"罗马帝国",g:"自传",imp:5,col:"#D35400",y:400},
-{id:93,t:"鲁拜集",a:"海亚姆",c:"波斯",g:"诗歌",imp:4,col:"#795548",y:1100},
-{id:97,t:"格林童话",a:"格林兄弟",c:"德国",g:"童话集",imp:5,col:"#2ECC71",y:1812},
-{id:98,t:"一千零一夜",a:"匿名",c:"阿拉伯",g:"故事集",imp:5,col:"#795548",y:800},
-{id:101,t:"百年孤独",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:5,col:"#F1C40F",y:1967},
-{id:102,t:"霍乱时期的爱情",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:4,col:"#F1C40F",y:1985},
-{id:103,t:"虚构集",a:"博尔赫斯",c:"阿根廷",g:"后现代",imp:5,col:"#3498DB",y:1944},
-{id:105,t:"人鼠之间",a:"斯坦贝克",c:"美国",g:"社会小说",imp:4,col:"#E74C3C",y:1937},
-{id:106,t:"愤怒的葡萄",a:"斯坦贝克",c:"美国",g:"社会小说",imp:5,col:"#E74C3C",y:1939},
-{id:107,t:"老人与海",a:"海明威",c:"美国",g:"中篇小说",imp:5,col:"#E74C3C",y:1952},
-{id:108,t:"太阳照常升起",a:"海明威",c:"美国",g:"现代主义",imp:4,col:"#E74C3C",y:1926},
-{id:109,t:"瓦解",a:"阿契贝",c:"尼日利亚",g:"后殖民小说",imp:5,col:"#27AE60",y:1958},
-{id:113,t:"吉檀迦利",a:"泰戈尔",c:"印度",g:"诗歌",imp:5,col:"#FF8C00",y:1910},
-{id:114,t:"薄伽梵歌",a:"毗耶娑",c:"印度",g:"宗教哲学",imp:5,col:"#FF8C00",y:-200},
-{id:116,t:"安徒生童话",a:"安徒生",c:"丹麦",g:"童话",imp:5,col:"#85C1E9",y:1835},
-{id:121,t:"小王子",a:"圣埃克苏佩里",c:"法国",g:"寓言",imp:5,col:"#9B59B6",y:1943},
-{id:122,t:"追忆似水年华",a:"普鲁斯特",c:"法国",g:"意识流",imp:5,col:"#9B59B6",y:1913},
-{id:124,t:"1984",a:"奥威尔",c:"英国",g:"反乌托邦",imp:5,col:"#4A90D9",y:1949},
-{id:125,t:"动物庄园",a:"奥威尔",c:"英国",g:"寓言",imp:5,col:"#4A90D9",y:1945},
-{id:126,t:"美丽新世界",a:"赫胥黎",c:"英国",g:"反乌托邦",imp:5,col:"#4A90D9",y:1932},
-{id:127,t:"了不起的盖茨比",a:"菲茨杰拉德",c:"美国",g:"现代主义",imp:5,col:"#E74C3C",y:1925},
-{id:128,t:"青年艺术家的画像",a:"乔伊斯",c:"爱尔兰",g:"意识流",imp:5,col:"#00CED1",y:1916},
-{id:129,t:"审判",a:"卡夫卡",c:"奥地利",g:"现代主义",imp:5,col:"#CDDC39",y:1925},
-{id:131,t:"悉达多",a:"黑塞",c:"德国",g:"哲学小说",imp:5,col:"#2ECC71",y:1922},
-{id:132,t:"人间失格",a:"太宰治",c:"日本",g:"私小说",imp:5,col:"#E91E63",y:1948},
-{id:133,t:"雪国",a:"川端康成",c:"日本",g:"唯美主义",imp:4,col:"#E91E63",y:1937},
-{id:134,t:"西游记",a:"吴承恩",c:"中国",g:"神魔小说",imp:5,col:"#FF5722",y:1592},
-{id:135,t:"三国演义",a:"罗贯中",c:"中国",g:"历史演义",imp:5,col:"#FF5722",y:1522},
-{id:142,t:"尤利西斯",a:"乔伊斯",c:"爱尔兰",g:"意识流",imp:5,col:"#00CED1",y:1922},
-{id:143,t:"达洛维夫人",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1925},
-{id:144,t:"到灯塔去",a:"伍尔夫",c:"英国",g:"意识流",imp:4,col:"#4A90D9",y:1927},
-{id:146,t:"局外人",a:"加缪",c:"法国",g:"存在主义",imp:5,col:"#9B59B6",y:1942},
-{id:147,t:"隐形人",a:"埃里森",c:"美国",g:"非裔文学",imp:5,col:"#E74C3C",y:1952},
-{id:148,t:"铁皮鼓",a:"格拉斯",c:"德国",g:"魔幻现实主义",imp:4,col:"#2ECC71",y:1959},
-{id:149,t:"伊万·杰尼索维奇的一天",a:"索尔仁尼琴",c:"俄国",g:"集中营文学",imp:5,col:"#F39C12",y:1962},
-{id:150,t:"变形记(奥维德)",a:"奥维德",c:"古罗马",g:"叙事诗",imp:4,col:"#D35400",y:8},
-{id:151,t:"吉尔伽美什史诗",a:"匿名",c:"美索不达米亚",g:"史诗",imp:5,col:"#8D6E63",y:-2100},
-{id:152,t:"吠陀经",a:"匿名",c:"印度",g:"宗教诗",imp:5,col:"#FF8C00",y:-1500},
-{id:153,t:"亡灵书",a:"匿名",c:"古埃及",g:"宗教文本",imp:4,col:"#8D6E63",y:-1550},
-{id:154,t:"诗经",a:"匿名",c:"中国",g:"诗歌总集",imp:5,col:"#FF5722",y:-600},
-{id:155,t:"神谱",a:"赫西俄德",c:"古希腊",g:"神话诗",imp:4,col:"#E67E22",y:-700},
-{id:156,t:"罗摩衍那",a:"蚁垤",c:"印度",g:"史诗",imp:5,col:"#FF8C00",y:-500},
-{id:157,t:"摩诃婆罗多",a:"毗耶娑",c:"印度",g:"史诗",imp:5,col:"#FF8C00",y:-400},
-{id:158,t:"论语",a:"孔子",c:"中国",g:"哲学",imp:5,col:"#FF5722",y:-500},
-{id:159,t:"庄子",a:"庄子",c:"中国",g:"哲学",imp:5,col:"#FF5722",y:-300},
-{id:160,t:"古兰经",a:"穆罕默德",c:"阿拉伯",g:"宗教经典",imp:5,col:"#795548",y:650},
-{id:161,t:"尼伯龙根之歌",a:"匿名",c:"德国",g:"史诗",imp:4,col:"#2ECC71",y:1200},
-{id:162,t:"罗兰之歌",a:"匿名",c:"法国",g:"史诗",imp:4,col:"#9B59B6",y:1100},
-{id:163,t:"十日谈",a:"薄伽丘",c:"意大利",g:"故事集",imp:5,col:"#1ABC9C",y:1353},
-{id:164,t:"哈姆雷特",a:"莎士比亚",c:"英国",g:"悲剧",imp:5,col:"#4A90D9",y:1601},
-{id:165,t:"少年维特之烦恼",a:"歌德",c:"德国",g:"书信体小说",imp:5,col:"#2ECC71",y:1774},
-{id:166,t:"飘",a:"米切尔",c:"美国",g:"历史小说",imp:4,col:"#E74C3C",y:1936},
-{id:167,t:"大师和玛格丽特",a:"布尔加科夫",c:"俄国",g:"魔幻讽刺",imp:5,col:"#F39C12",y:1967},
-{id:168,t:"霍乱时期的爱情",a:"马尔克斯",c:"哥伦比亚",g:"魔幻现实主义",imp:4,col:"#F1C40F",y:1985},
-];
-
-var ERAS=[
-{name:"远古",s:-2100,e:-500,c:"#8D6E63"},
-{name:"古典",s:-500,e:0,c:"#E67E22"},
-{name:"古代",s:0,e:500,c:"#D35400"},
-{name:"中世纪",s:500,e:1400,c:"#795548"},
-{name:"文艺复兴",s:1400,e:1600,c:"#1ABC9C"},
-{name:"巴洛克",s:1600,e:1700,c:"#9B59B6"},
-{name:"启蒙时代",s:1700,e:1800,c:"#3498DB"},
-{name:"浪漫主义",s:1800,e:1850,c:"#E74C3C"},
-{name:"现实主义",s:1850,e:1900,c:"#2ECC71"},
-{name:"现代主义",s:1900,e:1950,c:"#00CED1"},
-{name:"后现代",s:1950,e:2000,c:"#F1C40F"},
-];
-
-var MV={"-2100":"人类最早的文学，四大文明古国的智慧结晶","-800":"荷马时代，希腊史诗诞生，西方文学的源头","-500":"轴心时代，人类思想大爆发，东西方哲学奠基","0":"古典晚期，帝国文学与宗教文本兴起","500":"中世纪黎明，宗教文学主导欧洲","800":"阿拉伯文学黄金时代，一千零一夜","1000":"东方古典巅峰，紫式部与宋词","1200":"欧洲中世纪盛期，骑士文学与史诗","1300":"文艺复兴前夜，但丁与薄伽丘","1400":"文艺复兴，人文主义觉醒","1500":"大航海时代，塞万提斯与莎士比亚","1600":"巴洛克时代，弥尔顿与戏剧黄金期","1700":"启蒙运动，理性与批判的世纪","1770":"狂飙突进，歌德引领浪漫主义","1800":"浪漫主义，想象力与自然的颂歌","1830":"现实主义兴起，社会全景的文学镜像","1850":"现实主义鼎盛，小说的黄金时代","1870":"自然主义，科学方法进入文学","1890":"世纪末美学，颓废与象征主义","1900":"现代主义先锋，意识流与文学实验","1910":"大战与文学，迷惘的一代","1920":"现代主义巅峰，乔伊斯与普鲁斯特","1930":"反乌托邦，对极权主义的预言","1940":"战后存在主义，荒诞与抉择","1950":"后殖民文学，多元世界的声音","1960":"魔幻现实主义，拉丁美洲文学爆炸","1980":"全球化文学，跨越边界的声音"};
-
-
-/* === 状态 === */
-var sc=1,px=0,py=0,dr=false,lx=0,ly=0,aEra=null,aRegions={},sq="",isDark=false;
-var filtered=[];
-
-B.sort(function(a,b){return a.y-b.y});
-
-/* === 初始化 === */
-document.addEventListener("DOMContentLoaded",function(){
-  var saved=localStorage.getItem('tl-theme');
-  if(saved==='dark'){isDark=true;document.documentElement.setAttribute('data-theme','dark');document.getElementById('thb').textContent='☀️'}
-  document.getElementById("stat").textContent=B.length+" 部 · "+fy(B[0].y)+" — "+fy(B[B.length-1].y);
-  buildEras();buildLegend();applyFilters();buildMiniMap();
-  document.getElementById("ld").style.display="none";
-  bindEvents();
-});
-
-function fy(y){return y<0?"前"+Math.abs(y)+"年":y===0?"公元元年":y+"年"}
-
-/* === 时代筛选 === */
-function buildEras(){
-  var bar=document.getElementById("ebar");
-  var h='<button class="ebtn on" data-era="">全部</button>';
-  ERAS.forEach(function(e){
-    var n=B.filter(function(b){return b.y>=e.s&&b.y<e.e}).length;
-    if(n>0) h+='<button class="ebtn" data-era="'+e.name+'">'+e.name+' ('+n+')</button>';
-  });
-  bar.innerHTML=h;
-  bar.querySelectorAll(".ebtn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      aEra=btn.dataset.era||null;
-      bar.querySelectorAll(".ebtn").forEach(function(b){b.classList.remove("on")});
-      btn.classList.add("on");
-      px=0;py=0;applyFilters();
-    });
-  });
-}
-
-/* === 图例+地区筛选 === */
-function buildLegend(){
-  var cols={};
-  B.forEach(function(b){if(!cols[b.c])cols[b.c]=b.col});
-  var rg=["中国","古希腊","古罗马","印度","英国","法国","俄国","美国","德国","日本","意大利","西班牙","波斯","阿拉伯","哥伦比亚"];
-  var h='<h4>🌍 地区（点击筛选）</h4>';
-  rg.forEach(function(c){
-    if(cols[c]){
-      var on=aRegions[c]?' on':'';
-      h+='<div class="li'+on+'" data-region="'+c+'"><span class="dt" style="background:'+cols[c]+'"></span>'+c+'</div>';
-    }
-  });
-  document.getElementById("leg").innerHTML=h;
-  document.getElementById("leg").querySelectorAll(".li").forEach(function(li){
-    li.addEventListener("click",function(){
-      var r=li.dataset.region;
-      if(aRegions[r])delete aRegions[r];else aRegions[r]=true;
-      li.classList.toggle("on");
-      px=0;py=0;applyFilters();
-    });
-  });
-}
-
-/* === 筛选+渲染 === */
-function applyFilters(){
-  filtered=B.filter(function(b){
-    if(aEra){var era=null;ERAS.forEach(function(e){if(e.name===aEra)era=e});if(era&&(b.y<era.s||b.y>=era.e))return false}
-    var rKeys=Object.keys(aRegions);
-    if(rKeys.length>0&&!aRegions[b.c])return false;
-    if(sq){var q=sq.toLowerCase();if(b.t.toLowerCase().indexOf(q)<0&&b.a.toLowerCase().indexOf(q)<0)return false}
-    return true;
-  });
-  document.getElementById("stat").textContent=filtered.length+"/"+B.length+" 部 · "+fy(B[0].y)+" — "+fy(B[B.length-1].y);
-  render();
-  updateStats();
-  drawMiniMap();
-}
-
-function render(){
-  var vp=document.getElementById("vp"),tl=document.getElementById("tl");
-  var W=vp.clientWidth,H=vp.clientHeight;
-  if(!filtered.length){tl.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">未找到匹配作品</div>';tl.style.width="100%";return}
-  var yMin=filtered[0].y,yMax=filtered[filtered.length-1].y,ySpan=Math.max(1,yMax-yMin);
-  var bpx=2.5,tW=Math.max(W*2,ySpan*bpx*sc);
-  tl.innerHTML="";tl.style.width=tW+"px";
-  /* 时代列 */
-  ERAS.forEach(function(e){
-    if(e.s>yMax||e.e<yMin)return;
-    var l=((e.s-yMin)/ySpan)*tW,w=((e.e-e.s)/ySpan)*tW;
-    var d=document.createElement("div");d.className="ecol";
-    d.style.cssText="left:"+l+"px;width:"+w+"px;background:"+e.c+"08";
-    d.innerHTML='<div class="el">'+e.name+'</div>';
-    tl.appendChild(d);
-  });
-  /* 年份标记 */
-  var step=ySpan>3000?500:ySpan>1000?200:ySpan>400?100:ySpan>100?50:20;
-  for(var yr=Math.ceil(yMin/step)*step;yr<=yMax;yr+=step){
-    var l=((yr-yMin)/ySpan)*tW;
-    var d=document.createElement("div");d.className="ym";d.style.left=l+"px";d.textContent=fy(yr);
-    tl.appendChild(d);
-  }
-  /* 里程碑 */
-  var mvKeys=Object.keys(MV).map(Number).sort(function(a,b){return a-b});
-  mvKeys.forEach(function(mk){
-    if(mk<yMin||mk>yMax)return;
-    var l=((mk-yMin)/ySpan)*(tW-40)+20;
-    var d=document.createElement("div");d.className="ms";
-    d.style.cssText="left:"+l+"px;top:50%;transform:translate(-50%,-50%)";
-    var txt=MV[mk].substring(0,12);
-    d.innerHTML='<div class="ms-ring"></div><div class="ms-line"></div><div class="ms-txt">'+txt+'</div>';
-    tl.appendChild(d);
-  });
-  /* 气泡 */
-  var bs=Math.max(1,Math.round(ySpan/200)),bk={};
-  filtered.forEach(function(b){var k=Math.round(b.y/bs)*bs;if(!bk[k])bk[k]=[];bk[k].push(b)});
-  filtered.forEach(function(b){
-    var l=((b.y-yMin)/ySpan)*(tW-40)+20;
-    var k=Math.round(b.y/bs)*bs,idx=bk[k].indexOf(b),tot=bk[k].length;
-    var mg=H*.08,us=H-mg*2,sp=Math.min(28,us/(tot+1)),t=mg+idx*sp+sp/2;
-    var sz=b.imp>=5?14:b.imp>=4?10:7;
-    var n=document.createElement("div");n.className="bn";
-    n.style.cssText="left:"+l+"px;top:"+t+"px;width:"+sz+"px;height:"+sz+"px;background:"+b.col+";transform:translate(-50%,-50%)";
-    if(b.imp>=5)n.style.boxShadow="0 0 0 2px "+b.col+"40";
-    var lb=document.createElement("div");lb.className="bl "+(idx%2===0?"ab":"be");lb.textContent=b.t;
-    n.appendChild(lb);
-    n.addEventListener("mouseenter",function(ev){showTip(ev,b)});
-    n.addEventListener("mouseleave",hideTip);
-    n.addEventListener("click",function(){showModal(b)});
-    tl.appendChild(n);
-  });
-  tl.style.transform="translate("+px+"px,"+py+"px)";
-}
-
-/* === Tooltip === */
-function showTip(ev,b){
-  var t=document.getElementById("tip");
-  var stars=b.imp>=5?' <span style="color:#FF5722">★</span>':'';
-  t.innerHTML='<h3>'+b.t+stars+'</h3><div class="ta">'+b.a+' · '+b.c+'</div><div class="tg">'+b.g+'</div><div class="ty">'+fy(b.y)+'</div>';
-  t.classList.add("show");
-  t.style.left=Math.min(ev.clientX+12,window.innerWidth-270)+"px";
-  t.style.top=Math.min(ev.clientY+12,window.innerHeight-110)+"px";
-}
-function hideTip(){document.getElementById("tip").classList.remove("show")}
-
-/* === Modal === */
-function showModal(b){
-  var md=document.getElementById("md");
-  var ks=Object.keys(MV).map(Number).sort(function(a,b){return a-b}),mv="";
-  for(var i=0;i<ks.length;i++){if(b.y>=ks[i])mv=MV[ks[i]]}
-  var same=B.filter(function(x){return x.c===b.c&&x.id!==b.id}).slice(0,3);
-  var rel='';
-  if(same.length){rel='<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">同地区作品</div>';same.forEach(function(s){rel+='<span class="mt" onclick="showModal(B.find(function(x){return x.id==='+s.id+'}))">'+s.t+'</span>'});rel+='</div>'}
-  md.innerHTML='<button class=cx onclick="closeModal()">×</button><h2>'+b.t+'</h2><div class="ma">'+b.a+'</div><div><span class="mt">'+b.c+'</span><span class="mt">'+b.g+'</span>'+(b.imp>=5?'<span class="mt" style="background:rgba(255,87,34,.08);color:#FF5722">★ 经典</span>':'')+'</div><div class="my">'+fy(b.y)+'</div><div class="mc">'+(mv||'')+'</div>'+rel;
-  document.getElementById("mo").classList.add("show");
-}
-function closeModal(){document.getElementById("mo").classList.remove("show")}
-
-/* === 缩放/重置 === */
-function zI(){sc=Math.min(5,sc*1.3);updateZoom();applyFilters()}
-function zO(){sc=Math.max(.3,sc/1.3);updateZoom();applyFilters()}
-function updateZoom(){document.getElementById("zl").textContent=Math.round(sc*100)+"%"}
-function resetView(){sc=1;px=0;py=0;updateZoom();applyFilters()}
-
-/* === 暗色模式 === */
-function toggleTheme(){
-  isDark=!isDark;
-  document.documentElement.setAttribute('data-theme',isDark?'dark':'');
-  document.getElementById('thb').textContent=isDark?'☀️':'🌙';
-  localStorage.setItem('tl-theme',isDark?'dark':'light');
-  applyFilters();
-}
-
-/* === 统计面板 === */
-function toggleStats(){var s=document.getElementById('sp');s.style.display=s.style.display==='none'?'block':'none'}
-function toggleStatsBody(){var s=document.getElementById('sb'),a=document.getElementById('spA');if(s.style.display==='none'){s.style.display='';a.textContent='▼'}else{s.style.display='none';a.textContent='▶'}}
-function updateStats(){
-  var sb=document.getElementById('sb');
-  var cols={};B.forEach(function(b){if(!cols[b.c])cols[b.c]=b.col});
-  /* 地区分布 */
-  var regions={};
-  filtered.forEach(function(b){regions[b.c]=(regions[b.c]||0)+1});
-  var rg=Object.keys(regions).sort(function(a,b){return regions[b]-regions[a]}).slice(0,8);
-  var maxR=rg.length?regions[rg[0]]:1;
-  var h='<h4 style="font-size:10px;color:var(--muted);margin:6px 0 4px">🌍 地区分布</h4>';
-  rg.forEach(function(r){var w=Math.round(regions[r]/maxR*100);h+='<div class="row"><span class="lb">'+r+'</span><div class="bar"><div style="width:'+w+'%;background:'+(cols[r]||'var(--accent)')+'"></div></div><span class="ct">'+regions[r]+'</span></div>'});
-  /* 类型TOP5 */
-  var genres={};
-  filtered.forEach(function(b){genres[b.g]=(genres[b.g]||0)+1});
-  var gg=Object.keys(genres).sort(function(a,b){return genres[b]-genres[a]}).slice(0,5);
-  var maxG=gg.length?genres[gg[0]]:1;
-  h+='<h4 style="font-size:10px;color:var(--muted);margin:8px 0 4px">📚 类型 TOP5</h4>';
-  gg.forEach(function(g){var w=Math.round(genres[g]/maxG*100);h+='<div class="row"><span class="lb">'+g+'</span><div class="bar"><div style="width:'+w+'%;background:var(--accent)"></div></div><span class="ct">'+genres[g]+'</span></div>'});
-  /* 时代分布 */
-  h+='<h4 style="font-size:10px;color:var(--muted);margin:8px 0 4px">⏳ 时代分布</h4>';
-  var eMax=0;
-  ERAS.forEach(function(e){var n=filtered.filter(function(b){return b.y>=e.s&&b.y<e.e}).length;if(n>eMax)eMax=n});
-  ERAS.forEach(function(e){var n=filtered.filter(function(b){return b.y>=e.s&&b.y<e.e}).length;if(n>0){var w=Math.round(n/Math.max(1,eMax)*100);h+='<div class="row"><span class="lb">'+e.name+'</span><div class="bar"><div style="width:'+w+'%;background:'+e.c+'"></div></div><span class="ct">'+n+'</span></div>'}});
-  sb.innerHTML=h;
-}
-
-/* === Mini-Map === */
-function buildMiniMap(){
-  document.getElementById('mc').addEventListener('click',function(e){
-    var rect=this.getBoundingClientRect();
-    var ratio=(e.clientX-rect.left)/rect.width;
-    var vp=document.getElementById('vp');
-    var yMin=filtered.length?filtered[0].y:B[0].y;
-    var yMax=filtered.length?filtered[filtered.length-1].y:B[B.length-1].y;
-    var ySpan=Math.max(1,yMax-yMin);
-    var targetY=yMin+ratio*ySpan;
-    var bpx=2.5,tW=Math.max(vp.clientWidth*2,ySpan*bpx*sc);
-    var targetL=((targetY-yMin)/ySpan)*(tW-40)+20;
-    px=-targetL+vp.clientWidth/2;py=0;
-    document.getElementById('tl').style.transform="translate("+px+"px,"+py+"px)";
-    drawMiniMap();
-  });
-}
-function drawMiniMap(){
-  if(!filtered.length)return;
-  var yMin=filtered[0].y,yMax=filtered[filtered.length-1].y,ySpan=Math.max(1,yMax-yMin);
-  var canvas=document.getElementById('mc');
-  var ctx=canvas.getContext('2d');
-  var cw=canvas.width,ch=canvas.height;
-  ctx.clearRect(0,0,cw,ch);
-  var bg=isDark?'#2a2a2a':'#f5f5f7';
-  ctx.fillStyle=bg;ctx.fillRect(0,0,cw,ch);
-  ERAS.forEach(function(e){
-    if(e.s>yMax||e.e<yMin)return;
-    var x=((e.s-yMin)/ySpan)*cw,w=Math.max(1,((e.e-e.s)/ySpan)*cw);
-    ctx.fillStyle=e.c+'20';ctx.fillRect(x,0,w,ch);
-  });
-  filtered.forEach(function(b){
-    var x=((b.y-yMin)/ySpan)*cw;
-    var y=ch/2+(b.imp-3)*3;
-    ctx.fillStyle=b.col;
-    var r=b.imp>=5?2:1.5;
-    ctx.beginPath();ctx.arc(Math.max(r,Math.min(cw-r,x)),Math.max(r,Math.min(ch-r,y)),r,0,Math.PI*2);ctx.fill();
-  });
-  var vp=document.getElementById('vp'),tl=document.getElementById('tl');
-  var tW=parseInt(tl.style.width)||vp.clientWidth*2;
-  var vl=(-px/tW)*cw,vw=(vp.clientWidth/tW)*cw;
-  ctx.strokeStyle=isDark?'rgba(255,255,255,.5)':'rgba(0,0,0,.3)';
-  ctx.lineWidth=1;ctx.strokeRect(Math.max(0,vl),1,Math.min(cw,vw),ch-2);
-}
-
-/* === 事件绑定 === */
-function bindEvents(){
-  var vp=document.getElementById("vp");
-  vp.addEventListener("mousedown",function(e){if(e.target.closest('.bn'))return;dr=true;lx=e.clientX;ly=e.clientY});
-  window.addEventListener("mousemove",function(e){if(!dr)return;px+=e.clientX-lx;py+=e.clientY-ly;lx=e.clientX;ly=e.clientY;document.getElementById("tl").style.transform="translate("+px+"px,"+py+"px)";drawMiniMap()});
-  window.addEventListener("mouseup",function(){dr=false});
-  vp.addEventListener("dblclick",function(e){if(!e.target.closest('.bn'))resetView()});
-  var tid=null;
-  vp.addEventListener("touchstart",function(e){if(e.touches.length===1){tid=e.touches[0].identifier;lx=e.touches[0].clientX;ly=e.touches[0].clientY}},{passive:true});
-  vp.addEventListener("touchmove",function(e){if(e.touches.length===1&&e.touches[0].identifier===tid){var t=e.touches[0];px+=t.clientX-lx;py+=t.clientY-ly;lx=t.clientX;ly=t.clientY;document.getElementById("tl").style.transform="translate("+px+"px,"+py+"px)";drawMiniMap()}},{passive:true});
-  vp.addEventListener("touchend",function(){tid=null});
-  vp.addEventListener("wheel",function(e){e.preventDefault();var os=sc;if(e.deltaY<0)sc=Math.min(5,sc*1.1);else sc=Math.max(.3,sc/1.1);var r=sc/os;var rect=vp.getBoundingClientRect();var mx=e.clientX-rect.left,my=e.clientY-rect.top;px=mx-r*(mx-px);py=my-r*(my-py);updateZoom();applyFilters()},{passive:false});
-  document.getElementById("sq").addEventListener("input",function(e){sq=e.target.value.trim();applyFilters()});
-  window.addEventListener("keydown",function(e){if(e.key==="Escape")closeModal();if(e.key==="+"||e.key==="=")zI();if(e.key==="-")zO();if(e.key==="0")resetView();if(e.key==="d"&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=='INPUT')toggleTheme()});
-  document.getElementById("mo").addEventListener("click",function(e){if(e.target.id==="mo")closeModal()});
-  window.addEventListener("resize",function(){applyFilters()});
-}
-</script>
-</body>
-</html>
