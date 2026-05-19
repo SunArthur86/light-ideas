@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>中文文学库 · 两千年文脉</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fafafa;--card:#fff;--text:#1a1a1a;--text2:#666;--accent:#c0392b;--accent2:#e74c3c;--border:#e8e8e8;--shadow:0 2px 12px rgba(0,0,0,.06);--radius:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+/* Hero */
+.hero{position:relative;min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px 40px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:300;letter-spacing:.1em;margin-bottom:12px}
+.hero h1 span{font-weight:700;background:linear-gradient(90deg,#e74c3c,#f39c12,#e74c3c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 100%;animation:shimmer 3s ease infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .subtitle{font-size:clamp(.9rem,2vw,1.2rem);opacity:.7;margin-bottom:30px;font-weight:300}
+.stats-row{display:flex;gap:40px;flex-wrap:wrap;justify-content:center}
+.stat{text-align:center}
+.stat .num{font-size:2rem;font-weight:700;color:#f39c12}
+.stat .label{font-size:.8rem;opacity:.6;margin-top:2px}
+/* Brush stroke decoration */
+.brush-line{width:120px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:20px auto;border-radius:2px}
+/* Era Nav */
+.era-nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;transition:box-shadow .3s}
+.era-nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.08)}
+.era-nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:12px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.era-nav-inner::-webkit-scrollbar{display:none}
+.era-btn{flex-shrink:0;padding:6px 16px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text2);font-size:.85rem;cursor:pointer;transition:all .25s;white-space:nowrap}
+.era-btn:hover{border-color:var(--accent);color:var(--accent)}
+.era-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.era-btn .count{display:inline-block;background:rgba(0,0,0,.06);border-radius:10px;padding:1px 7px;font-size:.75rem;margin-left:4px}
+.era-btn.active .count{background:rgba(255,255,255,.25)}
+/* Filter bar */
+.filter-bar{max-width:1200px;margin:24px auto 0;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--border);border-radius:var(--radius);font-size:.95rem;background:var(--card);outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.9rem}
+.genre-filters{display:flex;gap:6px;flex-wrap:wrap}
+.genre-btn{padding:5px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--text2)}
+.genre-btn:hover{border-color:var(--accent);color:var(--accent)}
+.genre-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.view-btn{padding:8px 14px;background:var(--card);border:none;cursor:pointer;font-size:.9rem;color:var(--text2);transition:all .2s}
+.view-btn.active{background:var(--text);color:#fff}
+.view-btn:not(:last-child){border-right:1px solid var(--border)}
+/* Main content */
+.main{max-width:1200px;margin:20px auto 60px;padding:0 20px}
+.result-info{color:var(--text2);font-size:.85rem;margin-bottom:16px}
+/* Grid view */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--accent)}
+.card .era-tag{position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:.7rem;padding:3px 10px;border-radius:0 0 0 var(--radius)}
+.card h3{font-size:1.05rem;font-weight:600;margin-bottom:4px;padding-right:60px}
+.card .author{color:var(--accent);font-size:.85rem;margin-bottom:8px}
+.card .desc{color:var(--text2);font-size:.82rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.card .meta span{font-size:.7rem;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:var(--text2)}
+/* Timeline view */
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),#f39c12,var(--accent))}
+.tl-item{position:relative;margin-bottom:20px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .3s}
+.tl-item:hover{box-shadow:var(--shadow);border-color:var(--accent)}
+.tl-item::before{content:'';position:absolute;left:-28px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
+.tl-item .year{font-size:.75rem;color:var(--accent);font-weight:600;margin-bottom:4px}
+.tl-item h3{font-size:.95rem;font-weight:600;margin-bottom:2px}
+.tl-item .author{font-size:.8rem;color:var(--text2)}
+.tl-item .desc{font-size:.8rem;color:var(--text2);margin-top:6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* Chart view */
+.chart-section{display:none}
+.chart-section.show{display:block}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px;margin-top:16px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-card h3{font-size:.95rem;font-weight:600;margin-bottom:16px;color:var(--text)}
+canvas.chart{width:100%!important;height:260px!important}
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:16px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;padding:32px;position:relative;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:var(--text2);border:none;background:none;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal h2{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.modal .m-author{color:var(--accent);font-size:1rem;margin-bottom:16px}
+.modal .m-desc{line-height:1.8;color:var(--text);margin-bottom:16px}
+.modal .m-tags{display:flex;gap:8px;flex-wrap:wrap}
+.modal .m-tags span{padding:4px 12px;border-radius:16px;font-size:.8rem;background:#f5f5f5;color:var(--text2)}
+.modal .m-tags span:first-child{background:var(--accent);color:#fff}
+/* Scroll to top */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:1.2rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(192,57,43,.3);transition:all .3s;z-index:50}
+.scroll-top:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,57,43,.4)}
+.scroll-top.show{display:flex}
+/* Responsive */
+@media(max-width:768px){
+.hero{min-height:50vh;padding:40px 16px 30px}
+.stats-row{gap:24px}
+.grid{grid-template-columns:1fr}
+.chart-grid{grid-template-columns:1fr}
+.filter-bar{flex-direction:column}
+.genre-filters{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+}
+@media(max-width:480px){
+.hero h1{font-size:1.6rem}
+.stat .num{font-size:1.4rem}
+.era-btn{padding:5px 10px;font-size:.8rem}
+}
+</style>
+</head>
+<body>
+<!-- Hero -->
+<div class="hero">
+<h1>中文文学库 · <span>两千年文脉</span></h1>
+<p class="subtitle">从诗经到长安的荔枝，200部作品纵览中华文明</p>
+<div class="brush-line"></div>
+<div class="stats-row" id="statsRow"></div>
+</div>
+<!-- Era Nav -->
+<div class="era-nav" id="eraNav">
+<div class="era-nav-inner" id="eraBtns"></div>
+</div>
+<!-- Filter -->
+<div class="filter-bar">
+<div class="search-box"><input id="searchInput" placeholder="搜索作品名、作者、关键词…"></div>
+<div class="genre-filters" id="genreBtns"></div>
+<div class="view-toggle">
+<button class="view-btn active" data-view="grid">⊞</button>
+<button class="view-btn" data-view="timeline">◷</button>
+<button class="view-btn" data-view="chart">▧</button>
+</div>
+</div>
+<!-- Main -->
+<div class="main">
+<div class="result-info" id="resultInfo"></div>
+<div id="gridView" class="grid"></div>
+<div id="timelineView" class="timeline" style="display:none"></div>
+<div id="chartView" class="chart-section"></div>
+</div>
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal" id="modal">
+<button class="modal-close" id="modalClose">×</button>
+<div id="modalBody"></div>
+</div>
+</div>
+<button class="scroll-top" id="scrollTop">↑</button>
+<script>
+const W=[
+{id:1,t:"诗经",a:"佚名",y:-1000,e:"先秦",g:"诗歌",ty:"总集",d:"中国最早诗歌总集，收录西周初年至春秋中叶305篇，分风雅颂三类，开中国现实主义文学传统。",p:"陕西/河南"},
+{id:2,t:"楚辞",a:"屈原 等",y:-300,e:"先秦",g:"诗歌",ty:"总集",d:"中国第一部浪漫主义诗歌总集，以屈原作品为主，开创楚辞体，影响深远。",p:"湖北"},
+{id:3,t:"离骚",a:"屈原",y:-278,e:"先秦",g:"诗歌",ty:"抒情诗",d:"中国古代最长的抒情诗，屈原代表作，表达忠君爱国之情与理想不得的愤懑。",p:"湖北"},
+{id:4,t:"道德经",a:"老子",y:-500,e:"先秦",g:"哲学",ty:"哲理散文",d:"道家哲学经典，五千言蕴含天地万物之理，影响中国文化两千余年。",p:"河南"},
+{id:5,t:"论语",a:"孔子弟子",y:-479,e:"先秦",g:"哲学",ty:"语录",d:"记录孔子及其弟子言行的语录集，儒家核心经典，塑造了中国人的价值观。",p:"山东"},
+{id:6,t:"庄子",a:"庄周",y:-300,e:"先秦",g:"哲学",ty:"哲理散文",d:"道家哲学巨著，以寓言故事阐发逍遥自由之境，文学性与哲思兼具。",p:"河南"},
+{id:7,t:"孟子",a:"孟子",y:-320,e:"先秦",g:"哲学",ty:"语录",d:"儒家经典，阐述仁政思想与性善论，气势磅礴的论辩风格影响后世。",p:"山东"},
+{id:8,t:"左传",a:"左丘明",y:-400,e:"先秦",g:"历史",ty:"编年史",d:"中国第一部叙事详细的编年体史书，记载春秋时期历史，文学价值极高。",p:"山东"},
+{id:9,t:"战国策",a:"刘向 编",y:-300,e:"先秦",g:"历史",ty:"国别体",d:"记载战国时期纵横家谋略的史书，人物描写生动，语言气势纵横。",p:"河南"},
+{id:10,t:"孙子兵法",a:"孙武",y:-512,e:"先秦",g:"军事",ty:"兵书",d:"世界最古老兵书之一，十三篇涵盖战争全貌，影响遍及全球军事与商业领域。",p:"山东"},
+{id:11,t:"山海经",a:"佚名",y:-400,e:"先秦",g:"神话",ty:"地理志",d:"中国最早神话地理志，记载山川神兽奇闻异事，开奇幻文学先河。",p:"全国"},
+{id:12,t:"周易",a:"佚名",y:-1000,e:"先秦",g:"哲学",ty:"经书",d:"中华文明之源，六十四卦蕴含宇宙变化之道，影响哲学、文学、艺术各领域。",p:"河南"},
+{id:13,t:"尚书",a:"佚名",y:-1000,e:"先秦",g:"历史",ty:"政书",d:"中国最早的历史文献汇编，记载上古至周代政令文告，古文运动的经典依据。",p:"全国"},
+{id:14,t:"荀子",a:"荀况",y:-260,e:"先秦",g:"哲学",ty:"论说文",d:"儒家重要典籍，提出性恶论与礼治思想，逻辑严密文采斐然。",p:"河北"},
+{id:15,t:"韩非子",a:"韩非",y:-233,e:"先秦",g:"哲学",ty:"论说文",d:"法家集大成之作，融法术势为一体，寓言精妙论证雄辩。",p:"河南"},
+{id:16,t:"墨子",a:"墨翟",y:-400,e:"先秦",g:"哲学",ty:"论说文",d:"墨家学派经典，主张兼爱非攻尚贤节用，逻辑学与科学思想超前。",p:"山东"},
+{id:17,t:"列子",a:"列御寇",y:-400,e:"先秦",g:"哲学",ty:"哲理散文",d:"道家经典，以寓言故事阐发万物齐一之理，愚公移山即出此书。",p:"河南"},
+{id:18,t:"晏子春秋",a:"佚名",y:-500,e:"先秦",g:"历史",ty:"传记",d:"记载齐国名相晏婴言行，展现春秋外交智慧与政治风骨。",p:"山东"},
+{id:19,t:"九歌",a:"屈原",y:-300,e:"先秦",g:"诗歌",ty:"祭祀诗",d:"楚辞名篇，十一篇祭祀歌辞，描绘楚地神话世界，意境瑰丽。",p:"湖北"},
+{id:20,t:"天问",a:"屈原",y:-300,e:"先秦",g:"诗歌",ty:"问答题",d:"屈原奇作，一百七十余问涉及天文地理历史神话，体现古人探索精神。",p:"湖北"},
+{id:21,t:"吕氏春秋",a:"吕不韦",y:-239,e:"先秦",g:"哲学",ty:"杂家",d:"先秦百科全书式著作，兼收各家之长，吕不韦门客集体编撰。",p:"陕西"},
+{id:22,t:"史记",a:"司马迁",y:-91,e:"秦汉",g:"历史",ty:"纪传体",d:"中国第一部纪传体通史，记载上起黄帝下至汉武帝三千年历史，鲁迅称'史家之绝唱'。",p:"陕西"},
+{id:23,t:"汉书",a:"班固",y:92,e:"秦汉",g:"历史",ty:"纪传体",d:"中国第一部纪传体断代史，记载西汉历史，文笔洗练条理清晰。",p:"陕西"},
+{id:24,t:"古诗十九首",a:"佚名",y:150,e:"秦汉",g:"诗歌",ty:"五言诗",d:"汉代五言诗巅峰之作，十九首无名氏诗作，开五言诗先河，被誉为'五言之冠冕'。",p:"河南"},
+{id:25,t:"论衡",a:"王充",y:80,e:"秦汉",g:"哲学",ty:"论说文",d:"东汉唯物主义哲学巨著，批判天人感应与谶纬迷信，提倡实知求真。",p:"浙江"},
+{id:26,t:"说文解字",a:"许慎",y:121,e:"秦汉",g:"语言学",ty:"字典",d:"中国第一部系统分析汉字字形的字书，收九千余字，为文字学奠基之作。",p:"河南"},
+{id:27,t:"汉乐府",a:"佚名",y:-100,e:"秦汉",g:"诗歌",ty:"乐府诗",d:"汉代官方采集的民歌，反映社会生活，'感于哀乐缘事而发'的现实主义精神。",p:"全国"},
+{id:28,t:"出师表",a:"诸葛亮",y:227,e:"秦汉",g:"散文",ty:"表文",d:"诸葛亮北伐前上书后主刘禅，忠诚恳切言辞动人，千古名篇。",p:"四川"},
+{id:29,t:"过秦论",a:"贾谊",y:-170,e:"秦汉",g:"散文",ty:"政论",d:"西汉政论名篇，总结秦亡教训，'仁义不施而攻守之势异也'警醒千古。",p:"河南"},
+{id:30,t:"盐铁论",a:"桓宽",y:-60,e:"秦汉",g:"经济",ty:"论辩",d:"记录西汉盐铁会议争论，反映汉朝经济政策辩论，经济思想史重要文献。",p:"全国"},
+{id:31,t:"洛神赋",a:"曹植",y:223,e:"魏晋南北朝",g:"辞赋",ty:"抒情赋",d:"曹植代表作，描绘洛水女神宓妃之美，辞采华美想象奇绝，赋中绝唱。",p:"河南"},
+{id:32,t:"文心雕龙",a:"刘勰",y:502,e:"魏晋南北朝",g:"文学理论",ty:"理论",d:"中国第一部系统文学理论专著，五十篇涵盖创作论批评论，体大思精。",p:"山东"},
+{id:33,t:"诗品",a:"钟嵘",y:520,e:"魏晋南北朝",g:"文学理论",ty:"批评",d:"中国第一部诗歌批评专著，品评五言诗人一百二十余人，分三品论高下。",p:"河南"},
+{id:34,t:"世说新语",a:"刘义庆",y:430,e:"魏晋南北朝",g:"笔记小说",ty:"志人小说",d:"记载魏晋名士言行的笔记小说，展现魏晋风度与名士精神。",p:"江苏"},
+{id:35,t:"搜神记",a:"干宝",y:350,e:"魏晋南北朝",g:"小说",ty:"志怪小说",d:"魏晋志怪小说代表作，记载神仙鬼怪故事，开中国小说志怪传统。",p:"河南"},
+{id:36,t:"陶渊明集",a:"陶渊明",y:410,e:"魏晋南北朝",g:"诗歌",ty:"诗集",d:"田园诗派开创者，'采菊东篱下悠然见南山'成千古名句，桃花源记影响深远。",p:"江西"},
+{id:37,t:"阮籍咏怀诗",a:"阮籍",y:260,e:"魏晋南北朝",g:"诗歌",ty:"抒情诗",d:"正始文学代表，八十二首咏怀诗隐晦曲折表达对现实的不满与忧虑。",p:"河南"},
+{id:38,t:"嵇康集",a:"嵇康",y:260,e:"魏晋南北朝",g:"散文",ty:"文集",d:"竹林七贤领袖之作，与山巨源绝交书等名篇展现独立人格精神。",p:"安徽"},
+{id:39,t:"水经注",a:"郦道元",y:515,e:"魏晋南北朝",g:"地理",ty:"地理志",d:"综合性地理著作，详细记载河流山川，文学描写优美，三峡篇尤为著名。",p:"河北"},
+{id:40,t:"木兰辞",a:"佚名",y:550,e:"魏晋南北朝",g:"诗歌",ty:"乐府诗",d:"北朝乐府民歌，花木兰代父从军的故事，巾帼英雄形象流传千古。",p:"北方"},
+{id:41,t:"孔雀东南飞",a:"佚名",y:200,e:"魏晋南北朝",g:"诗歌",ty:"叙事诗",d:"中国文学史上第一部长篇叙事诗，讲述焦仲卿与刘兰芝的悲剧爱情。",p:"安徽"},
+{id:42,t:"昭明文选",a:"萧统",y:530,e:"魏晋南北朝",g:"总集",ty:"诗文选集",d:"中国现存最早的诗文总集，选录先秦至梁代七百余篇，文学选本典范。",p:"江苏"},
+{id:43,t:"陈情表",a:"李密",y:280,e:"魏晋南北朝",g:"散文",ty:"表文",d:"李密辞不赴任的表文，以孝道动人，与出师表并称'两大名表'。",p:"四川"},
+{id:44,t:"归园田居",a:"陶渊明",y:406,e:"魏晋南北朝",g:"诗歌",ty:"田园诗",d:"陶渊明田园诗代表，五首描绘归隐田园的闲适生活，中国田园诗的典范。",p:"江西"},
+{id:45,t:"饮酒·其五",a:"陶渊明",y:416,e:"魏晋南北朝",g:"诗歌",ty:"五言诗",d:"'采菊东篱下悠然见南山'出自此组诗，意境高远物我两忘。",p:"江西"},
+{id:46,t:"滕王阁序",a:"王勃",y:675,e:"隋唐",g:"散文",ty:"骈文",d:"初唐四杰王勃名篇，'落霞与孤鹜齐飞秋水共长天一色'传诵千古。",p:"江西"},
+{id:47,t:"春江花月夜",a:"张若虚",y:710,e:"隋唐",g:"诗歌",ty:"七言诗",d:"'孤篇盖全唐'，以月为主线贯穿全诗，意境空灵幽美，闻一多赞为'诗中的诗'。",p:"江苏"},
+{id:48,t:"李白全集",a:"李白",y:744,e:"隋唐",g:"诗歌",ty:"诗集",d:"诗仙李太白，浪漫主义诗歌巅峰，将进酒蜀道难静夜思等名篇照耀千古。",p:"四川/陕西"},
+{id:49,t:"杜甫全集",a:"杜甫",y:760,e:"隋唐",g:"诗歌",ty:"诗集",d:"诗圣杜子美，现实主义诗歌顶峰，三吏三别等反映民间疾苦，被称为'诗史'。",p:"河南/四川"},
+{id:50,t:"白居易集",a:"白居易",y:810,e:"隋唐",g:"诗歌",ty:"诗集",d:"新乐府运动倡导者，长恨歌琵琶行长篇叙事名篇，语言通俗老妪能解。",p:"陕西/河南"},
+{id:51,t:"王维集",a:"王维",y:740,e:"隋唐",g:"诗歌",ty:"诗集",d:"诗佛王摩诘，山水田园诗派代表，诗中有画画中有诗，禅意深远。",p:"山西/陕西"},
+{id:52,t:"孟浩然集",a:"孟浩然",y:730,e:"隋唐",g:"诗歌",ty:"诗集",d:"盛唐山水田园诗人，春晓过故人庄等名篇清新自然淡远悠长。",p:"湖北"},
+{id:53,t:"李商隐诗集",a:"李商隐",y:850,e:"隋唐",g:"诗歌",ty:"诗集",d:"晚唐诗人，无题诗朦胧凄美意境深幽，'春蚕到死丝方尽'传诵千年。",p:"河南"},
+{id:54,t:"杜牧诗集",a:"杜牧",y:840,e:"隋唐",g:"诗歌",ty:"诗集",d:"晚唐杰出诗人，咏史怀古诗独步一时，'停车坐爱枫林晚'家喻户晓。",p:"陕西"},
+{id:55,t:"长恨歌",a:"白居易",y:809,e:"隋唐",g:"诗歌",ty:"叙事诗",d:"白居易代表作，讲述唐玄宗与杨贵妃爱情悲剧，'天长地久有时尽此恨绵绵无绝期'。",p:"陕西"},
+{id:56,t:"琵琶行",a:"白居易",y:816,e:"隋唐",g:"诗歌",ty:"叙事诗",d:"白居易贬谪江州时作，'同是天涯沦落人相逢何必曾相识'千古名句。",p:"江西"},
+{id:57,t:"韩愈文集",a:"韩愈",y:800,e:"隋唐",g:"散文",ty:"文集",d:"唐宋八大家之首，古文运动倡导者，师说进学解等名篇气势磅礴。",p:"河南"},
+{id:58,t:"柳宗元文集",a:"柳宗元",y:810,e:"隋唐",g:"散文",ty:"文集",d:"唐宋八大家之一，山水游记与寓言散文成就极高，永州八记为其代表作。",p:"山西"},
+{id:59,t:"刘禹锡集",a:"刘禹锡",y:810,e:"隋唐",g:"诗歌",ty:"诗集",d:"中唐诗人，'沉舟侧畔千帆过病树前头万木春'乐观豁达，被称为'诗豪'。",p:"河南"},
+{id:60,t:"寒山诗",a:"寒山",y:750,e:"隋唐",g:"诗歌",ty:"诗集",d:"唐代隐僧寒山之作，融合佛道思想，白话诗风独特，在海外影响巨大。",p:"浙江"},
+{id:61,t:"王昌龄诗集",a:"王昌龄",y:740,e:"隋唐",g:"诗歌",ty:"诗集",d:"边塞诗派代表，被誉为'七绝圣手'，'秦时明月汉时关'气魄雄浑。",p:"陕西"},
+{id:62,t:"岑参诗集",a:"岑参",y:750,e:"隋唐",g:"诗歌",ty:"诗集",d:"边塞诗派代表，'忽如一夜春风来千树万树梨花开'写雪奇绝。",p:"河南"},
+{id:63,t:"高适诗集",a:"高适",y:745,e:"隋唐",g:"诗歌",ty:"诗集",d:"边塞诗派代表，燕歌行气势豪迈，与岑参并称'高岑'。",p:"河北"},
+{id:64,t:"李贺诗集",a:"李贺",y:810,e:"隋唐",g:"诗歌",ty:"诗集",d:"被称为'诗鬼'，诗风奇诡瑰丽想象惊人，'黑云压城城欲摧'为其名句。",p:"河南"},
+{id:65,t:"唐传奇",a:"多人",y:800,e:"隋唐",g:"小说",ty:"传奇",d:"唐代文言短篇小说，莺莺传霍小玉传南柯记等，标志中国小说走向成熟。",p:"全国"},
+{id:66,t:"游子吟",a:"孟郊",y:790,e:"隋唐",g:"诗歌",ty:"五言诗",d:"'慈母手中线游子身上衣'歌颂母爱的千古绝唱，朴实无华感人至深。",p:"浙江"},
+{id:67,t:"阿房宫赋",a:"杜牧",y:825,e:"隋唐",g:"辞赋",ty:"咏史赋",d:"杜牧借秦灭之史讽谏当朝，'秦人不暇自哀而后人哀之'警醒千古。",p:"陕西"},
+{id:68,t:"师说",a:"韩愈",y:802,e:"隋唐",g:"散文",ty:"论说文",d:"韩愈名篇，'师者所以传道受业解惑也'成为千古教育名言。",p:"河南"},
+{id:69,t:"花间集",a:"赵崇祚 编",y:940,e:"五代十国",g:"词",ty:"词集",d:"中国最早的词总集，收录晚唐五代十八家词五百首，婉约词的源头。",p:"四川"},
+{id:70,t:"李煜词集",a:"李煜",y:975,e:"五代十国",g:"词",ty:"词集",d:"南唐后主词作，亡国后词风沉痛凄美，'问君能有几多愁'传诵千古。",p:"江苏"},
+{id:71,t:"花蕊夫人宫词",a:"花蕊夫人",y:950,e:"五代十国",g:"诗歌",ty:"宫词",d:"后蜀花蕊夫人的百首宫词，描绘蜀宫生活细节，史料与文学价值兼具。",p:"四川"},
+{id:72,t:"苏轼全集",a:"苏轼",y:1080,e:"宋代",g:"诗词文",ty:"全集",d:"北宋文学全才，诗书画三绝，念奴娇·赤壁怀古水调歌头等名篇光照千古。",p:"四川/浙江"},
+{id:73,t:"李清照集",a:"李清照",y:1125,e:"宋代",g:"词",ty:"词集",d:"婉约词派宗师，'寻寻觅觅冷冷清清'千古第一才女，词作凄美动人。",p:"山东/浙江"},
+{id:74,t:"辛弃疾词集",a:"辛弃疾",y:1185,e:"宋代",g:"词",ty:"词集",d:"豪放词派代表，'醉里挑灯看剑梦回吹角连营'雄浑悲壮。",p:"山东/江西"},
+{id:75,t:"陆游诗集",a:"陆游",y:1180,e:"宋代",g:"诗歌",ty:"诗集",d:"南宋爱国诗人，存诗九千余首，'王师北定中原日家祭无忘告乃翁'感人至深。",p:"浙江"},
+{id:76,t:"柳永词集",a:"柳永",y:1030,e:"宋代",g:"词",ty:"词集",d:"北宋词人，创制大量慢词，'杨柳岸晓风残月'广为传唱，凡有井水处皆歌柳词。",p:"福建"},
+{id:77,t:"欧阳修文集",a:"欧阳修",y:1060,e:"宋代",g:"散文",ty:"文集",d:"北宋文坛领袖，醉翁亭记为山水散文极品，唐宋八大家之一。",p:"江西"},
+{id:78,t:"王安石文集",a:"王安石",y:1070,e:"宋代",g:"诗文",ty:"文集",d:"北宋政治家兼文学家，诗文革新运动重要人物，游褒禅山记等名篇传世。",p:"江西"},
+{id:79,t:"黄庭坚诗集",a:"黄庭坚",y:1090,e:"宋代",g:"诗歌",ty:"诗集",d:"江西诗派开创者，讲究'点铁成金'，与苏轼并称'苏黄'。",p:"江西"},
+{id:80,t:"范仲淹文集",a:"范仲淹",y:1046,e:"宋代",g:"散文",ty:"文集",d:"岳阳楼记为千古名篇，'先天下之忧而忧后天下之乐而乐'激励无数仁人志士。",p:"江苏"},
+{id:81,t:"晏殊词集",a:"晏殊",y:1020,e:"宋代",g:"词",ty:"词集",d:"北宋宰相词人，'无可奈何花落去似曾相识燕归来'意境浑然天成。",p:"江西"},
+{id:82,t:"周邦彦词集",a:"周邦彦",y:1100,e:"宋代",g:"词",ty:"词集",d:"北宋词的集大成者，格律精严音韵和谐，被视为词家正宗。",p:"浙江"},
+{id:83,t:"姜夔词集",a:"姜夔",y:1195,e:"宋代",g:"词",ty:"词集",d:"南宋格律派词人，'二十四桥仍在波心荡冷月无声'清空骚雅。",p:"江西"},
+{id:84,t:"秦观词集",a:"秦观",y:1085,e:"宋代",g:"词",ty:"词集",d:"苏门四学士之一，'两情若是久长时又岂在朝朝暮暮'为词中名句。",p:"江苏"},
+{id:85,t:"杨万里诗集",a:"杨万里",y:1180,e:"宋代",g:"诗歌",ty:"诗集",d:"南宋四大家之一，'诚斋体'自然活泼，'小荷才露尖尖角'家喻户晓。",p:"江西"},
+{id:86,t:"朱熹文集",a:"朱熹",y:1180,e:"宋代",g:"哲学",ty:"理学",d:"理学集大成者，四书集注为科举标准教材，影响中国思想史七百年。",p:"福建/江西"},
+{id:87,t:"东京梦华录",a:"孟元老",y:1147,e:"宋代",g:"笔记",ty:"笔记",d:"追忆北宋汴京繁华盛景，城市生活的百科全书，珍贵的社会史料。",p:"河南"},
+{id:88,t:"梦溪笔谈",a:"沈括",y:1088,e:"宋代",g:"科学",ty:"笔记",d:"北宋科学百科全书，涵盖天文数学物理化学等领域，被李约瑟称为'中国科学史里程碑'。",p:"浙江"},
+{id:89,t:"文天祥诗集",a:"文天祥",y:1280,e:"宋代",g:"诗歌",ty:"诗集",d:"南宋民族英雄，正气歌过零丁洋等慷慨悲壮，'人生自古谁无死'浩然正气。",p:"江西"},
+{id:90,t:"岳飞诗词",a:"岳飞",y:1140,e:"宋代",g:"词",ty:"词集",d:"南宋名将词作，满江红'怒发冲冠'壮怀激烈，千古传诵。",p:"河南"},
+{id:91,t:"元好问集",a:"元好问",y:1230,e:"辽金元",g:"诗歌",ty:"诗集",d:"金代文学代表，'问世间情是何物直教生死相许'千古名句。",p:"山西"},
+{id:92,t:"关汉卿杂剧",a:"关汉卿",y:1290,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元曲四大家之首，窦娥冤为中国古典悲剧巅峰之作，千古奇冤感天动地。",p:"北京"},
+{id:93,t:"西厢记",a:"王实甫",y:1300,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元杂剧巅峰之作，张生与崔莺莺的爱情故事，'愿天下有情人终成眷属'。",p:"北京"},
+{id:94,t:"窦娥冤",a:"关汉卿",y:1295,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元杂剧悲剧代表，窦娥含冤而死六月飞雪，揭露社会黑暗伸张正义。",p:"北京"},
+{id:95,t:"马致远杂剧",a:"马致远",y:1295,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元曲四大家之一，汉宫秋等历史剧悲壮苍凉，天净沙·秋思被誉为'秋思之祖'。",p:"北京"},
+{id:96,t:"赵氏孤儿",a:"纪君祥",y:1300,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元杂剧名作，程婴救孤故事，忠义精神感人，最早被译介到欧洲的中国戏剧。",p:"北京"},
+{id:97,t:"白朴杂剧",a:"白朴",y:1280,e:"辽金元",g:"戏剧",ty:"杂剧",d:"元曲四大家之一，墙头马上梧桐雨等作品，文采斐然情感真挚。",p:"北京"},
+{id:98,t:"张养浩散曲",a:"张养浩",y:1320,e:"辽金元",g:"散曲",ty:"散曲集",d:"元代散曲大家，山坡羊·潼关怀古'兴百姓苦亡百姓苦'千古名句。",p:"山东"},
+{id:99,t:"崔颢黄鹤楼",a:"崔颢",y:740,e:"隋唐",g:"诗歌",ty:"七言诗",d:"黄鹤楼一诗传诵千古，据传李白见之亦搁笔叹'眼前有景道不得'。",p:"河南"},
+{id:100,t:"李之仪词",a:"李之仪",y:1090,e:"宋代",g:"词",ty:"词集",d:"北宋词人，'我住长江头君住长江尾'朴素深情广为传唱。",p:"河北"},
+{id:101,t:"西厢记诸宫调",a:"董解元",y:1200,e:"辽金元",g:"说唱",ty:"诸宫调",d:"金代说唱文学代表作，为王实甫西厢记的蓝本，保存了珍贵的音乐文学形式。",p:"北京"},
+{id:102,t:"三国演义",a:"罗贯中",y:1400,e:"明代",g:"小说",ty:"长篇小说",d:"中国第一部长篇历史演义小说，描写东汉末年至西晋近百年的历史风云，桃园三结义等故事家喻户晓。",p:"浙江"},
+{id:103,t:"水浒传",a:"施耐庵",y:1400,e:"明代",g:"小说",ty:"长篇小说",d:"中国第一部歌颂农民起义的长篇小说，一百零八位好汉替天行道的故事流传千古。",p:"江苏"},
+{id:104,t:"西游记",a:"吴承恩",y:1592,e:"明代",g:"小说",ty:"长篇小说",d:"中国古典神魔小说巅峰，唐僧师徒四人西天取经的奇幻旅程，想象力惊天动地。",p:"江苏"},
+{id:105,t:"金瓶梅",a:"兰陵笑笑生",y:1610,e:"明代",g:"小说",ty:"长篇小说",d:"中国第一部由文人独立创作的长篇世情小说，深刻揭示明代社会百态，文学价值极高。",p:"山东"},
+{id:106,t:"牡丹亭",a:"汤显祖",y:1598,e:"明代",g:"戏剧",ty:"传奇",d:"明代戏剧巅峰，杜丽娘因梦而死又因情复生，'情不知所起一往而深'传诵千古。",p:"江西"},
+{id:107,t:"封神演义",a:"许仲琳",y:1620,e:"明代",g:"小说",ty:"神魔小说",d:"以武王伐纣为背景的神魔小说，哪吒杨戬姜子牙等形象深入人心。",p:"江苏"},
+{id:108,t:"徐霞客游记",a:"徐霞客",y:1640,e:"明代",g:"地理",ty:"游记",d:"明代地理名著，三十余年实地考察记录，对喀斯特地貌的研究早于西方两百年。",p:"江苏"},
+{id:109,t:"三言",a:"冯梦龙",y:1620,e:"明代",g:"小说",ty:"话本集",d:"喻世明言警世通言醒世恒言三部白话短篇小说集，反映明代市井生活百态。",p:"江苏"},
+{id:110,t:"二拍",a:"凌濛初",y:1630,e:"明代",g:"小说",ty:"话本集",d:"初刻拍案惊奇二刻拍案惊奇，与三言合称'三言二拍'，白话小说经典。",p:"浙江"},
+{id:111,t:"临川四梦",a:"汤显祖",y:1600,e:"明代",g:"戏剧",ty:"传奇",d:"汤显祖四部传奇剧：牡丹亭紫钗记邯郸记南柯记，以梦为线索探讨人生。",p:"江西"},
+{id:112,t:"归有光文集",a:"归有光",y:1560,e:"明代",g:"散文",ty:"文集",d:"明代散文家，项脊轩志为名篇，以家常琐事抒发深情淡而有味。",p:"江苏"},
+{id:113,t:"张岱文集",a:"张岱",y:1650,e:"明代",g:"散文",ty:"小品文",d:"晚明小品文大家，陶庵梦忆西湖梦寻追忆往昔繁华，文字清隽风雅。",p:"浙江"},
+{id:114,t:"袁宏道文集",a:"袁宏道",y:1600,e:"明代",g:"散文",ty:"小品文",d:"公安派代表，提倡'独抒性灵不拘格套'，反对复古拟古之风。",p:"湖北"},
+{id:115,t:"天工开物",a:"宋应星",y:1637,e:"明代",g:"科技",ty:"科技著作",d:"中国古代科技百科全书，系统记载农业手工业技术，被誉为'中国17世纪的工艺百科全书'。",p:"江西"},
+{id:116,t:"红楼梦",a:"曹雪芹",y:1791,e:"清代",g:"小说",ty:"长篇小说",d:"中国古典小说最高成就，以贾府兴衰为线索展现封建社会全貌，被誉为'中国封建社会的百科全书'。",p:"北京"},
+{id:117,t:"聊斋志异",a:"蒲松龄",y:1690,e:"清代",g:"小说",ty:"文言小说",d:"中国文言短篇小说巅峰，四百余篇鬼狐故事，借鬼神讽世情想象瑰丽。",p:"山东"},
+{id:118,t:"儒林外史",a:"吴敬梓",y:1750,e:"清代",g:"小说",ty:"讽刺小说",d:"中国讽刺小说巅峰之作，描绘科举制度下知识分子的众生相，辛辣幽默。",p:"安徽"},
+{id:119,t:"桃花扇",a:"孔尚任",y:1699,e:"清代",g:"戏剧",ty:"传奇",d:"清代传奇剧代表，以秦淮名妓李香君与侯方域的爱情反映南明兴亡。",p:"山东"},
+{id:120,t:"长生殿",a:"洪昇",y:1688,e:"清代",g:"戏剧",ty:"传奇",d:"清代传奇剧代表，写唐玄宗与杨贵妃爱情故事，与桃花扇并称'南洪北孔'。",p:"浙江"},
+{id:121,t:"纳兰性德词集",a:"纳兰性德",y:1680,e:"清代",g:"词",ty:"词集",d:"清代第一词人，'人生若只如初见何事秋风悲画扇'凄美动人。",p:"北京"},
+{id:122,t:"阅微草堂笔记",a:"纪昀",y:1790,e:"清代",g:"小说",ty:"笔记小说",d:"纪晓岚所著志怪小说集，与聊斋并称清代笔记小说双璧。",p:"北京"},
+{id:123,t:"镜花缘",a:"李汝珍",y:1820,e:"清代",g:"小说",ty:"长篇小说",d:"奇幻冒险小说，描绘海外奇国异俗，寓讽刺于幻想之中。",p:"江苏"},
+{id:124,t:"老残游记",a:"刘鹗",y:1903,e:"清代",g:"小说",ty:"长篇小说",d:"晚清四大谴责小说之一，通过江湖医生老残的游历揭露晚清社会黑暗。",p:"江苏"},
+{id:125,t:"官场现形记",a:"李伯元",y:1903,e:"清代",g:"小说",ty:"谴责小说",d:"晚清四大谴责小说之一，全面揭露晚清官场腐败丑态，笔锋犀利。",p:"江苏"},
+{id:126,t:"二十年目睹之怪现状",a:"吴趼人",y:1905,e:"清代",g:"小说",ty:"谴责小说",d:"晚清四大谴责小说之一，以见闻录形式记录晚清社会的种种怪现状。",p:"广东"},
+{id:127,t:"孽海花",a:"曾朴",y:1905,e:"清代",g:"小说",ty:"谴责小说",d:"晚清四大谴责小说之一，以赛金花故事为线索反映晚清外交与社会。",p:"江苏"},
+{id:128,t:"浮生六记",a:"沈复",y:1808,e:"清代",g:"散文",ty:"自传",d:"清代自传体散文，记录与妻子芸娘的平凡生活，真挚感人林语堂誉为中国文学最美之作。",p:"江苏"},
+{id:129,t:"龚自珍集",a:"龚自珍",y:1830,e:"清代",g:"诗文",ty:"文集",d:"晚清思想先驱，'我劝天公重抖擞不拘一格降人才'开启近代思想启蒙。",p:"浙江"},
+{id:130,t:"郑板桥集",a:"郑燮",y:1750,e:"清代",g:"诗文",ty:"文集",d:"扬州八怪之一，诗书画三绝，'难得糊涂'四字流传天下。",p:"江苏"},
+{id:131,t:"袁枚集",a:"袁枚",y:1770,e:"清代",g:"诗文",ty:"文集",d:"清代才子，随园诗话倡导性灵说，小仓山房诗文集文采斐然。",p:"浙江"},
+{id:132,t:"曾国藩家书",a:"曾国藩",y:1860,e:"清代",g:"散文",ty:"书信",d:"晚清名臣曾国藩的家书集，修身齐家治国的智慧结晶，影响至今。",p:"湖南"},
+{id:133,t:"说岳全传",a:"钱彩",y:1750,e:"清代",g:"小说",ty:"历史小说",d:"讲述岳飞精忠报国的故事，民间影响深远，岳飞形象的文学定型之作。",p:"浙江"},
+{id:134,t:"隋唐演义",a:"褚人获",y:1700,e:"清代",g:"小说",ty:"历史小说",d:"隋唐历史演义，从隋文帝到唐明皇的历史故事，英雄美人传奇荟萃。",p:"江苏"},
+{id:135,t:"东周列国志",a:"冯梦龙",y:1650,e:"清代",g:"小说",ty:"历史小说",d:"系统讲述春秋战国历史的长篇小说，各诸侯国兴亡故事精彩纷呈。",p:"江苏"},
+{id:136,t:"鲁迅全集",a:"鲁迅",y:1923,e:"民国",g:"小说/杂文",ty:"全集",d:"中国现代文学奠基人，狂人日记为中国第一篇白话小说，阿Q正传深刻揭示国民性。",p:"浙江/北京"},
+{id:137,t:"骆驼祥子",a:"老舍",y:1937,e:"民国",g:"小说",ty:"长篇小说",d:"老舍代表作，描写北平人力车夫祥子的悲惨命运，京味文学的经典。",p:"北京"},
+{id:138,t:"家",a:"巴金",y:1933,e:"民国",g:"小说",ty:"长篇小说",d:"巴金激流三部曲之一，描写封建家庭的崩溃，青年一代的觉醒与反抗。",p:"四川"},
+{id:139,t:"子夜",a:"茅盾",y:1933,e:"民国",g:"小说",ty:"长篇小说",d:"茅盾代表作，描绘20世纪30年代上海的社会全景，中国现代长篇小说里程碑。",p:"浙江"},
+{id:140,t:"边城",a:"沈从文",y:1934,e:"民国",g:"小说",ty:"中篇小说",d:"沈从文代表作，描绘湘西边城茶峒的纯美爱情，田园牧歌式的文学净土。",p:"湖南"},
+{id:141,t:"雷雨",a:"曹禺",y:1934,e:"民国",g:"戏剧",ty:"话剧",d:"中国现代话剧奠基之作，两个家庭三十年的恩怨纠葛，戏剧冲突激烈震撼。",p:"天津"},
+{id:142,t:"围城",a:"钱钟书",y:1947,e:"民国",g:"小说",ty:"长篇小说",d:"钱钟书唯一长篇，以幽默讽刺笔法描绘知识分子群像，'围在城里的人想逃出来'。",p:"江苏"},
+{id:143,t:"张爱玲全集",a:"张爱玲",y:1944,e:"民国",g:"小说",ty:"作品集",d:"民国才女作家，倾城之恋金锁记等小说以冷艳笔触描绘都市男女，风格独特。",p:"上海"},
+{id:144,t:"呼兰河传",a:"萧红",y:1940,e:"民国",g:"小说",ty:"长篇小说",d:"萧红代表作，描绘东北呼兰河小城的风土人情，笔调苍凉寂寞而深情。",p:"黑龙江"},
+{id:145,t:"徐志摩诗集",a:"徐志摩",y:1928,e:"民国",g:"诗歌",ty:"诗集",d:"新月派代表诗人，再别康桥'轻轻的我走了正如我轻轻的来'浪漫唯美。",p:"浙江"},
+{id:146,t:"闻一多诗集",a:"闻一多",y:1925,e:"民国",g:"诗歌",ty:"诗集",d:"新月派诗人，死水红烛等诗篇关注现实格律严整，后为民主运动献身。",p:"湖北"},
+{id:147,t:"朱自清散文",a:"朱自清",y:1928,e:"民国",g:"散文",ty:"散文集",d:"现代散文大家，背影荷塘月色等名篇情感细腻真挚动人。",p:"江苏"},
+{id:148,t:"郁达夫文集",a:"郁达夫",y:1930,e:"民国",g:"小说/散文",ty:"文集",d:"创造社创始人之一，沉沦等作品大胆暴露内心，文风清丽哀婉。",p:"浙江"},
+{id:149,t:"冰心散文",a:"冰心",y:1923,e:"民国",g:"散文",ty:"散文集",d:"中国现代儿童文学先驱，繁星春水等作品以母爱童真自然为主题温暖动人。",p:"福建"},
+{id:150,t:"林语堂散文",a:"林语堂",y:1937,e:"民国",g:"散文",ty:"散文集",d:"'两脚踏中西文化一心评宇宙文章'，吾国与吾民向世界介绍中国文化。",p:"福建"},
+{id:151,t:"彷徨",a:"鲁迅",y:1926,e:"民国",g:"小说",ty:"短篇小说集",d:"鲁迅第二部小说集，祝福伤逝等名篇深刻揭示旧社会的压迫与人性的挣扎。",p:"北京"},
+{id:152,t:"茶馆",a:"老舍",y:1957,e:"当代",g:"戏剧",ty:"话剧",d:"老舍戏剧杰作，通过裕泰茶馆五十年的变迁展现中国社会沧桑巨变。",p:"北京"},
+{id:153,t:"活着",a:"余华",y:1993,e:"当代",g:"小说",ty:"长篇小说",d:"余华代表作，福贵一生的苦难与坚韧，以平静笔调书写命运无常感动千万读者。",p:"浙江"},
+{id:154,t:"平凡的世界",a:"路遥",y:1988,e:"当代",g:"小说",ty:"长篇小说",d:"路遥代表作，描写黄土高原上普通人奋斗的人生故事，激励无数青年。",p:"陕西"},
+{id:155,t:"白鹿原",a:"陈忠实",y:1993,e:"当代",g:"小说",ty:"长篇小说",d:"陈忠实代表作，描绘白鹿原上两个家族的恩怨与变迁，渭河平原的史诗。",p:"陕西"},
+{id:156,t:"红高粱家族",a:"莫言",y:1987,e:"当代",g:"小说",ty:"长篇小说",d:"莫言代表作之一，以浓烈色彩描绘高密东北乡的传奇故事，诺贝尔文学奖作品。",p:"山东"},
+{id:157,t:"蛙",a:"莫言",y:2009,e:"当代",g:"小说",ty:"长篇小说",d:"莫言诺贝尔文学奖获奖作品之一，以乡村女医生姑姑的一生反映计划生育历史。",p:"山东"},
+{id:158,t:"三体",a:"刘慈欣",y:2008,e:"当代",g:"科幻",ty:"长篇小说",d:"中国科幻里程碑，黑暗森林法则宇宙社会学震撼全球，雨果奖获奖作品。",p:"山西"},
+{id:159,t:"许三观卖血记",a:"余华",y:1995,e:"当代",g:"小说",ty:"长篇小说",d:"余华又一力作，许三观靠卖血度过人生难关，悲喜交织令人动容。",p:"浙江"},
+{id:160,t:"长恨歌",a:"王安忆",y:1995,e:"当代",g:"小说",ty:"长篇小说",d:"王安忆代表作，描绘上海弄堂女人王琦瑶四十年的命运沉浮，茅盾文学奖作品。",p:"上海"},
+{id:161,t:"城南旧事",a:"林海音",y:1960,e:"当代",g:"小说",ty:"中篇小说",d:"林海音自传体小说，以小女孩英子的视角展现20年代北京城南的生活。",p:"北京"},
+{id:162,t:"北岛诗集",a:"北岛",y:1978,e:"当代",g:"诗歌",ty:"诗集",d:"朦胧诗代表诗人，'卑鄙是卑鄙者的通行证高尚是高尚者的墓志铭'振聋发聩。",p:"北京"},
+{id:163,t:"顾城诗集",a:"顾城",y:1980,e:"当代",g:"诗歌",ty:"诗集",d:"朦胧诗代表，'黑夜给了我黑色的眼睛我却用它寻找光明'成为时代名句。",p:"北京"},
+{id:164,t:"海子诗集",a:"海子",y:1987,e:"当代",g:"诗歌",ty:"诗集",d:"当代诗人，'面朝大海春暖花开'成为一代人的精神图腾，诗风纯粹热烈。",p:"安徽"},
+{id:165,t:"我与地坛",a:"史铁生",y:1991,e:"当代",g:"散文",ty:"散文",d:"史铁生散文代表作，在地坛思考生死与命运，文字深沉而有力量。",p:"北京"},
+{id:166,t:"文化苦旅",a:"余秋雨",y:1992,e:"当代",g:"散文",ty:"散文集",d:"余秋雨文化散文代表作，行走中国大地的文化思考，开创文化大散文风气。",p:"浙江"},
+{id:167,t:"额尔古纳河右岸",a:"迟子建",y:2005,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，描绘鄂温克族最后一位酋长女人的百年人生，苍凉壮美。",p:"黑龙江"},
+{id:168,t:"尘埃落定",a:"阿来",y:1998,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，以'傻子'视角讲述土司制度的终结，藏族文化的挽歌。",p:"四川"},
+{id:169,t:"繁花",a:"金宇澄",y:2012,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，以上海话书写上海市井生活，当代城市文学新高度。",p:"上海"},
+{id:170,t:"黄金时代",a:"王小波",y:1994,e:"当代",g:"小说",ty:"中篇小说",d:"王小波代表作，以黑色幽默书写特殊年代的知识分子命运，独立思想的象征。",p:"北京"},
+{id:171,t:"穆斯林的葬礼",a:"霍达",y:1988,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，讲述一个穆斯林家族六十年间的兴衰与爱情悲剧。",p:"北京"},
+{id:172,t:"废都",a:"贾平凹",y:1993,e:"当代",g:"小说",ty:"长篇小说",d:"贾平凹争议之作，描绘西京城中文人的精神困境，引发广泛讨论。",p:"陕西"},
+{id:173,t:"秦腔",a:"贾平凹",y:2005,e:"当代",g:"小说",ty:"长篇小说",d:"贾平凹茅盾文学奖作品，以秦腔为线索描绘农村变革中传统文化的衰落。",p:"陕西"},
+{id:174,t:"青春之歌",a:"杨沫",y:1958,e:"当代",g:"小说",ty:"长篇小说",d:"描写'九一八'到'一二九'期间青年学生的觉醒与成长，影响深远。",p:"北京"},
+{id:175,t:"林海雪原",a:"曲波",y:1957,e:"当代",g:"小说",ty:"长篇小说",d:"讲述东北剿匪故事，杨子荣智取威虎山成为经典故事。",p:"山东"},
+{id:176,t:"棋王",a:"阿城",y:1984,e:"当代",g:"小说",ty:"中篇小说",d:"阿城代表作，以棋道写人生哲学，知青文学中的清流之作。",p:"北京"},
+{id:177,t:"动物凶猛",a:"王朔",y:1991,e:"当代",g:"小说",ty:"中篇小说",d:"王朔代表作，以北京大院少年为主角，姜文据此改编电影阳光灿烂的日子。",p:"北京"},
+{id:178,t:"妻妾成群",a:"苏童",y:1990,e:"当代",g:"小说",ty:"中篇小说",d:"苏童代表作，描绘旧式家庭中女性的命运，张艺谋改编为大红灯笼高高挂。",p:"江苏"},
+{id:179,t:"一地鸡毛",a:"刘震云",y:1992,e:"当代",g:"小说",ty:"中篇小说",d:"刘震云代表作，以小公务员的日常琐碎反映生活本质，新写实主义经典。",p:"河南"},
+{id:180,t:"一句顶一万句",a:"刘震云",y:2009,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，描写中国人千百年的孤独感与寻找'说得着'的人。",p:"河南"},
+{id:181,t:"人生",a:"路遥",y:1982,e:"当代",g:"小说",ty:"中篇小说",d:"路遥成名作，描写农村青年高加林的人生抉择与爱情悲剧，引发全国讨论。",p:"陕西"},
+{id:182,t:"暗算",a:"麦家",y:2003,e:"当代",g:"小说",ty:"长篇小说",d:"麦家谍战文学代表作，茅盾文学奖作品，揭示隐蔽战线无名英雄的故事。",p:"浙江"},
+{id:183,t:"受活",a:"阎连科",y:2003,e:"当代",g:"小说",ty:"长篇小说",d:"阎连科代表作，以荒诞手法讲述受活庄残疾人的传奇故事，魔幻现实主义杰作。",p:"河南"},
+{id:184,t:"格非江南三部曲",a:"格非",y:2011,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，人面桃花山河入梦春尽江南，百年中国知识分子精神史。",p:"江苏"},
+{id:185,t:"秋园",a:"杨本芬",y:2020,e:"当代",g:"散文",ty:"自传",d:"八旬老人在厨房写成的母亲传记，记录普通中国女性的一生，感动无数读者。",p:"湖南"},
+{id:186,t:"人世间",a:"梁晓声",y:2017,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，描绘北方城市平民社区五十年的沧桑巨变与人间烟火。",p:"黑龙江"},
+{id:187,t:"北上",a:"徐则臣",y:2018,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，沿京杭大运河展开百年中国故事，运河文明的壮丽史诗。",p:"江苏"},
+{id:188,t:"长安的荔枝",a:"马伯庸",y:2022,e:"当代",g:"小说",ty:"中篇小说",d:"马伯庸历史小说，以一骑红尘妃子笑为引子，展现小人物在大时代中的命运。",p:"陕西"},
+{id:189,t:"风声",a:"麦家",y:2007,e:"当代",g:"小说",ty:"长篇小说",d:"麦家谍战名作，一座老宅中的密室推理与信仰抉择，改编电影获巨大成功。",p:"浙江"},
+{id:190,t:"红旗谱",a:"梁斌",y:1957,e:"当代",g:"小说",ty:"长篇小说",d:"描绘冀中平原农民革命斗争的史诗，中国农民觉醒的壮丽画卷。",p:"河北"},
+{id:191,t:"创业史",a:"柳青",y:1960,e:"当代",g:"小说",ty:"长篇小说",d:"描绘农业合作化时期关中农村的变革，现实主义文学杰作。",p:"陕西"},
+{id:192,t:"南渡记",a:"宗璞",y:1988,e:"当代",g:"小说",ty:"长篇小说",d:"宗璞野葫芦引四卷本之一，描写抗战时期知识分子的南迁与坚守。",p:"北京"},
+{id:193,t:"白鹿原",a:"陈忠实",y:1993,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，描绘关中平原两个家族的百年恩怨，中国当代文学高峰。",p:"陕西"},
+{id:194,t:"面朝大海春暖花开",a:"海子",y:1989,e:"当代",g:"诗歌",ty:"抒情诗",d:"海子名篇，'从明天起做一个幸福的人'成为一代人的精神宣言。",p:"安徽"},
+{id:195,t:"致橡树",a:"舒婷",y:1977,e:"当代",g:"诗歌",ty:"抒情诗",d:"朦胧诗人舒婷代表作，以橡树与木棉比喻平等的爱情观，影响深远。",p:"福建"},
+{id:196,t:"西藏组诗",a:"马建",y:1985,e:"当代",g:"诗歌",ty:"组诗",d:"当代诗歌中以西藏为题材的代表作，神秘辽阔的高原意象震撼人心。",p:"西藏"},
+{id:197,t:"九月寓言",a:"张炜",y:1992,e:"当代",g:"小说",ty:"长篇小说",d:"张炜长篇代表作，以寓言式叙事描绘胶东农村的变迁，充满诗意与哲思。",p:"山东"},
+{id:198,t:"笨花",a:"铁凝",y:2006,e:"当代",g:"小说",ty:"长篇小说",d:"铁凝长篇代表作，描绘冀中平原笨花村半个世纪的变迁，乡土中国的温柔画卷。",p:"河北"},
+{id:199,t:"湖光山色",a:"周大新",y:2006,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，以丹江口水库为背景，描绘当代农村女性命运的起伏。",p:"河南"},
+{id:200,t:"主角",a:"陈彦",y:2019,e:"当代",g:"小说",ty:"长篇小说",d:"茅盾文学奖作品，讲述秦腔名伶忆秦娥半生的艺术人生，'戏如人生'的壮丽史诗。",p:"陕西"},
+
+];
+
+// === App State ===
+let curEra='全部',curGenre='全部',curView='grid',searchQ='';
+
+// === Era & Genre lists ===
+const ERAS=['全部','先秦','秦汉','魏晋南北朝','隋唐','五代十国','宋代','辽金元','明代','清代','民国','当代'];
+const GENRES=['全部','诗歌','小说','词','戏剧','散文','哲学','历史','辞赋','文学理论','科幻','军事','神话','地理','科技','其他'];
+
+// === Init ===
+window.addEventListener('DOMContentLoaded',()=>{
+  renderStats();
+  renderEraNav();
+  renderGenreBtns();
+  renderView();
+  bindEvents();
+});
+
+function renderStats(){
+  const el=document.getElementById('statsRow');
+  const span=W[W.length-1].y-W[0].y;
+  el.innerHTML=`
+    <div class="stat"><div class="num">${W.length}</div><div class="label">部作品</div></div>
+    <div class="stat"><div class="num">${ERAS.length-1}</div><div class="label">个时代</div></div>
+    <div class="stat"><div class="num">${Math.abs(Math.round(span/100))}+</div><div class="label">世纪跨度</div></div>
+    <div class="stat"><div class="num">${new Set(W.flatMap(w=>w.p.split('/'))).size}</div><div class="label">个地域</div></div>
+  `;
+}
+
+function renderEraNav(){
+  const c=document.getElementById('eraBtns');
+  c.innerHTML=ERAS.map(e=>{
+    const cnt=e==='全部'?W.length:W.filter(w=>w.e===e).length;
+    return `<button class="era-btn${e===curEra?' active':''}" data-era="${e}">${e}<span class="count">${cnt}</span></button>`;
+  }).join('');
+}
+
+function renderGenreBtns(){
+  const c=document.getElementById('genreBtns');
+  c.innerHTML=GENRES.map(g=>{
+    return `<button class="genre-btn${g===curGenre?' active':''}" data-genre="${g}">${g}</button>`;
+  }).join('');
+}
+
+function getFiltered(){
+  let f=W;
+  if(curEra!=='全部') f=f.filter(w=>w.e===curEra);
+  if(curGenre!=='全部'){
+    if(curGenre==='其他'){
+      const main=['诗歌','小说','词','戏剧','散文','哲学','历史','辞赋','文学理论','科幻','军事','神话','地理','科技'];
+      f=f.filter(w=>!main.includes(w.g));
+    } else {
+      f=f.filter(w=>w.g===curGenre);
+    }
+  }
+  if(searchQ){
+    const q=searchQ.toLowerCase();
+    f=f.filter(w=>(w.t+w.a+w.d+w.e+w.g+w.p).toLowerCase().includes(q));
+  }
+  return f.sort((a,b)=>a.y-b.y);
+}
+
+function renderView(){
+  const items=getFiltered();
+  document.getElementById('resultInfo').textContent=`共 ${items.length} 部作品`;
+  document.getElementById('gridView').style.display=curView==='grid'?'grid':'none';
+  document.getElementById('timelineView').style.display=curView==='timeline'?'block':'none';
+  const cv=document.getElementById('chartView');
+  cv.classList.toggle('show',curView==='chart');
+  if(curView==='grid') renderGrid(items);
+  else if(curView==='timeline') renderTimeline(items);
+  else renderCharts(items);
+}
+
+function renderGrid(items){
+  document.getElementById('gridView').innerHTML=items.map(w=>`
+    <div class="card" data-id="${w.id}">
+      <div class="era-tag">${w.e}</div>
+      <h3>${w.t}</h3>
+      <div class="author">${w.a} · ${fmtYear(w.y)}</div>
+      <div class="desc">${w.d}</div>
+      <div class="meta">
+        <span>${w.g}</span><span>${w.ty}</span><span>${w.p}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTimeline(items){
+  document.getElementById('timelineView').innerHTML=items.map(w=>`
+    <div class="tl-item" data-id="${w.id}">
+      <div class="year">${fmtYear(w.y)} · ${w.e}</div>
+      <h3>${w.t}</h3>
+      <div class="author">${w.a} · ${w.g}</div>
+      <div class="desc">${w.d}</div>
+    </div>
+  `).join('');
+}
+
+function renderCharts(items){
+  const cv=document.getElementById('chartView');
+  cv.innerHTML=`<div class="chart-grid">
+    <div class="chart-card"><h3>时代分布</h3><canvas id="eraChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>体裁分布</h3><canvas id="genreChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>地域分布 Top 10</h3><canvas id="regionChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>时间线密度</h3><canvas id="timeChart" class="chart"></canvas></div>
+  </div>`;
+  requestAnimationFrame(()=>drawCharts(items));
+}
+
+function drawCharts(items){
+  drawEraChart(items);
+  drawGenreChart(items);
+  drawRegionChart(items);
+  drawTimeChart(items);
+}
+
+function drawEraChart(items){
+  const c=document.getElementById('eraChart');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
+  const W2=c.offsetWidth,H=260;
+  const counts={};
+  ERAS.slice(1).forEach(e=>counts[e]=0);
+  items.forEach(w=>{if(counts[w.e]!==undefined)counts[w.e]++});
+  const entries=Object.entries(counts);
+  const max=Math.max(...entries.map(e=>e[1]),1);
+  const barW=W2/entries.length-8;
+  const colors=['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9','#8e44ad','#1abc9c','#d35400','#2c3e50','#e74c3c','#3498db'];
+  entries.forEach(([era,cnt],i)=>{
+    const x=i*(barW+8)+4;
+    const h=Math.max((cnt/max)*(H-60),0);
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.beginPath();
+    roundRect(ctx,x,H-30-h,barW,h,4);
+    ctx.fill();
+    ctx.fillStyle='#666';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(era.slice(0,2),x+barW/2,H-12);
+    if(cnt>0){ctx.fillStyle='#333';ctx.font='bold 11px sans-serif';ctx.fillText(cnt,x+barW/2,H-34-h);}
+  });
+}
+
+function drawGenreChart(items){
+  const c=document.getElementById('genreChart');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
+  const W2=c.offsetWidth,H=260;
+  const counts={};
+  items.forEach(w=>{counts[w.g]=(counts[w.g]||0)+1});
+  const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max=Math.max(...entries.map(e=>e[1]),1);
+  const barH=24;
+  const colors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#2980b9','#8e44ad','#1abc9c'];
+  entries.forEach(([g,cnt],i)=>{
+    const y=i*(barH+6)+10;
+    const w2=Math.max((cnt/max)*(W2-120),0);
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.beginPath();roundRect(ctx,80,y,w2,barH,4);ctx.fill();
+    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';
+    ctx.fillText(g,74,y+16);
+    ctx.fillStyle='#666';ctx.textAlign='left';
+    ctx.fillText(cnt,86+w2,y+16);
+  });
+}
+
+function drawRegionChart(items){
+  const c=document.getElementById('regionChart');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
+  const W2=c.offsetWidth,H=260;
+  const counts={};
+  items.forEach(w=>{w.p.split('/').forEach(p=>{counts[p]=(counts[p]||0)+1})});
+  const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const max=Math.max(...entries.map(e=>e[1]),1);
+  const barH=22;
+  const colors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#2980b9','#8e44ad','#1abc9c','#2c3e50','#d35400'];
+  entries.forEach(([p,cnt],i)=>{
+    const y=i*(barH+5)+10;
+    const w2=Math.max((cnt/max)*(W2-100),0);
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.beginPath();roundRect(ctx,70,y,w2,barH,4);ctx.fill();
+    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';
+    ctx.fillText(p,64,y+15);
+    ctx.fillStyle='#666';ctx.textAlign='left';
+    ctx.fillText(cnt,76+w2,y+15);
+  });
+}
+
+function drawTimeChart(items){
+  const c=document.getElementById('timeChart');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
+  const W2=c.offsetWidth,H=260;
+  const sorted=[...items].sort((a,b)=>a.y-b.y);
+  if(!sorted.length) return;
+  const minY=sorted[0].y,maxY=sorted[sorted.length-1].y;
+  const range=maxY-minY||1;
+  // Background line
+  ctx.strokeStyle='#eee';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(40,H-30);ctx.lineTo(W2-10,H-30);ctx.stroke();
+  // Era bands
+  const eraColors={'先秦':'#c0392b','秦汉':'#e67e22','魏晋南北朝':'#f1c40f','隋唐':'#27ae60','五代十国':'#2980b9','宋代':'#8e44ad','辽金元':'#1abc9c','明代':'#d35400','清代':'#2c3e50','民国':'#e74c3c','当代':'#3498db'};
+  let lastEra='';
+  sorted.forEach((w,i)=>{
+    const x=40+(w.y-minY)/range*(W2-60);
+    const color=eraColors[w.e]||'#999';
+    ctx.fillStyle=color;
+    ctx.beginPath();ctx.arc(x,H-30-8-Math.random()*80,3,0,Math.PI*2);ctx.fill();
+  });
+  // Axis labels
+  ctx.fillStyle='#999';ctx.font='10px sans-serif';ctx.textAlign='center';
+  [sorted[0],sorted[Math.floor(sorted.length/2)],sorted[sorted.length-1]].forEach(w=>{
+    const x=40+(w.y-minY)/range*(W2-60);
+    ctx.fillText(fmtYear(w.y),x,H-14);
+  });
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,Math.max(w,0)/2,Math.max(h,0)/2);
+  if(w<=0||h<=0) return;
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+}
+
+function fmtYear(y){
+  if(y<0) return '公元前'+Math.abs(y)+'年';
+  return y+'年';
+}
+
+function showModal(id){
+  const w=W.find(x=>x.id===id);
+  if(!w) return;
+  document.getElementById('modalBody').innerHTML=`
+    <h2>${w.t}</h2>
+    <div class="m-author">${w.a} · ${fmtYear(w.y)}</div>
+    <div class="m-desc">${w.d}</div>
+    <div class="m-tags">
+      <span>${w.e}</span><span>${w.g}</span><span>${w.ty}</span><span>${w.p}</span>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function bindEvents(){
+  // Era nav
+  document.getElementById('eraBtns').addEventListener('click',e=>{
+    const btn=e.target.closest('.era-btn');
+    if(!btn) return;
+    curEra=btn.dataset.era;
+    document.querySelectorAll('.era-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderView();
+  });
+  // Genre
+  document.getElementById('genreBtns').addEventListener('click',e=>{
+    const btn=e.target.closest('.genre-btn');
+    if(!btn) return;
+    curGenre=btn.dataset.genre;
+    document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderView();
+  });
+  // View toggle
+  document.querySelectorAll('.view-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      curView=btn.dataset.view;
+      document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderView();
+    });
+  });
+  // Search
+  document.getElementById('searchInput').addEventListener('input',e=>{
+    searchQ=e.target.value;
+    renderView();
+  });
+  // Card click
+  document.getElementById('gridView').addEventListener('click',e=>{
+    const card=e.target.closest('.card');
+    if(card) showModal(+card.dataset.id);
+  });
+  document.getElementById('timelineView').addEventListener('click',e=>{
+    const item=e.target.closest('.tl-item');
+    if(item) showModal(+item.dataset.id);
+  });
+  // Modal close
+  document.getElementById('modalClose').addEventListener('click',()=>{
+    document.getElementById('modalOverlay').classList.remove('show');
+  });
+  document.getElementById('modalOverlay').addEventListener('click',e=>{
+    if(e.target===e.currentTarget) e.currentTarget.classList.remove('show');
+  });
+  // Scroll top
+  const st=document.getElementById('scrollTop');
+  window.addEventListener('scroll',()=>{
+    st.classList.toggle('show',window.scrollY>400);
+    document.getElementById('eraNav').classList.toggle('scrolled',window.scrollY>100);
+  });
+  st.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  // Keyboard
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') document.getElementById('modalOverlay').classList.remove('show');
+    if(e.key==='/'&&!e.ctrlKey){e.preventDefault();document.getElementById('searchInput').focus();}
+  });
+}
+</script>
+</body>
+</html>
+
+
+
+
+
