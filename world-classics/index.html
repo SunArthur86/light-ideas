@@ -182,7 +182,7 @@ function init(){
 
 function setC(el){
   var txt=el.textContent.trim();
-  curC=txt.replace(/[\u{1F000}-\u{1FFFF}]/gu,'').replace(/[\u{1F1E0}-\u{1F1FF}][\u{1F1E0}-\u{1F1FF}]/g,'').trim();
+  curC=txt.replace(/[\u{1F000}-\u{1FFFF}]/gu,'').replace(/[\u{1F1E0}-\u{1F1FF}][\u{1F1E0}-\u{1F1FF}]/gu,'').trim();
   if(curC==='全部')curC='全部';
   el.parentNode.querySelectorAll('.tab').forEach(function(t,i){if(i<=cs.length)t.classList.remove('on')});
   el.classList.add('on');render();
