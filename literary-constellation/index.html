@@ -114,6 +114,7 @@ function ts(wx,wy){return[(wx+ox)*sc+W/2,(wy+oy)*sc+H/2]}
 function tw(sx,sy){return[(sx-W/2)/sc-ox,(sy-H/2)/sc-oy]}
 
 function dr(){
+  if(!W||!H||!isFinite(W)||!isFinite(H))return;
   x.setTransform(2,0,0,2,0,0);x.clearRect(0,0,W,H);
   x.fillStyle='#0a0a1a';x.fillRect(0,0,W,H);
   for(let i=0;i<200;i++){
@@ -166,7 +167,6 @@ function dr(){
 
 let animFrame;
 function animate(){dr();animFrame=requestAnimationFrame(animate)}
-animate();
 
 c.onmousedown=e=>{if(e.button!==0)return;drag=true;dx=e.clientX;dy=e.clientY};
 c.onmousemove=e=>{
@@ -209,7 +209,7 @@ document.addEventListener('keydown',e=>{
 });
 /* 随机星星 */
 function randomStar(){var b=B[Math.floor(Math.random()*B.length)];flyTo(b.id)}
-window.addEventListener('DOMContentLoaded',rsz);window.addEventListener('load',rsz);rsz();
+window.addEventListener('DOMContentLoaded',rsz);window.addEventListener('load',rsz);rsz();animate();
 </script>
 </body>
 </html>
