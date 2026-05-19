@@ -361,13 +361,13 @@ function getLayout(){
   var yMin=filtered[0].y, yMax=filtered[filtered.length-1].y;
   var ySpan=Math.max(1,yMax-yMin);
   var padding=40;
-  var usableW=W-padding*2;
+  /* horizontal timeline: time → x axis, region → y lanes */
+  var totalW=Math.max(W*2, ySpan*2.5);
   /* vertical lanes by region */
   var regions=[];
   var regSet={};
   filtered.forEach(function(b){if(!regSet[b.c]){regSet[b.c]=1;regions.push(b.c)}});
-  var laneW=Math.max(40, usableW/Math.min(regions.length, 20));
-  var totalW=Math.max(W, regions.length*laneW+padding*2);
+  var laneH=Math.max(30, (H-padding*2)/Math.min(regions.length, 16));
   /* assign lane index */
   var laneMap={};
   regions.forEach(function(r,i){laneMap[r]=i});
@@ -375,12 +375,12 @@ function getLayout(){
   var items=[];
   filtered.forEach(function(b){
     var ln=laneMap[b.c]||0;
-    var bx=padding+ln*laneW+laneW/2;
-    var by=padding+((b.y-yMin)/ySpan)*(totalW-padding*2);
+    var bx=padding+((b.y-yMin)/ySpan)*(totalW-padding*2);
+    var by=padding+ln*laneH+laneH/2;
     var sz=b.imp>=5?10:b.imp>=4?7:5;
     items.push({b:b, x:bx, y:by, sz:sz, lane:ln});
   });
-  return {items:items, regions:regions, laneMap:laneMap, laneW:laneW, totalW:totalW, yMin:yMin, yMax:yMax, ySpan:ySpan, padding:padding};
+  return {items:items, regions:regions, laneMap:laneMap, laneH:laneH, totalW:totalW, yMin:yMin, yMax:yMax, ySpan:ySpan, padding:padding};
 }
 
 /* === Main render === */
@@ -417,7 +417,7 @@ function draw(){
   x.translate(ox,0);
   x.scale(sc,1);
   
-  /* era columns */
+  /* era columns (horizontal bands) */
   ERAS.forEach(function(e){
     var x1=L.padding+((e.s-L.yMin)/L.ySpan)*(L.totalW-L.padding*2);
     var x2=L.padding+((e.e-L.yMin)/L.ySpan)*(L.totalW-L.padding*2);
@@ -433,7 +433,7 @@ function draw(){
     x.restore();
   });
   
-  /* year markers */
+  /* year markers (horizontal axis) */
   var ySpan=L.ySpan;
   var step=ySpan>3000?500:ySpan>1000?200:ySpan>400?100:ySpan>100?50:20;
   x.font='9px -apple-system,sans-serif';
@@ -442,18 +442,18 @@ function draw(){
   for(var yr=Math.ceil(L.yMin/step)*step;yr<=L.yMax;yr+=step){
     var mx2=L.padding+((yr-L.yMin)/ySpan)*(L.totalW-L.padding*2);
     x.fillText(fy(yr),mx2,H-8);
-    /* tick */
+    /* vertical tick line */
     x.strokeStyle=isDark?'rgba(255,255,255,.06)':'rgba(0,0,0,.04)';
     x.lineWidth=.5;
     x.beginPath();x.moveTo(mx2,20);x.lineTo(mx2,H-14);x.stroke();
   }
   
-  /* milestone markers */
+  /* milestone markers (along x axis) */
   var mvKeys=Object.keys(MV).map(Number).sort(function(a,b){return a-b});
   mvKeys.forEach(function(mk){
     if(mk<L.yMin||mk>L.yMax) return;
-    var mx2=L.padding+((mk-L.yMin)/ySpan)*(L.totalW-L.padding*2);
-    /* diamond marker */
+    var mx2=L.padding+((mk-L.yMin)/L.ySpan)*(L.totalW-L.padding*2);
+    /* diamond marker at center */
     x.save();
     x.translate(mx2,H/2);
     x.fillStyle='rgba(0,113,227,'+(isDark?'.2':'.1')+')';
@@ -468,7 +468,7 @@ function draw(){
     x.restore();
   });
   
-  /* connection lines between same-region works */
+  /* connection lines between same-region works (horizontal bezier) */
   var byRegion={};
   L.items.forEach(function(it){
     if(!byRegion[it.b.c])byRegion[it.b.c]=[];
@@ -477,16 +477,16 @@ function draw(){
   Object.keys(byRegion).forEach(function(reg){
     var items=byRegion[reg];
     if(items.length<2) return;
-    items.sort(function(a,b){return a.b.y-b.b.y});
+    items.sort(function(a,b){return a.x-b.x});
     for(var i=0;i<items.length-1;i++){
       var a=items[i],b=items[i+1];
-      if(Math.abs(b.y-a.y)>200) continue;
+      if(Math.abs(b.x-a.x)>300) continue;
       x.strokeStyle=a.b.col+(isDark?'15':'08');
       x.lineWidth=.8;
       x.beginPath();
-      var cp=(a.y+b.y)/2;
+      var cp=(a.x+b.x)/2;
       x.moveTo(a.x,a.y);
-      x.bezierCurveTo(a.x,cp,b.x,cp,b.x,b.y);
+      x.bezierCurveTo(cp,a.y,cp,b.y,b.x,b.y);
       x.stroke();
     }
   });
@@ -552,11 +552,12 @@ function drawMiniMap(L){
   mx.fillStyle=isDark?'#1a1a2e':'#f0f0f0';
   mx.fillRect(0,0,mw,mh);
   
+  var nLanes=Math.max(1,Object.keys(L.laneMap).length);
   L.items.forEach(function(it){
-    var mx2=(it.y/L.totalW)*mw;
-    var my2=4+it.lane*(mh-8)/Math.max(1,Object.keys(L.laneMap).length-1||1);
+    var px=(it.x/L.totalW)*mw;
+    var py=2+it.lane*(mh-4)/nLanes;
     mx.fillStyle=it.b.col+'80';
-    mx.fillRect(mx2,my2,1.5,2);
+    mx.fillRect(px,py,1.5,2);
   });
   
   /* viewport indicator */
@@ -571,7 +572,7 @@ function hitTest(cx,cy){
   var L=getLayout();
   if(!L.items.length) return null;
   var worldX=(cx-ox)/sc;
-  var best=null, bd=15;
+  var best=null, bd=20;
   L.items.forEach(function(it){
     var d=Math.hypot(it.x-worldX,it.y-cy);
     if(d<bd){bd=d;best=it.b}
