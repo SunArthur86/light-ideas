@@ -240,23 +240,38 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
 /* Responsive */
 
 /* Gesture mode */
-.sound-toggle{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 4px;opacity:.7;transition:opacity .2s}.sound-toggle:hover{opacity:1}
-.gesture-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.72em;font-weight:500;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:3px;white-space:nowrap}
-.gesture-toggle:hover{border-color:var(--accent)}
-.gesture-toggle.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.cam-overlay{position:fixed;bottom:24px;right:20px;width:120px;height:120px;border-radius:50%;overflow:hidden;border:3px solid var(--border);z-index:90;background:#000;opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-.cam-overlay.show{opacity:1}
-.cam-overlay.face{border-color:var(--correct)}
-.cam-overlay video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-.cam-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65em;font-weight:500;text-shadow:0 1px 3px rgba(0,0,0,.5);background:rgba(0,0,0,.3);border-radius:50%}
-.cam-dot{position:absolute;top:8px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--wrong);border:1.5px solid #fff}
-.cam-overlay.face .cam-dot{background:var(--correct)}
-.gesture-indicator{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-size:1.6em;font-weight:700;pointer-events:none;z-index:160;opacity:0}
-.gesture-indicator.show{animation:gestureFlash .7s ease forwards}
-.q-opt.highlighted{border-color:var(--gold)!important;box-shadow:0 0 0 2px rgba(255,149,0,.3);transform:scale(1.02);transition:all .2s}
-.gesture-hint{position:fixed;bottom:160px;right:20px;background:rgba(0,0,0,.75);color:#fff;padding:10px 14px;border-radius:10px;font-size:.72em;line-height:1.6;z-index:91;opacity:0;transition:opacity .3s;pointer-events:none;max-width:160px}
-.gesture-hint.show{opacity:1}
-@keyframes gestureFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}20%{opacity:1;transform:translate(-50%,-60%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
+
+/* Gesture debug panel */
+.gesture-debug{position:fixed;bottom:155px;right:20px;z-index:92;background:rgba(0,0,0,.85);color:#fff;padding:8px 12px;border-radius:10px;font-size:.65em;width:140px;display:none;flex-direction:column;gap:4px;backdrop-filter:blur(8px)}
+.gesture-debug .gd-row{display:flex;align-items:center;justify-content:space-between}
+.gesture-debug .gd-type{font-weight:600}
+.gesture-debug .gd-bar{height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.gesture-debug .gd-bar-fill{height:100%;border-radius:2px;transition:width .1s,background .2s;width:0%}
+.gesture-debug .gd-sens{display:flex;align-items:center;gap:6px;margin-top:2px;padding-top:4px;border-top:1px solid rgba(255,255,255,.15)}
+.gesture-debug .gd-sens input{width:60px;accent-color:var(--accent);cursor:pointer}
+.gesture-debug .gd-sens label{font-size:.95em;opacity:.7}
+
+/* Better gesture indicator with color */
+.gesture-indicator{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-size:1.8em;font-weight:800;pointer-events:none;z-index:160;opacity:0;text-shadow:0 2px 16px rgba(0,0,0,.2)}
+.gesture-indicator.show{animation:gestureFlash .8s ease forwards}
+
+/* Highlighted option animation */
+.q-opt.highlighted{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(255,149,0,.25),0 2px 12px rgba(255,149,0,.15)!important;transform:scale(1.03);transition:all .25s cubic-bezier(.4,0,.2,1)}
+.q-opt.highlighted .letter{background:var(--gold)!important;color:#fff!important;transform:scale(1.1)}
+
+/* Cam overlay bigger with pulse */
+.cam-overlay{width:140px;height:140px;border-radius:50%}
+.cam-overlay.face .cam-dot{background:var(--correct);box-shadow:0 0 6px rgba(52,199,89,.5)}
+
+/* Mouth open indicator */
+.mouth-indicator{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:1.2em;opacity:0;transition:opacity .2s}
+.cam-overlay.mouth-open .mouth-indicator{opacity:1}
+
+/* Gesture hint upgraded */
+.gesture-hint{position:fixed;bottom:175px;right:20px;background:rgba(0,0,0,.82);color:#fff;padding:12px 16px;border-radius:12px;font-size:.72em;line-height:1.7;z-index:91;opacity:0;transition:all .3s;pointer-events:none;max-width:170px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
+.gesture-hint.show{opacity:1;animation:hintIn .3s ease}
+@keyframes hintIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
 
 @media(max-width:640px){
   .home-hero h1{font-size:1.6em}
@@ -1208,12 +1223,24 @@ document.addEventListener('touchend', e => {
 }, { passive: true });
 
 
-// === GESTURE MODE (体感操控) ===
+
+// === GESTURE MODE v2 (多动作体感引擎) ===
 const GestureMode = {
   active: false, loading: false, faceDetection: null, video: null, stream: null,
-  positions: [], bufferSize: 20, cooldown: 900, lastGestureTime: 0,
-  nodThresh: 0.028, shakeThresh: 0.045,
+  // Tracking data
+  history: [],        // { x, y, landmarks, t }
+  histSize: 30,
+  cooldown: 850, lastGestureTime: 0,
+  // Adaptive baseline (calibrated in first 2s)
+  baseline: null, baselineSamples: [], calibrated: false,
+  // Cycling
   cycleTimer: null, cycleIndex: 0, sending: false, rafId: null,
+  // Sensitivity: 1=normal, 0.7=sensitive, 1.4=relaxed
+  sensitivity: 1.0,
+  // Mouth aspect tracking
+  mouthOpen: false, mouthCloseTime: 0,
+  // Debug overlay
+  debugEl: null, gestureBar: null,
 
   async toggle() { this.active ? this.stop() : await this.start(); },
 
@@ -1225,6 +1252,9 @@ const GestureMode = {
     btn.classList.add('loading');
     overlay.classList.add('show');
     document.getElementById('camStatus').textContent = '加载中...';
+
+    // Load sensitivity setting
+    this.sensitivity = parseFloat(localStorage.getItem('litquiz_gsens') || '1');
 
     try {
       // Lazy-load MediaPipe Face Detection
@@ -1239,14 +1269,12 @@ const GestureMode = {
         });
       }
 
-      // Init detector
       this.faceDetection = new FaceDetection({
         locateFile: (f) => 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4/' + f
       });
       this.faceDetection.setOptions({ model: 'short', minDetectionConfidence: 0.5 });
       this.faceDetection.onResults((r) => this.onResults(r));
 
-      // Camera
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } }
       });
@@ -1255,15 +1283,23 @@ const GestureMode = {
       await ov.play();
 
       this.video = ov;
-      document.getElementById('camStatus').textContent = '';
+      this.debugEl = document.getElementById('gestureDebug');
+      this.gestureBar = document.getElementById('gestureBar');
+
+      document.getElementById('camStatus').textContent = '📐 校准中...保持正面';
       this.active = true; this.loading = false;
+      this.baseline = null; this.baselineSamples = []; this.calibrated = false;
+      this.history = [];
+
       btn.classList.remove('loading');
       btn.classList.add('active');
       btn.querySelector('.btn-text').textContent = '体感 ✓';
 
-      // Show hint for 4s
+      // Update hint for new gestures
+      document.getElementById('gestureHint').innerHTML =
+        '👆 点头 = 选择<br>😬 张嘴 = 确认<br>👋 摇头 = 跳过<br>🔄 自动轮播选项';
       hint.classList.add('show');
-      setTimeout(() => hint.classList.remove('show'), 4000);
+      setTimeout(() => hint.classList.remove('show'), 5000);
 
       this.processLoop();
       if (!answered) this.startCycling();
@@ -1282,7 +1318,8 @@ const GestureMode = {
     if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
     if (this.cycleTimer) { clearInterval(this.cycleTimer); this.cycleTimer = null; }
     if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
-    this.positions = []; this.sending = false;
+    this.history = []; this.sending = false;
+    this.baseline = null; this.calibrated = false;
 
     const btn = document.getElementById('gestureBtn');
     btn.classList.remove('active');
@@ -1290,6 +1327,7 @@ const GestureMode = {
     document.getElementById('camOverlay').classList.remove('show', 'face');
     document.getElementById('gestureHint').classList.remove('show');
     document.querySelectorAll('.q-opt.highlighted').forEach(o => o.classList.remove('highlighted'));
+    if (this.debugEl) this.debugEl.style.display = 'none';
   },
 
   processLoop() {
@@ -1303,72 +1341,193 @@ const GestureMode = {
 
   onResults(results) {
     const overlay = document.getElementById('camOverlay');
-    if (results.detections && results.detections.length > 0) {
-      overlay.classList.add('face');
-      // Use nose tip (landmark index 2) for precise tracking
-      const nose = results.detections[0].landmarks[2];
-      this.addPos(nose.x, nose.y);
-      const g = this.detect();
-      if (g) this.handleGesture(g);
-    } else {
+    if (!results.detections || results.detections.length === 0) {
       overlay.classList.remove('face');
+      this.updateDebug('noface', 0);
+      return;
     }
+
+    overlay.classList.add('face');
+    const lm = results.detections[0].landmarks;
+    // landmarks: 0=right_eye, 1=left_eye, 2=nose_tip, 3=mouth_center, 4=right_ear_tragion, 5=left_ear_tragion
+
+    const now = Date.now();
+    const frame = {
+      t: now,
+      // Primary: nose
+      nx: lm[2].x, ny: lm[2].y,
+      // Secondary: mouth
+      mx: lm[3].x, my: lm[3].y,
+      // Eyes vertical midpoint (for nod corroboration)
+      ey: (lm[0].y + lm[1].y) / 2,
+      // Eye distance (for distance normalization)
+      ed: Math.abs(lm[0].x - lm[1].x),
+      // Mouth openness: distance from nose to mouth / eye distance
+      // When mouth opens, nose-to-mouth distance increases
+      mouthRatio: Math.abs(lm[2].y - lm[3].y) / Math.max(0.01, Math.abs(lm[0].x - lm[1].x)),
+      // Face tilt (ear Y difference)
+      tilt: lm[4].y - lm[5].y,
+      // Raw landmarks for debug
+      lm: lm
+    };
+
+    // Adaptive baseline calibration (first ~40 frames ≈ 2s)
+    if (!this.calibrated) {
+      this.baselineSamples.push(frame);
+      if (this.baselineSamples.length >= 40) {
+        this.calibrate();
+      }
+      this.updateDebug('calibrating', this.baselineSamples.length / 40);
+      return;
+    }
+
+    this.history.push(frame);
+    while (this.history.length > this.histSize) this.history.shift();
+
+    const g = this.detect();
+    if (g) this.handleGesture(g);
   },
 
-  addPos(x, y) {
-    this.positions.push({ x, y, t: Date.now() });
-    while (this.positions.length > this.bufferSize) this.positions.shift();
+  calibrate() {
+    const s = this.baselineSamples;
+    // Use last 20 frames (more stable after settling)
+    const stable = s.slice(-20);
+    this.baseline = {
+      mouthRatio: stable.reduce((a, f) => a + f.mouthRatio, 0) / stable.length,
+      nx: stable.reduce((a, f) => a + f.nx, 0) / stable.length,
+      ny: stable.reduce((a, f) => a + f.ny, 0) / stable.length,
+      ey: stable.reduce((a, f) => a + f.ey, 0) / stable.length,
+      tilt: stable.reduce((a, f) => a + f.tilt, 0) / stable.length,
+      ed: stable.reduce((a, f) => a + f.ed, 0) / stable.length,
+    };
+    this.calibrated = true;
+    document.getElementById('camStatus').textContent = '';
   },
 
   detect() {
-    if (this.positions.length < 8) return null;
+    if (this.history.length < 10) return null;
     if (Date.now() - this.lastGestureTime < this.cooldown) return null;
 
-    const r = this.positions.slice(-14);
-    const xs = r.map(p => p.x), ys = r.map(p => p.y);
-    const xR = Math.max(...xs) - Math.min(...xs);
-    const yR = Math.max(...ys) - Math.min(...ys);
+    const h = this.history;
+    const bl = this.baseline;
+    const sens = this.sensitivity;
+    const last = h[h.length - 1];
+    const recent = h.slice(-16);
 
-    // Count direction changes (oscillation)
-    let xC = 0, yC = 0;
-    for (let i = 2; i < r.length; i++) {
-      if ((r[i-1].x - r[i-2].x) * (r[i].x - r[i-1].x) < 0) xC++;
-      if ((r[i-1].y - r[i-2].y) * (r[i].y - r[i-1].y) < 0) yC++;
+    // ── 1. MOUTH OPEN (张嘴确认) ──
+    // mouthRatio above baseline * factor = mouth open
+    const mouthThresh = bl.mouthRatio * (1 + 0.5 * sens);
+    if (last.mouthRatio > mouthThresh && !this.mouthOpen) {
+      this.mouthOpen = true;
+      this.updateDebug('mouth', Math.min(1, (last.mouthRatio - mouthThresh) / mouthThresh + 0.3));
+      return null; // wait for close
+    }
+    if (this.mouthOpen && last.mouthRatio < mouthThresh * 0.85) {
+      this.mouthOpen = false;
+      this.lastGestureTime = Date.now();
+      this.history = [];
+      this.updateDebug('mouth', 1);
+      return 'mouth';
     }
 
-    // Nod: vertical dominant
-    if (yR > this.nodThresh && yR > xR * 1.3 && (yC >= 1 || yR > this.nodThresh * 2.5)) {
-      this.lastGestureTime = Date.now();
-      this.positions = [];
-      return 'nod';
+    // ── 2. NOD (点头) ── multi-point corroboration ──
+    const noseYs = recent.map(f => f.ny);
+    const eyeYs = recent.map(f => f.ey);
+    const noseYRange = Math.max(...noseYs) - Math.min(...noseYs);
+    const eyeYRange = Math.max(...eyeYs) - Math.min(...eyeYs);
+
+    // Both nose and eyes should move vertically
+    const nodThresh = 0.022 / sens;
+    if (noseYRange > nodThresh && eyeYRange > nodThresh * 0.6) {
+      // Count Y direction changes
+      let yChanges = 0;
+      for (let i = 2; i < recent.length; i++) {
+        const d1 = recent[i-1].ny - recent[i-2].ny;
+        const d2 = recent[i].ny - recent[i-1].ny;
+        if (d1 * d2 < 0 && Math.abs(d1) > 0.004 && Math.abs(d2) > 0.004) yChanges++;
+      }
+      // At least 1 direction change (down-up or up-down-up) or very large amplitude
+      const xRange = Math.max(...recent.map(f => f.nx)) - Math.min(...recent.map(f => f.nx));
+      const isVertical = noseYRange > xRange * 1.2;
+
+      if (isVertical && (yChanges >= 1 || noseYRange > nodThresh * 2.5)) {
+        this.lastGestureTime = Date.now();
+        this.history = [];
+        this.updateDebug('nod', Math.min(1, noseYRange / nodThresh / 3 + 0.3));
+        return 'nod';
+      }
     }
-    // Shake: horizontal dominant
-    if (xR > this.shakeThresh && xR > yR * 1.3 && (xC >= 1 || xR > this.shakeThresh * 2.5)) {
-      this.lastGestureTime = Date.now();
-      this.positions = [];
-      return 'shake';
+
+    // ── 3. SHAKE (摇头) ── with tilt corroboration ──
+    const noseXs = recent.map(f => f.nx);
+    const noseXRange = Math.max(...noseXs) - Math.min(...noseXs);
+
+    const shakeThresh = 0.035 / sens;
+    if (noseXRange > shakeThresh) {
+      let xChanges = 0;
+      for (let i = 2; i < recent.length; i++) {
+        const d1 = recent[i-1].nx - recent[i-2].nx;
+        const d2 = recent[i].nx - recent[i-1].nx;
+        if (d1 * d2 < 0 && Math.abs(d1) > 0.005 && Math.abs(d2) > 0.005) xChanges++;
+      }
+      const isHorizontal = noseXRange > noseYRange * 1.2;
+
+      if (isHorizontal && (xChanges >= 1 || noseXRange > shakeThresh * 2.5)) {
+        this.lastGestureTime = Date.now();
+        this.history = [];
+        this.updateDebug('shake', Math.min(1, noseXRange / shakeThresh / 3 + 0.3));
+        return 'shake';
+      }
     }
+
+    // ── No gesture: show current strongest signal ──
+    const maxSig = Math.max(noseYRange / nodThresh, noseXRange / shakeThresh);
+    const sigType = noseYRange / nodThresh > noseXRange / shakeThresh ? 'nod-raw' : 'shake-raw';
+    this.updateDebug(sigType, Math.min(0.8, maxSig * 0.3));
+
     return null;
+  },
+
+  updateDebug(type, confidence) {
+    if (!this.debugEl) return;
+    this.debugEl.style.display = 'flex';
+    const icons = { nod: '👇 点头', shake: '👋 摇头', mouth: '😬 张嘴', calibrating: '📐 校准', noface: '❌ 无脸', 'nod-raw': '↓', 'shake-raw': '←→' };
+    document.getElementById('gestureType').textContent = icons[type] || type;
+    const bar = document.getElementById('gestureBar');
+    bar.style.width = Math.round(confidence * 100) + '%';
+    const colors = { nod: '#0071e3', shake: '#ff9500', mouth: '#34c759', calibrating: '#5856d6', noface: '#ff3b30' };
+    bar.style.background = colors[type] || '#6e6e73';
   },
 
   handleGesture(g) {
     const ind = document.getElementById('gestureIndicator');
-    if (g === 'nod') {
-      ind.textContent = '👆 选择!';
+    const gestureNames = { nod: '👇 选择!', mouth: '😬 确认!', shake: '👋 跳过' };
+    const gestureColors = { nod: 'var(--accent)', mouth: 'var(--correct)', shake: 'var(--gold)' };
+
+    if (g === 'nod' || g === 'mouth') {
+      // Both nod and mouth = CONFIRM selection
+      ind.textContent = gestureNames[g];
+      ind.style.color = gestureColors[g];
       ind.className = 'gesture-indicator show';
       const h = document.querySelector('.q-opt.highlighted');
       if (h) h.click();
+      else {
+        // If no cycling active, click first option
+        const first = document.querySelector('.q-opt:not(.disabled)');
+        if (first) first.click();
+      }
       this.stopCycling();
+      playSound('correct');
     } else if (g === 'shake') {
       const nextBtn = document.getElementById('qNext');
       if (answered && nextBtn.classList.contains('show')) {
         ind.textContent = '➡️ 下一题';
+        ind.style.color = 'var(--gold)';
         ind.className = 'gesture-indicator show';
         nextQuestion();
-        // Cycling restarts via showQuestion hook
       } else if (!answered) {
-        // Skip current option, advance highlight
         ind.textContent = '👋 跳过';
+        ind.style.color = 'var(--gold)';
         ind.className = 'gesture-indicator show';
         this.advanceHighlight();
       }
@@ -1380,7 +1539,8 @@ const GestureMode = {
     this.stopCycling();
     this.cycleIndex = 0;
     this.updateHL();
-    this.cycleTimer = setInterval(() => this.advanceHighlight(), 2000);
+    // Faster cycling: 1.5s instead of 2s
+    this.cycleTimer = setInterval(() => this.advanceHighlight(), 1500);
   },
 
   stopCycling() {
@@ -1400,6 +1560,13 @@ const GestureMode = {
     opts.forEach((o, i) => o.classList.toggle('highlighted', i === this.cycleIndex));
   }
 };
+
+// Legacy GestureMode removed — v2 engine defined above
+
+// Sensitivity slider live update
+document.getElementById('sensSlider').addEventListener('input', function() {
+  document.getElementById('sensVal').textContent = this.value;
+});
 
 
 // === THEME ===
@@ -1635,8 +1802,14 @@ setInterval(updateDailyCD, 1000);
   <video autoplay playsinline muted></video>
   <div class="cam-status" id="camStatus"></div>
   <div class="cam-dot"></div>
+  <div class="mouth-indicator">😬</div>
+</div>
+<div class="gesture-debug" id="gestureDebug">
+  <div class="gd-row"><span class="gd-type" id="gestureType">--</span></div>
+  <div class="gd-bar"><div class="gd-bar-fill" id="gestureBar"></div></div>
+  <div class="gd-sens"><label>灵敏度</label><input type="range" min="0.5" max="1.5" step="0.1" value="1.0" id="sensSlider" onchange="GestureMode.sensitivity=parseFloat(this.value);localStorage.setItem('litquiz_gsens',this.value)"><span id="sensVal">1.0</span></div>
 </div>
 <div class="gesture-indicator" id="gestureIndicator"></div>
-<div class="gesture-hint" id="gestureHint">👆 点头 = 选择<br>👋 摇头 = 跳过<br>🔄 自动轮播选项</div>
+<div class="gesture-hint" id="gestureHint">👆 点头 = 选择<br>😬 张嘴 = 确认<br>👋 摇头 = 跳过<br>🔄 自动轮播选项</div>
 </body>
 </html>
