@@ -178,6 +178,25 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
 .shake{animation:shakeX .3s ease}
 
 /* Responsive */
+
+/* Gesture mode */
+.gesture-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.72em;font-weight:500;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.gesture-toggle:hover{border-color:var(--accent)}
+.gesture-toggle.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cam-overlay{position:fixed;bottom:24px;right:20px;width:120px;height:120px;border-radius:50%;overflow:hidden;border:3px solid var(--border);z-index:90;background:#000;opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.cam-overlay.show{opacity:1}
+.cam-overlay.face{border-color:var(--correct)}
+.cam-overlay video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65em;font-weight:500;text-shadow:0 1px 3px rgba(0,0,0,.5);background:rgba(0,0,0,.3);border-radius:50%}
+.cam-dot{position:absolute;top:8px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--wrong);border:1.5px solid #fff}
+.cam-overlay.face .cam-dot{background:var(--correct)}
+.gesture-indicator{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-size:1.6em;font-weight:700;pointer-events:none;z-index:160;opacity:0}
+.gesture-indicator.show{animation:gestureFlash .7s ease forwards}
+.q-opt.highlighted{border-color:var(--gold)!important;box-shadow:0 0 0 2px rgba(255,149,0,.3);transform:scale(1.02);transition:all .2s}
+.gesture-hint{position:fixed;bottom:160px;right:20px;background:rgba(0,0,0,.75);color:#fff;padding:10px 14px;border-radius:10px;font-size:.72em;line-height:1.6;z-index:91;opacity:0;transition:opacity .3s;pointer-events:none;max-width:160px}
+.gesture-hint.show{opacity:1}
+@keyframes gestureFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}20%{opacity:1;transform:translate(-50%,-60%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
+
 @media(max-width:640px){
   .home-hero h1{font-size:1.6em}
   .mode-card{padding:14px 10px}
@@ -246,6 +265,7 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
     <div class="q-counter" id="qCounter">1 / 20</div>
     <div class="q-progress"><div class="q-progress-fill" id="qProgress" style="width:0%"></div></div>
     <div class="q-timer" id="qTimer">00:00</div>
+    <button class="gesture-toggle" id="gestureBtn" onclick="GestureMode.toggle()"><span>🤳</span><span class="btn-text">体感</span></button>
   </div>
   <div class="q-ring-wrap" id="qRingWrap">
     <svg class="q-ring" viewBox="0 0 48 48">
@@ -1097,5 +1117,13 @@ document.addEventListener('touchend', e => {
 loadStats();
 
 </script>
+<!-- Gesture camera overlay -->
+<div class="cam-overlay" id="camOverlay">
+  <video autoplay playsinline muted></video>
+  <div class="cam-status" id="camStatus"></div>
+  <div class="cam-dot"></div>
+</div>
+<div class="gesture-indicator" id="gestureIndicator"></div>
+<div class="gesture-hint" id="gestureHint">👆 点头 = 选择<br>👋 摇头 = 跳过<br>🔄 自动轮播选项</div>
 </body>
 </html>
