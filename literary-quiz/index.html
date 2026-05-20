@@ -2,204 +2,238 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>文学问答 · Literary Quiz</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#fafafa;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--accent:#0071e3;--accent2:#0077ED;--correct:#34c759;--wrong:#ff3b30;--gold:#ff9500;--border:#e5e5ea;--card:#fff;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:14px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:100vh}
+:root{--bg:#fafafa;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#0071e3;--accent2:#0077ED;--correct:#34c759;--wrong:#ff3b30;--gold:#ff9500;--border:#e5e5ea;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:14px;--radius-sm:10px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:100vh;min-height:100dvh}
+
+/* Nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,250,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px}
-nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
-nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px}
+nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500;transition:opacity .2s}
+nav .back:hover{opacity:.6}
+nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
 
-/* ===== HOME SCREEN ===== */
-.home{padding:72px 20px 40px;max-width:640px;margin:0 auto;display:block}
-.home-hero{text-align:center;padding:40px 0 32px}
+/* === SCREENS === */
+.screen{display:none;opacity:0;transition:opacity .3s ease}
+.screen.active{display:block;opacity:1}
+
+/* === HOME === */
+.home{padding:68px 20px 40px;max-width:640px;margin:0 auto}
+.home-hero{text-align:center;padding:36px 0 28px;animation:heroIn .6s ease}
+.home-hero .emoji{font-size:3.2em;margin-bottom:10px;display:inline-block;animation:float 3s ease-in-out infinite}
 .home-hero h1{font-size:2em;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,#1d1d1f 0%,#0071e3 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.home-hero .sub{font-size:1em;color:var(--text2);margin-top:6px}
-.home-hero .emoji{font-size:3em;margin-bottom:12px}
+.home-hero .sub{font-size:.95em;color:var(--text2);margin-top:6px}
 
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;cursor:pointer;transition:all .2s;text-align:center}
-.mode-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.08);border-color:var(--accent)}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.mode-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:0;transition:opacity .2s}
+.mode-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
 .mode-card:active{transform:scale(.97)}
-.mode-card .icon{font-size:2em;margin-bottom:8px}
-.mode-card .name{font-size:.95em;font-weight:600;margin-bottom:4px}
-.mode-card .desc{font-size:.75em;color:var(--text2);line-height:1.4}
-.mode-card.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.15)}
+.mode-card .icon{font-size:1.8em;margin-bottom:6px}
+.mode-card .name{font-size:.9em;font-weight:600;margin-bottom:2px}
+.mode-card .desc{font-size:.72em;color:var(--text2);line-height:1.3}
+.mode-card.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.12)}
+.mode-card.active::before{opacity:1}
 
-.settings{margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.settings h3{font-size:.85em;font-weight:600;margin-bottom:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.settings{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.settings h3{font-size:.78em;font-weight:600;margin-bottom:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
 .diff-row{display:flex;gap:8px}
-.diff-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;font-size:.85em;font-weight:500;transition:all .2s;text-align:center;color:var(--text)}
+.diff-btn{flex:1;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:.82em;font-weight:500;transition:all .2s;text-align:center;color:var(--text)}
 .diff-btn:hover{border-color:var(--accent)}
 .diff-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .diff-btn .stars{font-size:.7em;display:block;margin-top:2px;opacity:.7}
 
-.start-btn{display:block;width:100%;margin-top:16px;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:1.1em;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:-.2px}
-.start-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+.start-btn{display:block;width:100%;margin-top:14px;padding:16px;background:linear-gradient(135deg,var(--accent),#5856d6);color:#fff;border:none;border-radius:12px;font-size:1.05em;font-weight:600;cursor:pointer;transition:all .25s;letter-spacing:-.2px;position:relative;overflow:hidden}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,113,227,.3)}
 .start-btn:active{transform:scale(.98)}
+.start-btn .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);transform:scale(0);animation:ripple .6s linear}
 
-.stats-bar{display:flex;gap:12px;margin-top:20px}
-.stat-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center}
+.daily-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#ff9500,#ff6b00);color:#fff;font-size:.7em;font-weight:600;padding:3px 10px;border-radius:20px;margin-top:10px}
+.daily-badge.new::after{content:'NEW';font-size:.6em;background:#ff3b30;padding:1px 5px;border-radius:8px;margin-left:2px;animation:pulse 2s ease infinite}
+
+.stats-bar{display:flex;gap:10px;margin-top:16px}
+.stat-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;transition:transform .2s}
+.stat-item:hover{transform:translateY(-1px)}
 .stat-item .num{font-size:1.3em;font-weight:700;color:var(--accent)}
-.stat-item .label{font-size:.7em;color:var(--text2);margin-top:2px}
+.stat-item .label{font-size:.68em;color:var(--text2);margin-top:2px}
 
-/* ===== QUIZ SCREEN ===== */
-.quiz{display:none;padding:68px 20px 100px;max-width:640px;margin:0 auto}
-.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.q-progress{flex:1;height:6px;background:#e5e5ea;border-radius:3px;overflow:hidden;margin:0 12px}
-.q-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#5856d6);border-radius:3px;transition:width .3s}
-.q-counter{font-size:.8em;color:var(--text2);font-weight:500;white-space:nowrap}
-.q-timer{font-size:.8em;color:var(--text2);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.q-timer.warning{color:var(--wrong);animation:pulse .5s ease infinite}
+/* Leaderboard */
+.leaderboard{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.leaderboard h3{font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;text-align:center}
+.lb-item{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f5f5f5;transition:background .2s}
+.lb-item:last-child{border:none}
+.lb-rank{width:28px;font-weight:700;font-size:.9em;text-align:center}
+.lb-rank.gold{color:#ffd700}
+.lb-rank.silver{color:#c0c0c0}
+.lb-rank.bronze{color:#cd7f32}
+.lb-info{flex:1;margin-left:8px}
+.lb-mode{font-size:.8em;font-weight:500}
+.lb-detail{font-size:.68em;color:var(--text2)}
+.lb-score{font-weight:700;color:var(--accent);font-size:.9em}
+.lb-empty{text-align:center;color:var(--text2);font-size:.85em;padding:16px 0}
 
-.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;box-shadow:var(--shadow);margin-bottom:16px}
-.q-type{font-size:.7em;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
-.q-text{font-size:1.15em;font-weight:500;line-height:1.6}
-.q-hint{font-size:.85em;color:var(--text2);margin-top:8px;font-style:italic}
+/* === QUIZ === */
+.quiz{padding:68px 20px 100px;max-width:640px;margin:0 auto}
+.quiz-header{display:flex;align-items:center;margin-bottom:16px;gap:8px}
+.q-counter{font-size:.78em;color:var(--text2);font-weight:500;white-space:nowrap;min-width:44px}
+.q-progress{flex:1;height:5px;background:#eee;border-radius:3px;overflow:hidden}
+.q-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#5856d6);border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.q-timer{font-size:.78em;color:var(--text2);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:44px;text-align:right}
+.q-timer.warning{color:var(--wrong);animation:pulse .6s ease infinite}
 
-.q-options{display:flex;flex-direction:column;gap:10px}
-.q-opt{padding:16px 20px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s;font-size:.95em;line-height:1.4;position:relative}
+/* Circular progress */
+.q-ring-wrap{position:relative;width:48px;height:48px;margin:0 auto 12px}
+.q-ring{width:48px;height:48px;transform:rotate(-90deg)}
+.q-ring-bg{fill:none;stroke:#e5e5ea;stroke-width:3}
+.q-ring-fill{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .4s ease}
+.q-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:700;color:var(--accent)}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+.q-type{font-size:.68em;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.q-text{font-size:1.1em;font-weight:500;line-height:1.6;white-space:pre-line}
+
+.q-options{display:flex;flex-direction:column;gap:8px}
+.q-opt{padding:14px 18px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s;font-size:.92em;line-height:1.4;position:relative;user-select:none}
 .q-opt:hover{border-color:var(--accent);background:rgba(0,113,227,.03)}
 .q-opt:active{transform:scale(.98)}
-.q-opt .letter{display:inline-block;width:24px;height:24px;border-radius:50%;background:#f2f2f7;text-align:center;line-height:24px;font-size:.75em;font-weight:600;margin-right:10px;color:var(--text2);vertical-align:middle}
-.q-opt.correct{border-color:var(--correct);background:rgba(52,199,89,.08);animation:correctPop .3s ease}
+.q-opt .letter{display:inline-flex;width:24px;height:24px;border-radius:50%;background:#f2f2f7;align-items:center;justify-content:center;font-size:.72em;font-weight:600;margin-right:10px;color:var(--text2);vertical-align:middle;transition:all .2s}
+.q-opt.correct{border-color:var(--correct);background:rgba(52,199,89,.08);animation:correctPop .35s ease}
 .q-opt.correct .letter{background:var(--correct);color:#fff}
 .q-opt.wrong{border-color:var(--wrong);background:rgba(255,59,48,.06)}
 .q-opt.wrong .letter{background:var(--wrong);color:#fff}
-.q-opt.disabled{pointer-events:none;opacity:.6}
+.q-opt.disabled{pointer-events:none}
+.q-opt.reveal{border-color:var(--correct);opacity:1!important}
 
-.q-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
-.q-streak{font-size:.85em;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:4px}
-.q-score{font-size:.85em;color:var(--text2)}
-.q-score span{font-weight:700;color:var(--accent)}
-.q-explain{display:none;margin-top:12px;padding:14px 16px;background:rgba(0,113,227,.04);border-radius:10px;border-left:3px solid var(--accent);font-size:.85em;color:var(--text2);line-height:1.6}
+/* Confetti */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall 1s ease forwards}
+
+.q-explain{margin-top:12px;padding:14px 16px;background:rgba(0,113,227,.04);border-radius:var(--radius-sm);border-left:3px solid var(--accent);font-size:.82em;color:var(--text2);line-height:1.6;display:none}
 .q-explain.show{display:block;animation:fadeInUp .3s ease}
-.q-next{display:none;margin-top:16px;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:.95em;font-weight:600;cursor:pointer;width:100%;transition:all .2s}
-.q-next:hover{background:var(--accent2)}
+.q-next{display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--accent),#5856d6);color:#fff;border:none;border-radius:var(--radius-sm);font-size:.92em;font-weight:600;cursor:pointer;width:100%;transition:all .2s}
+.q-next:hover{box-shadow:0 4px 16px rgba(0,113,227,.3)}
 .q-next.show{display:block;animation:fadeInUp .3s ease}
 
-/* ===== RESULT SCREEN ===== */
-.result{display:none;padding:72px 20px 40px;max-width:640px;margin:0 auto;text-align:center}
-.result-grade{font-size:4em;margin-bottom:8px}
-.result-title{font-size:1.8em;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
-.result-subtitle{font-size:1em;color:var(--text2);margin-bottom:24px}
-.result-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
-.rs-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 10px}
+.q-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.q-streak{font-size:.85em;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:4px}
+.q-streak.fire{animation:fireGlow 1s ease infinite alternate}
+.q-score{font-size:.82em;color:var(--text2)}
+.q-score span{font-weight:700;color:var(--accent)}
+
+/* Combo popup */
+.combo-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2em;font-weight:800;pointer-events:none;z-index:150;animation:comboPop .8s ease forwards;text-shadow:0 2px 8px rgba(0,0,0,.15)}
+.combo-popup.perfect{color:var(--correct)}
+.combo-popup.great{color:var(--accent)}
+.combo-popup.good{color:var(--gold)}
+
+/* === RESULT === */
+.result{padding:68px 20px 40px;max-width:640px;margin:0 auto;text-align:center}
+.result-grade{font-size:4em;margin-bottom:8px;animation:bounceIn .6s ease}
+.result-rank{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.82em;font-weight:600;margin-bottom:12px}
+.result-rank .rank-icon{font-size:1.2em}
+.result-title{font-size:1.7em;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.result-subtitle{font-size:.88em;color:var(--text2);margin-bottom:20px}
+.result-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.rs-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 8px}
 .rs-item .val{font-size:1.5em;font-weight:700}
 .rs-item .val.green{color:var(--correct)}
 .rs-item .val.gold{color:var(--gold)}
-.rs-item .lab{font-size:.7em;color:var(--text2);margin-top:2px}
-.result-bar{height:8px;background:#e5e5ea;border-radius:4px;overflow:hidden;margin:0 auto 20px;max-width:300px}
-.result-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.rs-item .val.blue{color:var(--accent)}
+.rs-item .lab{font-size:.68em;color:var(--text2);margin-top:2px}
+.result-bar{height:8px;background:#e5e5ea;border-radius:4px;overflow:hidden;margin:0 auto 20px;max-width:260px}
+.result-bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
 
 .result-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.r-btn{padding:12px 28px;border-radius:10px;font-size:.9em;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.r-btn{padding:12px 28px;border-radius:var(--radius-sm);font-size:.88em;font-weight:600;cursor:pointer;transition:all .2s;border:none}
 .r-btn:hover{transform:translateY(-1px)}
 .r-btn:active{transform:scale(.97)}
-.r-btn.primary{background:var(--accent);color:#fff}
+.r-btn.primary{background:linear-gradient(135deg,var(--accent),#5856d6);color:#fff}
 .r-btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 
-/* Leaderboard */
-.leaderboard{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:left}
-.leaderboard h3{font-size:.85em;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:12px;text-align:center}
-.lb-item{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #f2f2f7}
-.lb-item:last-child{border:none}
-.lb-rank{width:28px;font-weight:700;color:var(--gold);font-size:.9em}
-.lb-info{flex:1}
-.lb-mode{font-size:.8em;font-weight:500}
-.lb-detail{font-size:.7em;color:var(--text2)}
-.lb-score{font-weight:700;color:var(--accent);font-size:.9em}
-.lb-empty{text-align:center;color:var(--text2);font-size:.85em;padding:12px 0}
+/* Wrong answers review */
+.review{margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left}
+.review h3{font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;text-align:center}
+.rev-item{padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:.82em;line-height:1.5}
+.rev-item:last-child{border:none}
+.rev-q{font-weight:500;margin-bottom:2px}
+.rev-a{color:var(--correct)}
+.rev-w{color:var(--wrong);text-decoration:line-through;margin-right:6px}
 
 /* Animations */
-@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
 @keyframes correctPop{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.3)}50%{transform:scale(1.05)}70%{transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes fireGlow{from{text-shadow:0 0 4px rgba(255,149,0,.3)}to{text-shadow:0 0 12px rgba(255,149,0,.6)}}
+@keyframes comboPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}30%{opacity:1;transform:translate(-50%,-60%) scale(1.2)}60%{transform:translate(-50%,-70%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.8)}}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+@keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-.fade-in{animation:fadeInUp .4s ease forwards}
-.slide-in{animation:slideIn .35s ease forwards}
+.shake{animation:shakeX .3s ease}
 
 /* Responsive */
 @media(max-width:640px){
   .home-hero h1{font-size:1.6em}
-  .mode-grid{grid-template-columns:1fr 1fr;gap:8px}
   .mode-card{padding:14px 10px}
-  .mode-card .icon{font-size:1.6em}
-  .mode-card .name{font-size:.85em}
-  .q-card{padding:20px 16px}
-  .q-text{font-size:1.05em}
-  .q-opt{padding:13px 16px;font-size:.9em}
-  .result-title{font-size:1.4em}
+  .mode-card .icon{font-size:1.5em}
+  .q-card{padding:18px 14px}
+  .q-text{font-size:1em}
+  .q-opt{padding:12px 14px;font-size:.88em}
   .result-grade{font-size:3em}
 }
 @media(max-width:380px){
-  .mode-grid{grid-template-columns:1fr}
+  .mode-grid{grid-template-columns:1fr 1fr;gap:8px}
   .diff-row{flex-wrap:wrap}
-  .stats-bar{flex-wrap:wrap}
 }
 </style>
 </head>
 <body>
 
-<a href="../index.html" style="display:inline-block;padding:8px 16px;color:var(--accent);text-decoration:none;font-size:13px">← 首页</a>
+<a href="../index.html" class="back" style="display:inline-block;padding:8px 16px;color:var(--accent);text-decoration:none;font-size:13px">← 首页</a>
 
 <!-- HOME -->
-<div class="home" id="homeScreen">
+<div class="home screen active" id="homeScreen">
   <div class="home-hero">
     <div class="emoji">📚</div>
     <h1>文学问答</h1>
     <div class="sub">337 部经典 · 6 种题型 · 无限挑战</div>
   </div>
-
   <div class="mode-grid" id="modeGrid">
     <div class="mode-card active" data-mode="classic" onclick="selectMode(this)">
-      <div class="icon">🎯</div>
-      <div class="name">经典模式</div>
-      <div class="desc">20题限时挑战</div>
+      <div class="icon">🎯</div><div class="name">经典模式</div><div class="desc">20题限时挑战</div>
     </div>
     <div class="mode-card" data-mode="endless" onclick="selectMode(this)">
-      <div class="icon">♾️</div>
-      <div class="name">无尽模式</div>
-      <div class="desc">答错即止</div>
+      <div class="icon">♾️</div><div class="name">无尽模式</div><div class="desc">答错即止</div>
     </div>
     <div class="mode-card" data-mode="speed" onclick="selectMode(this)">
-      <div class="icon">⚡</div>
-      <div class="name">闪电战</div>
-      <div class="desc">60秒极限</div>
+      <div class="icon">⚡</div><div class="name">闪电战</div><div class="desc">60秒极限</div>
     </div>
-    <div class="mode-card" data-mode="versus" onclick="selectMode(this)">
-      <div class="icon">👥</div>
-      <div class="name">中日对决</div>
-      <div class="desc">世界 vs 中文</div>
+    <div class="mode-card" data-mode="daily" onclick="selectMode(this)">
+      <div class="icon">📅</div><div class="name">每日挑战</div><div class="desc">今日固定题</div>
     </div>
   </div>
-
+  <div id="dailyInfo" style="display:none;text-align:center;margin-top:6px"></div>
   <div class="settings">
     <h3>难度</h3>
     <div class="diff-row">
-      <div class="diff-btn active" data-diff="easy" onclick="selectDiff(this)">
-        入门<span class="stars">⭐</span>
-      </div>
-      <div class="diff-btn" data-diff="medium" onclick="selectDiff(this)">
-        进阶<span class="stars">⭐⭐</span>
-      </div>
-      <div class="diff-btn" data-diff="hard" onclick="selectDiff(this)">
-        大师<span class="stars">⭐⭐⭐</span>
-      </div>
+      <div class="diff-btn active" data-diff="easy" onclick="selectDiff(this)">入门<span class="stars">⭐</span></div>
+      <div class="diff-btn" data-diff="medium" onclick="selectDiff(this)">进阶<span class="stars">⭐⭐</span></div>
+      <div class="diff-btn" data-diff="hard" onclick="selectDiff(this)">大师<span class="stars">⭐⭐⭐</span></div>
     </div>
   </div>
-
-  <button class="start-btn" onclick="startQuiz()">开始挑战 →</button>
-
+  <button class="start-btn" onclick="startQuiz(this, event)">开始挑战 →</button>
   <div class="stats-bar">
     <div class="stat-item"><div class="num" id="statGames">0</div><div class="label">总局数</div></div>
     <div class="stat-item"><div class="num" id="statBest">0</div><div class="label">最高分</div></div>
     <div class="stat-item"><div class="num" id="statStreak">0</div><div class="label">最长连击</div></div>
+    <div class="stat-item"><div class="num" id="statAcc">-</div><div class="label">正确率</div></div>
   </div>
-
   <div class="leaderboard" id="leaderboard">
     <h3>🏆 排行榜</h3>
     <div id="lbContent"><div class="lb-empty">还没有记录，开始第一局吧！</div></div>
@@ -207,16 +241,22 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px}
 </div>
 
 <!-- QUIZ -->
-<div class="quiz" id="quizScreen">
+<div class="quiz screen" id="quizScreen">
   <div class="quiz-header">
     <div class="q-counter" id="qCounter">1 / 20</div>
     <div class="q-progress"><div class="q-progress-fill" id="qProgress" style="width:0%"></div></div>
     <div class="q-timer" id="qTimer">00:00</div>
   </div>
-  <div class="q-card fade-in" id="qCard">
+  <div class="q-ring-wrap" id="qRingWrap">
+    <svg class="q-ring" viewBox="0 0 48 48">
+      <circle class="q-ring-bg" cx="24" cy="24" r="20"/>
+      <circle class="q-ring-fill" id="qRingFill" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="0"/>
+    </svg>
+    <div class="q-ring-num" id="qRingNum">1</div>
+  </div>
+  <div class="q-card" id="qCard">
     <div class="q-type" id="qType">猜书名</div>
     <div class="q-text" id="qText">加载中...</div>
-    <div class="q-hint" id="qHint"></div>
   </div>
   <div class="q-options" id="qOptions"></div>
   <div class="q-explain" id="qExplain"></div>
@@ -228,23 +268,29 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px}
 </div>
 
 <!-- RESULT -->
-<div class="result" id="resultScreen">
+<div class="result screen" id="resultScreen">
   <div class="result-grade" id="rGrade">🎉</div>
+  <div class="result-rank" id="rRank"><span class="rank-icon">📖</span> 书虫</div>
   <div class="result-title" id="rTitle">挑战完成！</div>
   <div class="result-subtitle" id="rSubtitle">经典模式 · 进阶难度</div>
-  <div class="result-bar"><div class="result-bar-fill" id="rBar" style="width:0%;background:var(--accent)"></div></div>
+  <div class="result-bar"><div class="result-bar-fill" id="rBar" style="width:0%"></div></div>
   <div class="result-stats">
     <div class="rs-item"><div class="val green" id="rCorrect">0</div><div class="lab">正确</div></div>
-    <div class="rs-item"><div class="val" id="rTotal">0</div><div class="lab">总题数</div></div>
+    <div class="rs-item"><div class="val blue" id="rTotal">0</div><div class="lab">总题数</div></div>
     <div class="rs-item"><div class="val gold" id="rMaxStreak">0</div><div class="lab">最长连击</div></div>
   </div>
   <div class="result-btns">
     <button class="r-btn primary" onclick="startQuiz()">再来一局</button>
     <button class="r-btn secondary" onclick="goHome()">返回首页</button>
   </div>
+  <div class="review" id="reviewSection" style="display:none">
+    <h3>📋 答题回顾</h3>
+    <div id="reviewContent"></div>
+  </div>
 </div>
 
 <script>
+// === DATA ===
 // === DATA ===
 const WC=[
 {t:"悲惨世界",a:"维克多·雨果",c:"法国",y:1862,g:"社会史诗",w:"人性善恶与救赎的宏伟史诗"},
@@ -588,31 +634,105 @@ const CL=[
 {t:"主角",a:"陈彦",e:"当代",g:"小说",y:2019,d:"茅盾文学奖作品，讲述秦腔名伶忆秦娥半生的艺术人生，'戏如人生'的壮丽史诗。"}
 ];
 
-// === QUIZ ENGINE ===
+// === QUIZ ENGINE v2 ===
 const ALL_WC = WC.filter(b => b.a && b.c);
 const ALL_CL = CL.filter(b => b.a && b.d);
 
 let mode = 'classic', diff = 'easy';
 let questions = [], current = 0, score = 0, streak = 0, maxStreak = 0;
 let correct = 0, timer = null, seconds = 0, timeLimit = 0;
-let answered = false;
+let answered = false, wrongAnswers = [];
 
-// === MODE & DIFFICULTY ===
-function selectMode(el) {
-  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  mode = el.dataset.mode;
+// === SOUND (Web Audio API) ===
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function getAudio() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+function playSound(type) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.value = 0.08;
+    if (type === 'correct') {
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.16);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.35);
+    } else if (type === 'wrong') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+      gain.gain.value = 0.05;
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'combo') {
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.1);
+      gain.gain.value = 0.06;
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'end') {
+      [523, 659, 784, 1047].forEach((f, i) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = f; g.gain.value = 0.06;
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.15 + 0.3);
+        o.start(ctx.currentTime + i*0.15);
+        o.stop(ctx.currentTime + i*0.15 + 0.3);
+      });
+    }
+  } catch(e) {}
 }
-function selectDiff(el) {
-  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  diff = el.dataset.diff;
+
+// === HAPTIC ===
+function haptic(type) {
+  if (navigator.vibrate) navigator.vibrate(type === 'correct' ? 30 : type === 'wrong' ? [20, 30, 20] : 10);
+}
+
+// === CONFETTI ===
+function spawnConfetti() {
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti-wrap';
+  document.body.appendChild(wrap);
+  const colors = ['#ff3b30','#ff9500','#ffcc00','#34c759','#0071e3','#5856d6','#af52de'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100 + '%';
+    c.style.top = '-10px';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration = (0.8 + Math.random()*0.6) + 's';
+    c.style.animationDelay = Math.random()*0.3 + 's';
+    c.style.transform = 'rotate(' + Math.random()*360 + 'deg)';
+    wrap.appendChild(c);
+  }
+  setTimeout(() => wrap.remove(), 2000);
+}
+
+// === COMBO POPUP ===
+function showCombo(streak) {
+  const text = streak >= 10 ? '🔥🔥🔥 PERFECT!' : streak >= 7 ? '🔥🔥 AMAZING!' : streak >= 5 ? '🔥 GREAT!' : streak >= 3 ? '✨ NICE!' : null;
+  if (!text) return;
+  const el = document.createElement('div');
+  el.className = 'combo-popup ' + (streak >= 7 ? 'perfect' : streak >= 5 ? 'great' : 'good');
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
 }
 
 // === SCREENS ===
 function showScreen(id) {
-  document.querySelectorAll('.home,.quiz,.result').forEach(s => s.style.display = 'none');
-  document.getElementById(id).style.display = id === 'homeScreen' ? 'block' : '';
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); });
+  setTimeout(() => {
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }, 50);
 }
 function goHome() {
   clearInterval(timer);
@@ -620,84 +740,131 @@ function goHome() {
   loadStats();
 }
 
-// === QUESTION GENERATORS ===
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
+// === MODE & DIFF ===
+function selectMode(el) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  mode = el.dataset.mode;
+  const dailyInfo = document.getElementById('dailyInfo');
+  if (mode === 'daily') {
+    const today = new Date().toLocaleDateString('zh-CN');
+    const done = localStorage.getItem('litquiz_daily_' + today);
+    dailyInfo.style.display = 'block';
+    dailyInfo.innerHTML = done ? '<span class="daily-badge">今日已完成 ✓</span>' : '<span class="daily-badge new">今日新挑战 🔥</span>';
+  } else {
+    dailyInfo.style.display = 'none';
+  }
 }
-function pick(arr, n) { return shuffle(arr).slice(0, n); }
-function pickWrong(pool, correct, key, n) {
-  const wrongs = pool.filter(b => b[key] !== correct[key]).map(b => b[key]);
-  const unique = [...new Set(wrongs)];
-  return shuffle(unique).slice(0, n);
+function selectDiff(el) {
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  diff = el.dataset.diff;
 }
 
-function genQuestions(count, pool, pool2) {
+// === SEEDED RANDOM (for daily) ===
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+function hashStr(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+// === QUESTION GENERATORS ===
+function shuffle(arr, rng) {
+  const a = [...arr];
+  if (rng) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } }
+  else { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } }
+  return a;
+}
+function pickWrong(pool, correct, key, n, rng) {
+  const wrongs = pool.filter(b => b[key] !== correct[key]).map(b => b[key]);
+  const unique = [...new Set(wrongs)];
+  return shuffle(unique, rng).slice(0, n);
+}
+
+function genQuestions(count, pool, pool2, rng) {
   const qs = [];
   const types = diff === 'easy' ? [1,2,5,6] : diff === 'medium' ? [1,2,3,4,5,6] : [2,3,4,5,6,7];
   const allPool = pool2 ? [...pool, ...pool2] : pool;
+  const r = rng || Math.random;
 
-  for (let i = 0; i < count * 3 && qs.length < count; i++) {
-    const book = pool[Math.floor(Math.random() * pool.length)];
-    const type = types[Math.floor(Math.random() * types.length)];
+  for (let i = 0; i < count * 4 && qs.length < count; i++) {
+    const book = pool[Math.floor(r() * pool.length)];
+    const type = types[Math.floor(r() * types.length)];
     let q = null;
 
     if (type === 1 && book.w) {
-      // "这本名著讲述的是..." -> 猜书名
-      const wrongs = pickWrong(allPool, book, 't', 3);
-      if (wrongs.length >= 3) q = { text: `"${book.w}"\n这是哪本书？`, answer: book.t, options: shuffle([book.t, ...wrongs]), type: '📖 猜书名', explain: `${book.t}——${book.a}（${book.c || book.e || ''}）` };
+      const wrongs = pickWrong(allPool, book, 't', 3, rng);
+      if (wrongs.length >= 3) q = { text: '"' + book.w + '"\n这是哪本书？', answer: book.t, options: shuffle([book.t, ...wrongs], rng), type: '📖 猜书名', explain: book.t + '——' + book.a + '（' + (book.c || book.e || '') + '）' };
     }
     else if (type === 2) {
-      // "xx写了哪本书？" 
       const target = pool2 ? allPool : pool;
-      const b = target[Math.floor(Math.random() * target.length)];
+      const b = target[Math.floor(r() * target.length)];
       if (b.t && b.a) {
-        const wrongs = pickWrong(target, b, 't', 3);
-        if (wrongs.length >= 3) q = { text: `${b.a}写了以下哪部作品？`, answer: b.t, options: shuffle([b.t, ...wrongs]), type: '✍️ 猜作品', explain: `《${b.t}》——${b.a}` };
+        const wrongs = pickWrong(target, b, 't', 3, rng);
+        if (wrongs.length >= 3) q = { text: b.a + '写了以下哪部作品？', answer: b.t, options: shuffle([b.t, ...wrongs], rng), type: '✍️ 猜作品', explain: '《' + b.t + '》——' + b.a };
       }
     }
     else if (type === 3 && book.c) {
-      // 猜国家
-      const wrongs = pickWrong(allPool.filter(b => b.c), book, 'c', 3);
-      if (wrongs.length >= 3) q = { text: `《${book.t}》是哪个国家（地区）的作品？`, answer: book.c, options: shuffle([book.c, ...wrongs]), type: '🌍 猜国家', explain: `《${book.t}》——${book.a}（${book.c}）` };
+      const wrongs = pickWrong(allPool.filter(b => b.c), book, 'c', 3, rng);
+      if (wrongs.length >= 3) q = { text: '《' + book.t + '》是哪个国家（地区）的作品？', answer: book.c, options: shuffle([book.c, ...wrongs], rng), type: '🌍 猜国家', explain: '《' + book.t + '》——' + book.a + '（' + book.c + '）' };
     }
     else if (type === 5) {
-      // 猜作者
-      const wrongs = pickWrong(allPool.filter(b => b.a), book, 'a', 3);
-      if (wrongs.length >= 3) q = { text: `《${book.t}》的作者是？`, answer: book.a, options: shuffle([book.a, ...wrongs]), type: '👤 猜作者', explain: `${book.a}《${book.t}》` };
+      const wrongs = pickWrong(allPool.filter(b => b.a), book, 'a', 3, rng);
+      if (wrongs.length >= 3) q = { text: '《' + book.t + '》的作者是？', answer: book.a, options: shuffle([book.a, ...wrongs], rng), type: '👤 猜作者', explain: book.a + '《' + book.t + '》' };
     }
     else if (type === 6 && book.g) {
-      // 猜类型
-      const wrongs = pickWrong(allPool.filter(b => b.g), book, 'g', 3);
-      if (wrongs.length >= 3) q = { text: `《${book.t}》属于什么类型？`, answer: book.g, options: shuffle([book.g, ...wrongs]), type: '🏷️ 猜类型', explain: `《${book.t}》——${book.g}——${book.a}` };
+      const wrongs = pickWrong(allPool.filter(b => b.g), book, 'g', 3, rng);
+      if (wrongs.length >= 3) q = { text: '《' + book.t + '》属于什么类型？', answer: book.g, options: shuffle([book.g, ...wrongs], rng), type: '🏷️ 猜类型', explain: '《' + book.t + '》——' + book.g + '——' + book.a };
     }
     else if (type === 7 && book.d) {
-      // 中文文学：根据描述猜书名
-      const wrongs = pickWrong(ALL_CL, book, 't', 3);
-      if (wrongs.length >= 3) q = { text: `${book.d.slice(0, 60)}...`, answer: book.t, options: shuffle([book.t, ...wrongs]), type: '📝 猜书名', explain: `《${book.t}》——${book.a}（${book.e}）` };
+      const wrongs = pickWrong(ALL_CL, book, 't', 3, rng);
+      if (wrongs.length >= 3) q = { text: book.d.slice(0, 60) + '...', answer: book.t, options: shuffle([book.t, ...wrongs], rng), type: '📝 猜书名', explain: '《' + book.t + '》——' + book.a + '（' + book.e + '）' };
     }
     else if (type === 4 && book.e) {
-      // 猜时代
-      const wrongs = pickWrong(ALL_CL.filter(b => b.e), book, 'e', 3);
-      if (wrongs.length >= 3) q = { text: `《${book.t}》属于哪个时代？`, answer: book.e, options: shuffle([book.e, ...wrongs]), type: '⏳ 猜时代', explain: `《${book.t}》——${book.e}——${book.a}` };
+      const wrongs = pickWrong(ALL_CL.filter(b => b.e), book, 'e', 3, rng);
+      if (wrongs.length >= 3) q = { text: '《' + book.t + '》属于哪个时代？', answer: book.e, options: shuffle([book.e, ...wrongs], rng), type: '⏳ 猜时代', explain: '《' + book.t + '》——' + book.e + '——' + book.a };
     }
 
     if (q && !qs.some(x => x.text === q.text)) qs.push(q);
   }
-  return shuffle(qs).slice(0, count);
+  return shuffle(qs, rng).slice(0, count);
 }
 
 // === QUIZ FLOW ===
-function startQuiz() {
-  current = 0; score = 0; streak = 0; maxStreak = 0; correct = 0; seconds = 0; answered = false;
+function startQuiz(btn, event) {
+  // Ripple effect
+  if (btn && event) {
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (event.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (event.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
 
-  const pool = mode === 'versus' ? ALL_WC : [...ALL_WC, ...ALL_CL];
-  const pool2 = mode === 'versus' ? ALL_CL : null;
-  const count = mode === 'classic' ? 20 : mode === 'speed' ? 99 : 30;
-  questions = genQuestions(count, pool, pool2);
+  current = 0; score = 0; streak = 0; maxStreak = 0; correct = 0; seconds = 0; answered = false; wrongAnswers = [];
 
-  if (mode === 'speed') { timeLimit = 60; } else { timeLimit = 0; }
+  const pool = [...ALL_WC, ...ALL_CL];
+  let rng = null;
+
+  if (mode === 'daily') {
+    const today = new Date().toLocaleDateString('zh-CN');
+    rng = seededRandom(hashStr(today + diff));
+  }
+
+  const count = mode === 'speed' ? 99 : mode === 'endless' ? 50 : 20;
+  questions = genQuestions(count, pool, null, rng);
+  timeLimit = mode === 'speed' ? 60 : 0;
 
   showScreen('quizScreen');
   startTimer();
@@ -709,7 +876,7 @@ function startTimer() {
   seconds = timeLimit || 0;
   updateTimerDisplay();
   timer = setInterval(() => {
-    if (timeLimit) { seconds--; if (seconds <= 0) { clearInterval(timer); endQuiz(); return; } }
+    if (timeLimit) { seconds--; if (seconds <= 0) { clearInterval(timer); playSound('end'); endQuiz(); return; } }
     else { seconds++; }
     updateTimerDisplay();
   }, 1000);
@@ -718,19 +885,27 @@ function updateTimerDisplay() {
   const el = document.getElementById('qTimer');
   const m = Math.floor(Math.abs(seconds) / 60);
   const s = Math.abs(seconds) % 60;
-  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
   el.classList.toggle('warning', timeLimit > 0 && seconds <= 10);
 }
 
+function updateRing() {
+  const total = questions.length;
+  const pct = total > 0 ? current / total : 0;
+  const circ = 2 * Math.PI * 20;
+  document.getElementById('qRingFill').setAttribute('stroke-dashoffset', circ * (1 - pct));
+  document.getElementById('qRingNum').textContent = current + 1;
+}
+
 function showQuestion() {
-  if (current >= questions.length) { endQuiz(); return; }
+  if (current >= questions.length) { playSound('end'); endQuiz(); return; }
   answered = false;
   const q = questions[current];
-  document.getElementById('qCounter').textContent = `${current + 1} / ${questions.length}`;
-  document.getElementById('qProgress').style.width = `${((current) / questions.length) * 100}%`;
+  document.getElementById('qCounter').textContent = (current + 1) + ' / ' + questions.length;
+  document.getElementById('qProgress').style.width = ((current) / questions.length * 100) + '%';
+  updateRing();
   document.getElementById('qType').textContent = q.type;
   document.getElementById('qText').textContent = q.text;
-  document.getElementById('qHint').textContent = '';
   document.getElementById('qExplain').className = 'q-explain';
   document.getElementById('qNext').className = 'q-next';
 
@@ -739,13 +914,13 @@ function showQuestion() {
   const letters = ['A', 'B', 'C', 'D'];
   q.options.forEach((opt, i) => {
     const btn = document.createElement('div');
-    btn.className = 'q-opt slide-in';
-    btn.style.animationDelay = `${i * 0.06}s`;
-    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
+    btn.className = 'q-opt';
+    btn.style.animation = 'slideIn .3s ease ' + (i * 0.05) + 's both';
+    btn.dataset.value = opt;
+    btn.innerHTML = '<span class="letter">' + letters[i] + '</span>' + opt;
     btn.onclick = () => handleAnswer(btn, opt, q);
     optDiv.appendChild(btn);
   });
-
   updateFooter();
 }
 
@@ -753,22 +928,33 @@ function handleAnswer(btn, selected, q) {
   if (answered) return;
   answered = true;
   const isCorrect = selected === q.answer;
+
+  // Mark all options
   document.querySelectorAll('.q-opt').forEach(b => {
     b.classList.add('disabled');
-    if (b.textContent.slice(1) === q.answer) b.classList.add('correct');
+    if (b.dataset.value === q.answer) b.classList.add('correct', 'reveal');
   });
+
   if (isCorrect) {
-    btn.classList.add('correct');
     streak++;
     if (streak > maxStreak) maxStreak = streak;
     const base = diff === 'easy' ? 10 : diff === 'medium' ? 20 : 30;
     const bonus = Math.min(streak - 1, 5) * 5;
     score += base + bonus;
     correct++;
+    playSound('correct');
+    haptic('correct');
+    showCombo(streak);
+    if (streak >= 5) spawnConfetti();
   } else {
     btn.classList.add('wrong');
     streak = 0;
-    if (mode === 'endless') { setTimeout(endQuiz, 800); return; }
+    playSound('wrong');
+    haptic('wrong');
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 300);
+    wrongAnswers.push({ q: q.text, your: selected, answer: q.answer, explain: q.explain });
+    if (mode === 'endless') { setTimeout(() => { playSound('end'); endQuiz(); }, 1000); return; }
   }
 
   document.getElementById('qExplain').textContent = q.explain;
@@ -783,24 +969,42 @@ function nextQuestion() {
 }
 
 function updateFooter() {
-  document.getElementById('qStreak').innerHTML = streak > 1 ? `🔥 ${streak} 连击！` : '';
-  document.getElementById('qScore').innerHTML = `得分: <span>${score}</span>`;
+  const sEl = document.getElementById('qStreak');
+  sEl.innerHTML = streak > 1 ? '🔥 ' + streak + ' 连击！' : '';
+  sEl.className = 'q-streak' + (streak >= 3 ? ' fire' : '');
+  document.getElementById('qScore').innerHTML = '得分: <span>' + score + '</span>';
+}
+
+// === RANK SYSTEM ===
+function getRank(score) {
+  if (score >= 600) return { icon: '👑', name: '文学之王', color: '#ff9500' };
+  if (score >= 450) return { icon: '🏆', name: '文学大师', color: '#af52de' };
+  if (score >= 300) return { icon: '🌟', name: '博学书虫', color: '#5856d6' };
+  if (score >= 180) return { icon: '📖', name: '书虫', color: '#0071e3' };
+  if (score >= 80) return { icon: '🌱', name: '文学新手', color: '#34c759' };
+  return { icon: '📝', name: '入门读者', color: '#8e8e93' };
 }
 
 function endQuiz() {
   clearInterval(timer);
   showScreen('resultScreen');
 
-  const total = current + (answered ? 1 : 0);
+  const total = current + (answered && mode !== 'endless' ? 1 : answered ? 1 : 0);
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
   const grade = pct >= 90 ? '🏆' : pct >= 70 ? '🌟' : pct >= 50 ? '📚' : pct >= 30 ? '💪' : '🌱';
   const title = pct >= 90 ? '大师级！' : pct >= 70 ? '博学多才！' : pct >= 50 ? '继续加油！' : pct >= 30 ? '初露锋芒' : '文学之路刚刚开始';
 
   document.getElementById('rGrade').textContent = grade;
   document.getElementById('rTitle').textContent = title;
-  const modeNames = { classic: '经典模式', endless: '无尽模式', speed: '闪电战', versus: '中日对决' };
+
+  const rank = getRank(score);
+  document.getElementById('rRank').innerHTML = '<span class="rank-icon">' + rank.icon + '</span> ' + rank.name;
+  document.getElementById('rRank').style.borderColor = rank.color;
+  document.getElementById('rRank').style.color = rank.color;
+
+  const modeNames = { classic: '经典模式', endless: '无尽模式', speed: '闪电战', daily: '每日挑战', versus: '中日对决' };
   const diffNames = { easy: '入门', medium: '进阶', hard: '大师' };
-  document.getElementById('rSubtitle').textContent = `${modeNames[mode]} · ${diffNames[diff]} · ${seconds >= 0 ? (timeLimit ? `${timeLimit - seconds}秒` : formatTime(seconds)) : ''}`;
+  document.getElementById('rSubtitle').textContent = modeNames[mode] + ' · ' + diffNames[diff] + ' · ' + formatTime(seconds);
   document.getElementById('rCorrect').textContent = correct;
   document.getElementById('rTotal').textContent = total;
   document.getElementById('rMaxStreak').textContent = maxStreak;
@@ -808,24 +1012,38 @@ function endQuiz() {
   const bar = document.getElementById('rBar');
   bar.style.width = '0%';
   bar.style.background = pct >= 70 ? 'var(--correct)' : pct >= 40 ? 'var(--gold)' : 'var(--wrong)';
-  setTimeout(() => { bar.style.width = `${pct}%`; }, 100);
+  setTimeout(() => { bar.style.width = pct + '%'; }, 100);
 
+  // Wrong answers review
+  const revSec = document.getElementById('reviewSection');
+  const revCon = document.getElementById('reviewContent');
+  if (wrongAnswers.length > 0) {
+    revSec.style.display = 'block';
+    revCon.innerHTML = wrongAnswers.map(w =>
+      '<div class="rev-item"><div class="rev-q">' + w.q + '</div><div><span class="rev-w">' + w.your + '</span><span class="rev-a">' + w.answer + '</span></div></div>'
+    ).join('');
+  } else {
+    revSec.style.display = 'none';
+  }
+
+  if (pct >= 80) spawnConfetti();
   saveRecord(mode, diff, score, correct, total, maxStreak);
   loadStats();
 }
 
 function formatTime(s) {
   const m = Math.floor(s / 60);
-  return m > 0 ? `${m}分${s % 60}秒` : `${s}秒`;
+  return m > 0 ? m + '分' + (s % 60) + '秒' : s + '秒';
 }
 
 // === STORAGE ===
 function saveRecord(mode, diff, score, correct, total, maxStreak) {
   try {
     const records = JSON.parse(localStorage.getItem('litquiz_records') || '[]');
-    records.unshift({ mode, diff, score, correct, total, maxStreak, date: new Date().toLocaleDateString('zh-CN') });
+    records.unshift({ mode, diff, score, correct, total, maxStreak, date: new Date().toLocaleDateString('zh-CN'), ts: Date.now() });
     if (records.length > 50) records.length = 50;
     localStorage.setItem('litquiz_records', JSON.stringify(records));
+    if (mode === 'daily') localStorage.setItem('litquiz_daily_' + new Date().toLocaleDateString('zh-CN'), JSON.stringify({ score, correct, total }));
   } catch(e) {}
 }
 
@@ -835,34 +1053,45 @@ function loadStats() {
     document.getElementById('statGames').textContent = records.length;
     document.getElementById('statBest').textContent = records.reduce((m, r) => Math.max(m, r.score), 0);
     document.getElementById('statStreak').textContent = records.reduce((m, r) => Math.max(m, r.maxStreak), 0);
+    const totalC = records.reduce((s, r) => s + r.correct, 0);
+    const totalT = records.reduce((s, r) => s + r.total, 0);
+    document.getElementById('statAcc').textContent = totalT > 0 ? Math.round(totalC / totalT * 100) + '%' : '-';
 
     const lb = document.getElementById('lbContent');
     if (records.length === 0) { lb.innerHTML = '<div class="lb-empty">还没有记录，开始第一局吧！</div>'; return; }
     const top = records.slice(0, 10);
-    lb.innerHTML = top.map((r, i) => `
-      <div class="lb-item">
-        <div class="lb-rank">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</div>
-        <div class="lb-info">
-          <div class="lb-mode">${({classic:'经典',endless:'无尽',speed:'闪电战',versus:'对决'})[r.mode]} · ${{easy:'入门',medium:'进阶',hard:'大师'}[r.diff]}</div>
-          <div class="lb-detail">${r.date} · ${r.correct}/${r.total}正确 · ${r.maxStreak}连击</div>
-        </div>
-        <div class="lb-score">${r.score}</div>
-      </div>
-    `).join('');
+    const modeMap = {classic:'经典',endless:'无尽',speed:'闪电战',daily:'每日',versus:'对决'};
+    const diffMap = {easy:'入门',medium:'进阶',hard:'大师'};
+    lb.innerHTML = top.map((r, i) => {
+      const rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+      return '<div class="lb-item"><div class="lb-rank ' + rc + '">' + rank + '</div><div class="lb-info"><div class="lb-mode">' + (modeMap[r.mode]||r.mode) + ' · ' + (diffMap[r.diff]||r.diff) + '</div><div class="lb-detail">' + r.date + ' · ' + r.correct + '/' + r.total + ' · ' + r.maxStreak + '连击</div></div><div class="lb-score">' + r.score + '</div></div>';
+    }).join('');
   } catch(e) {}
 }
 
-// === KEYBOARD SHORTCUTS ===
+// === KEYBOARD ===
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') goHome();
   const opts = document.querySelectorAll('.q-opt:not(.disabled)');
   if (e.key >= '1' && e.key <= '4' && opts.length >= parseInt(e.key)) opts[parseInt(e.key) - 1].click();
-  if (e.key === 'a' || e.key === 'A') { if (opts.length >= 1) opts[0].click(); }
-  if (e.key === 'b' || e.key === 'B') { if (opts.length >= 2) opts[1].click(); }
-  if (e.key === 'c' || e.key === 'C') { if (opts.length >= 3) opts[2].click(); }
-  if (e.key === 'd' || e.key === 'D') { if (opts.length >= 4) opts[3].click(); }
-  if (e.key === 'Enter' || e.key === ' ') { const nb = document.getElementById('qNext'); if (nb.classList.contains('show')) nextQuestion(); }
+  if ((e.key === 'a' || e.key === 'A') && opts.length >= 1) opts[0].click();
+  if ((e.key === 'b' || e.key === 'B') && opts.length >= 2) opts[1].click();
+  if ((e.key === 'c' || e.key === 'C') && opts.length >= 3) opts[2].click();
+  if ((e.key === 'd' || e.key === 'D') && opts.length >= 4) opts[3].click();
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const nb = document.getElementById('qNext'); if (nb.classList.contains('show')) nextQuestion(); }
 });
+
+// === SWIPE GESTURE (mobile) ===
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 80) {
+    const nb = document.getElementById('qNext');
+    if (nb.classList.contains('show')) nextQuestion();
+  }
+}, { passive: true });
 
 // === INIT ===
 loadStats();
