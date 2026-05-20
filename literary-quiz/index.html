@@ -7,6 +7,19 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#fafafa;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#0071e3;--accent2:#0077ED;--correct:#34c759;--wrong:#ff3b30;--gold:#ff9500;--border:#e5e5ea;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:14px;--radius-sm:10px}
+
+/* Dark mode */
+[data-theme="dark"]{--bg:#0a0a0a;--surface:#1c1c1e;--text:#f5f5f7;--text2:#98989d;--text3:#636366;--accent:#0a84ff;--correct:#30d158;--wrong:#ff453a;--gold:#ff9f0a;--border:#2c2c2e;--shadow:0 2px 16px rgba(0,0,0,.3)}
+[data-theme="dark"] nav{background:rgba(10,10,10,.82)}
+[data-theme="dark"] .start-btn{background:linear-gradient(135deg,#0a84ff,#5e5ce6)}
+[data-theme="dark"] .q-opt .letter{background:#2c2c2e;color:var(--text2)}
+[data-theme="dark"] .q-progress{background:#2c2c2e}
+[data-theme="dark"] .result-bar{background:#2c2c2e}
+[data-theme="dark"] .review{background:var(--surface)}
+[data-theme="dark"] .q-explain{background:rgba(10,132,255,.08)}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:101;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .3s;box-shadow:var(--shadow)}
+.theme-toggle:hover{transform:scale(1.1)}
+
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:100vh;min-height:100dvh}
 
 /* Nav */
@@ -177,9 +190,57 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
 
 .shake{animation:shakeX .3s ease}
 
+
+/* Achievements */
+.badges-section{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.badges-section h3{font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;text-align:center}
+.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.badge-item{text-align:center;padding:10px 4px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);transition:all .2s;cursor:default}
+.badge-item.locked{opacity:.35;filter:grayscale(1)}
+.badge-item.unlocked{border-color:var(--gold);background:rgba(255,149,0,.05)}
+.badge-item .b-icon{font-size:1.5em;margin-bottom:2px}
+.badge-item .b-name{font-size:.6em;font-weight:500;color:var(--text2);line-height:1.2}
+.badge-item .b-desc{font-size:.52em;color:var(--text3);margin-top:1px;display:none}
+.badge-item:hover .b-desc{display:block}
+.badge-item:hover{transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+
+/* Share */
+.share-btn{display:inline-flex;align-items:center;gap:4px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.78em;font-weight:500;cursor:pointer;transition:all .2s;margin-top:12px}
+.share-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Animated counter */
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.count-anim{animation:countUp .5s ease forwards}
+
+/* Per-question timer */
+.q-qtimer{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;opacity:0;transition:opacity .3s}
+.q-qtimer.show{opacity:1}
+.q-qtimer-fill{height:100%;background:var(--correct);border-radius:2px;transition:width .1s linear}
+.q-qtimer-fill.warn{background:var(--wrong)}
+
+/* Daily countdown */
+.daily-cd{text-align:center;font-size:.72em;color:var(--text2);margin-top:4px}
+.daily-cd span{font-weight:600;color:var(--gold)}
+
+/* Rank card on home */
+.rank-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-top:14px}
+.rank-card .rc-icon{font-size:2em}
+.rank-card .rc-info{flex:1}
+.rank-card .rc-name{font-size:.9em;font-weight:600}
+.rank-card .rc-score{font-size:.72em;color:var(--text2)}
+.rank-card .rc-bar{height:4px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.rank-card .rc-bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+
+/* Mode card gradients */
+.mode-card[data-mode="classic"]::before{background:linear-gradient(90deg,#0071e3,#5856d6)}
+.mode-card[data-mode="endless"]::before{background:linear-gradient(90deg,#ff9500,#ff3b30)}
+.mode-card[data-mode="speed"]::before{background:linear-gradient(90deg,#ffcc00,#ff9500)}
+.mode-card[data-mode="daily"]::before{background:linear-gradient(90deg,#30d158,#0071e3)}
+
 /* Responsive */
 
 /* Gesture mode */
+.sound-toggle{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 4px;opacity:.7;transition:opacity .2s}.sound-toggle:hover{opacity:1}
 .gesture-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.72em;font-weight:500;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:3px;white-space:nowrap}
 .gesture-toggle:hover{border-color:var(--accent)}
 .gesture-toggle.active{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -215,6 +276,7 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
 <body>
 
 <a href="../index.html" class="back" style="display:inline-block;padding:8px 16px;color:var(--accent);text-decoration:none;font-size:13px">← 首页</a>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
 
 <!-- HOME -->
 <div class="home screen active" id="homeScreen">
@@ -238,6 +300,8 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
     </div>
   </div>
   <div id="dailyInfo" style="display:none;text-align:center;margin-top:6px"></div>
+  <div class="daily-cd" id="dailyCD" style="display:none">下次挑战：<span id="dailyCountdown">--:--:--</span></div>
+  <div class="rank-card" id="homeRank"><div class="rc-icon">📖</div><div class="rc-info"><div class="rc-name">入门读者</div><div class="rc-score">累计 0 分 · 下一级 300 分</div><div class="rc-bar"><div class="rc-bar-fill" style="width:0%;background:var(--accent)"></div></div></div></div>
   <div class="settings">
     <h3>难度</h3>
     <div class="diff-row">
@@ -257,6 +321,10 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
     <h3>🏆 排行榜</h3>
     <div id="lbContent"><div class="lb-empty">还没有记录，开始第一局吧！</div></div>
   </div>
+  <div class="badges-section" id="badgesSection">
+    <h3>🏅 成就</h3>
+    <div class="badges-grid" id="badgesGrid"></div>
+  </div>
 </div>
 
 <!-- QUIZ -->
@@ -265,6 +333,7 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
     <div class="q-counter" id="qCounter">1 / 20</div>
     <div class="q-progress"><div class="q-progress-fill" id="qProgress" style="width:0%"></div></div>
     <div class="q-timer" id="qTimer">00:00</div>
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="音效开关">🔊</button>
     <button class="gesture-toggle" id="gestureBtn" onclick="GestureMode.toggle()"><span>🤳</span><span class="btn-text">体感</span></button>
   </div>
   <div class="q-ring-wrap" id="qRingWrap">
@@ -277,6 +346,7 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
   <div class="q-card" id="qCard">
     <div class="q-type" id="qType">猜书名</div>
     <div class="q-text" id="qText">加载中...</div>
+    <div class="q-qtimer" id="qQTimer"><div class="q-qtimer-fill" id="qQTimerFill" style="width:100%"></div></div>
   </div>
   <div class="q-options" id="qOptions"></div>
   <div class="q-explain" id="qExplain"></div>
@@ -302,6 +372,7 @@ nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
   <div class="result-btns">
     <button class="r-btn primary" onclick="startQuiz()">再来一局</button>
     <button class="r-btn secondary" onclick="goHome()">返回首页</button>
+    <button class="share-btn" onclick="shareResult()">📤 分享成绩</button>
   </div>
   <div class="review" id="reviewSection" style="display:none">
     <h3>📋 答题回顾</h3>
@@ -762,6 +833,7 @@ function goHome() {
 
 // === MODE & DIFF ===
 function selectMode(el) {
+  updateDailyCD();
   document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   mode = el.dataset.mode;
@@ -944,6 +1016,7 @@ function showQuestion() {
   updateFooter();
   // Restart gesture cycling for new question
   if (GestureMode.active) GestureMode.startCycling();
+  startQTimer();
 }
 
 function handleAnswer(btn, selected, q) {
@@ -985,6 +1058,7 @@ function handleAnswer(btn, selected, q) {
   updateFooter();
   // Stop gesture cycling after answer
   if (GestureMode.active) GestureMode.stopCycling();
+  stopQTimer();
 }
 
 function nextQuestion() {
@@ -1029,9 +1103,22 @@ function endQuiz() {
   const modeNames = { classic: '经典模式', endless: '无尽模式', speed: '闪电战', daily: '每日挑战', versus: '中日对决' };
   const diffNames = { easy: '入门', medium: '进阶', hard: '大师' };
   document.getElementById('rSubtitle').textContent = modeNames[mode] + ' · ' + diffNames[diff] + ' · ' + formatTime(seconds);
-  document.getElementById('rCorrect').textContent = correct;
-  document.getElementById('rTotal').textContent = total;
-  document.getElementById('rMaxStreak').textContent = maxStreak;
+  // Animated counters
+  ['rCorrect','rTotal','rMaxStreak'].forEach(id => { const el = document.getElementById(id); el.classList.add('count-anim'); el.style.animationDelay = '0.' + (['rCorrect','rTotal','rMaxStreak'].indexOf(id) * 15) + 's'; });
+  animateNum('rCorrect', 0, correct, 600);
+  animateNum('rTotal', 0, total, 600);
+  animateNum('rMaxStreak', 0, maxStreak, 600);
+
+function animateNum(id, from, to, dur) {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / dur);
+    el.textContent = Math.round(from + (to - from) * p);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
 
   const bar = document.getElementById('rBar');
   bar.style.width = '0%';
@@ -1052,7 +1139,10 @@ function endQuiz() {
 
   if (pct >= 80) spawnConfetti();
   saveRecord(mode, diff, score, correct, total, maxStreak);
+  checkAchievements(score, total, maxStreak, mode, GestureMode.active);
   loadStats();
+  renderBadges();
+  updateHomeRank();
 }
 
 function formatTime(s) {
@@ -1311,8 +1401,233 @@ const GestureMode = {
   }
 };
 
+
+// === THEME ===
+let muted = false;
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('litquiz_theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
+}
+(function initTheme() {
+  const saved = localStorage.getItem('litquiz_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const dark = saved === 'dark' || (!saved && prefersDark);
+  if (dark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = '☀️';
+  }
+})();
+
+// === SOUND TOGGLE ===
+function toggleSound() {
+  muted = !muted;
+  document.getElementById('soundToggle').textContent = muted ? '🔇' : '🔊';
+  localStorage.setItem('litquiz_muted', muted ? '1' : '0');
+}
+if (localStorage.getItem('litquiz_muted') === '1') { muted = true; document.getElementById('soundToggle').textContent = '🔇'; }
+
+// Patch playSound to respect mute
+const _origPlaySound = playSound;
+playSound = function(type) { if (!muted) _origPlaySound(type); };
+
+// === PER-QUESTION TIMER ===
+let qTimerStart = 0, qTimerDuration = 15000, qTimerRAF = null;
+function startQTimer() {
+  const el = document.getElementById('qQTimer');
+  const fill = document.getElementById('qQTimerFill');
+  if (!el || mode === 'endless') { if (el) el.classList.remove('show'); return; }
+  qTimerDuration = diff === 'easy' ? 20000 : diff === 'medium' ? 15000 : 10000;
+  qTimerStart = Date.now();
+  el.classList.add('show');
+  fill.style.width = '100%';
+  fill.classList.remove('warn');
+  cancelAnimationFrame(qTimerRAF);
+  function tick() {
+    const elapsed = Date.now() - qTimerStart;
+    const pct = Math.max(0, 1 - elapsed / qTimerDuration);
+    fill.style.width = (pct * 100) + '%';
+    if (pct < 0.3) fill.classList.add('warn');
+    if (pct <= 0 && !answered) {
+      // Time's up — auto wrong
+      answered = true;
+      const q = questions[current];
+      document.querySelectorAll('.q-opt').forEach(b => {
+        b.classList.add('disabled');
+        if (b.dataset.value === q.answer) b.classList.add('correct', 'reveal');
+      });
+      streak = 0;
+      wrongAnswers.push({ q: q.text, your: '(超时)', answer: q.answer, explain: q.explain });
+      playSound('wrong'); haptic('wrong');
+      document.getElementById('qCard').classList.add('shake');
+      setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 300);
+      document.getElementById('qExplain').textContent = q.explain;
+      document.getElementById('qExplain').className = 'q-explain show';
+      document.getElementById('qNext').className = 'q-next show';
+      if (GestureMode.active) GestureMode.stopCycling();
+      updateFooter();
+      if (mode === 'endless') { setTimeout(() => { playSound('end'); endQuiz(); }, 1000); }
+      return;
+    }
+    qTimerRAF = requestAnimationFrame(tick);
+  }
+  tick();
+}
+function stopQTimer() {
+  cancelAnimationFrame(qTimerRAF);
+  const el = document.getElementById('qQTimer');
+  if (el) el.classList.remove('show');
+}
+
+// === ACHIEVEMENTS ===
+const BADGES = [
+  { id:'first', icon:'🎮', name:'初出茅庐', desc:'完成第一局' },
+  { id:'s10', icon:'🎯', name:'百发百中', desc:'单局正确率100%' },
+  { id:'s5', icon:'🔥', name:'五连击', desc:'连续答对5题' },
+  { id:'s10k', icon:'💎', name:'十连击', desc:'连续答对10题' },
+  { id:'m3', icon:'⚡', name:'闪电侠', desc:'闪电战得分200+' },
+  { id:'h100', icon:'💯', name:'百分先生', desc:'单局得分100+' },
+  { id:'h500', icon:'🏆', name:'五百大关', desc:'单局得分500+' },
+  { id:'g10', icon:'📚', name:'书虫', desc:'累计完成10局' },
+  { id:'g50', icon:'🎓', name:'学者', desc:'累计完成50局' },
+  { id:'d7', icon:'📅', name:'持之以恒', desc:'连续7天每日挑战' },
+  { id:'rank3', icon:'👑', name:'文学大师', desc:'达到文学大师段位' },
+  { id:'nod', icon:'🤳', name:'体感达人', desc:'使用体感完成一局' },
+];
+
+function checkAchievements(score, total, maxStreak, mode, usedGesture) {
+  const records = JSON.parse(localStorage.getItem('litquiz_records') || '[]');
+  const unlocked = JSON.parse(localStorage.getItem('litquiz_badges') || '[]');
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  const newBadges = [];
+
+  function tryUnlock(id) {
+    if (!unlocked.includes(id)) { unlocked.push(id); newBadges.push(id); }
+  }
+
+  if (records.length >= 1) tryUnlock('first');
+  if (pct === 100 && total >= 5) tryUnlock('s10');
+  if (maxStreak >= 5) tryUnlock('s5');
+  if (maxStreak >= 10) tryUnlock('s10k');
+  if (mode === 'speed' && score >= 200) tryUnlock('m3');
+  if (score >= 100) tryUnlock('h100');
+  if (score >= 500) tryUnlock('h500');
+  if (records.length >= 10) tryUnlock('g10');
+  if (records.length >= 50) tryUnlock('g50');
+  if (usedGesture) tryUnlock('nod');
+
+  // Rank check
+  const totalScore = records.reduce((s, r) => s + r.score, 0);
+  if (totalScore >= 1500) tryUnlock('rank3');
+
+  // Daily streak
+  const dailyDates = records.filter(r => r.mode === 'daily').map(r => r.date);
+  if (dailyDates.length >= 7) {
+    const unique = [...new Set(dailyDates)].sort();
+    let streak = 1, max = 1;
+    for (let i = 1; i < unique.length; i++) {
+      const d1 = new Date(unique[i-1]), d2 = new Date(unique[i]);
+      if ((d2 - d1) / 86400000 === 1) { streak++; if (streak > max) max = streak; }
+      else streak = 1;
+    }
+    if (max >= 7) tryUnlock('d7');
+  }
+
+  localStorage.setItem('litquiz_badges', JSON.stringify(unlocked));
+  if (newBadges.length > 0) showBadgeToast(newBadges);
+}
+
+function showBadgeToast(ids) {
+  const badge = BADGES.find(b => b.id === ids[0]);
+  if (!badge) return;
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),#ff6b00);color:#fff;padding:10px 20px;border-radius:20px;font-size:.85em;font-weight:600;z-index:200;box-shadow:0 4px 20px rgba(255,149,0,.3);animation:comboPop .8s ease forwards;white-space:nowrap';
+  toast.textContent = '🏅 成就解锁: ' + badge.icon + ' ' + badge.name;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function renderBadges() {
+  const unlocked = JSON.parse(localStorage.getItem('litquiz_badges') || '[]');
+  const grid = document.getElementById('badgesGrid');
+  if (!grid) return;
+  grid.innerHTML = BADGES.map(b => {
+    const ok = unlocked.includes(b.id);
+    return '<div class="badge-item ' + (ok ? 'unlocked' : 'locked') + '" title="' + b.desc + '"><div class="b-icon">' + b.icon + '</div><div class="b-name">' + b.name + '</div></div>';
+  }).join('');
+}
+
+// === HOME RANK CARD ===
+function updateHomeRank() {
+  const records = JSON.parse(localStorage.getItem('litquiz_records') || '[]');
+  const totalScore = records.reduce((s, r) => s + r.score, 0);
+  const rank = getRank(totalScore);
+  const card = document.getElementById('homeRank');
+  if (!card) return;
+  card.querySelector('.rc-icon').textContent = rank.icon;
+  card.querySelector('.rc-name').textContent = rank.name;
+  card.querySelector('.rc-name').style.color = rank.color;
+  const ranks = [{s:0,t:300},{s:300,t:800},{s:800,t:1500},{s:1500,t:2500},{s:2500,t:99999}];
+  const cur = ranks.find(r => totalScore >= r.s && totalScore < r.t) || ranks[ranks.length-1];
+  const pct = cur.t > 0 ? Math.min(100, Math.round((totalScore - cur.s) / (cur.t - cur.s) * 100)) : 100;
+  card.querySelector('.rc-score').textContent = '累计 ' + totalScore + ' 分 · ' + (cur.t < 99999 ? '下一级 ' + cur.t + ' 分' : '已满级');
+  card.querySelector('.rc-bar-fill').style.width = pct + '%';
+  card.querySelector('.rc-bar-fill').style.background = rank.color;
+}
+
+// === DAILY COUNTDOWN ===
+function updateDailyCD() {
+  const el = document.getElementById('dailyCD');
+  const cdEl = document.getElementById('dailyCountdown');
+  if (!el) return;
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  const diff = tomorrow - now;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  cdEl.textContent = h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  el.style.display = mode === 'daily' ? 'block' : 'none';
+}
+
+// === SHARE ===
+function shareResult() {
+  const pct = (correct / (current + (answered ? 1 : 0)) * 100).toFixed(0);
+  const rank = getRank(score);
+  const modeNames = { classic: '经典', endless: '无尽', speed: '闪电战', daily: '每日挑战' };
+  const text = '📚 文学问答 · ' + modeNames[mode] + '\n' +
+    rank.icon + ' ' + rank.name + ' · ' + score + '分\n' +
+    '正确 ' + correct + '/' + (current + (answered ? 1 : 0)) + ' (' + pct + '%)\n' +
+    '🔥 最长连击 ' + maxStreak + '\n' +
+    '👉 sunarthur86.github.io/light-ideas/literary-quiz/';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.share-btn');
+      btn.textContent = '✅ 已复制';
+      setTimeout(() => { btn.innerHTML = '📤 分享成绩'; }, 2000);
+    });
+  } else {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+    const btn = document.querySelector('.share-btn');
+    btn.textContent = '✅ 已复制';
+    setTimeout(() => { btn.innerHTML = '📤 分享成绩'; }, 2000);
+  }
+}
+
+
 // === INIT ===
 loadStats();
+renderBadges();
+updateHomeRank();
+setInterval(updateDailyCD, 1000);
 
 </script>
 <!-- Gesture camera overlay -->
