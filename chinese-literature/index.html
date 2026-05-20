@@ -6,119 +6,181 @@
 <title>中文文学库 · 两千年文脉</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#fafafa;--card:#fff;--text:#1a1a1a;--text2:#666;--accent:#c0392b;--accent2:#e74c3c;--border:#e8e8e8;--shadow:0 2px 12px rgba(0,0,0,.06);--radius:12px}
+:root{--bg:#fafafa;--card:#fff;--text:#1a1a1a;--text2:#666;--accent:#c0392b;--accent2:#e74c3c;--border:#e8e8e8;--shadow:0 2px 12px rgba(0,0,0,.06);--radius:12px;--gold:#f39c12}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-/* Hero */
-.hero{position:relative;min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px 40px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;overflow:hidden}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:300;letter-spacing:.1em;margin-bottom:12px}
+
+/* ===== Hero ===== */
+.hero{position:relative;min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 20px 36px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:300;letter-spacing:.1em;margin-bottom:10px}
 .hero h1 span{font-weight:700;background:linear-gradient(90deg,#e74c3c,#f39c12,#e74c3c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 100%;animation:shimmer 3s ease infinite}
 @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.hero .subtitle{font-size:clamp(.9rem,2vw,1.2rem);opacity:.7;margin-bottom:30px;font-weight:300}
-.stats-row{display:flex;gap:40px;flex-wrap:wrap;justify-content:center}
+.hero .subtitle{font-size:clamp(.85rem,2vw,1.1rem);opacity:.7;margin-bottom:24px;font-weight:300}
+.stats-row{display:flex;gap:36px;flex-wrap:wrap;justify-content:center}
 .stat{text-align:center}
-.stat .num{font-size:2rem;font-weight:700;color:#f39c12}
-.stat .label{font-size:.8rem;opacity:.6;margin-top:2px}
-/* Brush stroke decoration */
-.brush-line{width:120px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:20px auto;border-radius:2px}
-/* Era Nav */
+.stat .num{font-size:1.8rem;font-weight:700;color:var(--gold)}
+.stat .label{font-size:.75rem;opacity:.6;margin-top:2px}
+.brush-line{width:120px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:18px auto;border-radius:2px}
+
+/* ===== Discover Section ===== */
+.discover{max-width:1200px;margin:-40px auto 0;padding:0 20px;position:relative;z-index:10}
+.discover-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.dtab{padding:6px 18px;border-radius:20px;border:1px solid var(--border);background:var(--card);font-size:.85rem;cursor:pointer;transition:all .25s;color:var(--text2);box-shadow:var(--shadow)}
+.dtab:hover{border-color:var(--accent);color:var(--accent)}
+.dtab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.discover-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.dcard{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;gap:12px;align-items:flex-start}
+.dcard:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1);border-color:var(--accent)}
+.dcard-color{width:4px;min-height:48px;border-radius:2px;flex-shrink:0}
+.dcard-body{flex:1;min-width:0}
+.dcard h4{font-size:.95rem;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcard .dca{font-size:.8rem;color:var(--accent);margin-bottom:4px}
+.dcard .dcd{font-size:.78rem;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dcard .dcbadge{position:absolute;top:8px;right:8px;font-size:.65rem;padding:2px 8px;border-radius:10px;color:#fff}
+
+/* ===== Era Nav ===== */
 .era-nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;transition:box-shadow .3s}
 .era-nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.08)}
 .era-nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:12px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .era-nav-inner::-webkit-scrollbar{display:none}
-.era-btn{flex-shrink:0;padding:6px 16px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text2);font-size:.85rem;cursor:pointer;transition:all .25s;white-space:nowrap}
+.era-btn{flex-shrink:0;padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text2);font-size:.82rem;cursor:pointer;transition:all .25s;white-space:nowrap}
 .era-btn:hover{border-color:var(--accent);color:var(--accent)}
 .era-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.era-btn .count{display:inline-block;background:rgba(0,0,0,.06);border-radius:10px;padding:1px 7px;font-size:.75rem;margin-left:4px}
+.era-btn .count{display:inline-block;background:rgba(0,0,0,.06);border-radius:10px;padding:1px 7px;font-size:.7rem;margin-left:4px}
 .era-btn.active .count{background:rgba(255,255,255,.25)}
-/* Filter bar */
-.filter-bar{max-width:1200px;margin:24px auto 0;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* ===== Filter bar ===== */
+.filter-bar{max-width:1200px;margin:20px auto 0;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .search-box{flex:1;min-width:200px;position:relative}
-.search-box input{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--border);border-radius:var(--radius);font-size:.95rem;background:var(--card);outline:none;transition:border-color .2s}
+.search-box input{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--border);border-radius:var(--radius);font-size:.92rem;background:var(--card);outline:none;transition:border-color .2s}
 .search-box input:focus{border-color:var(--accent)}
-.search-box::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.9rem}
+.search-box::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.85rem}
 .genre-filters{display:flex;gap:6px;flex-wrap:wrap}
-.genre-btn{padding:5px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--text2)}
+.genre-btn{padding:5px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);font-size:.78rem;cursor:pointer;transition:all .2s;color:var(--text2)}
 .genre-btn:hover{border-color:var(--accent);color:var(--accent)}
 .genre-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .view-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.view-btn{padding:8px 14px;background:var(--card);border:none;cursor:pointer;font-size:.9rem;color:var(--text2);transition:all .2s}
+.view-btn{padding:8px 14px;background:var(--card);border:none;cursor:pointer;font-size:.85rem;color:var(--text2);transition:all .2s}
 .view-btn.active{background:var(--text);color:#fff}
 .view-btn:not(:last-child){border-right:1px solid var(--border)}
-/* Main content */
+
+/* ===== Tag cloud ===== */
+.tag-cloud{max-width:1200px;margin:12px auto 0;padding:0 20px;display:flex;gap:6px;flex-wrap:wrap}
+.tag-chip{padding:3px 10px;border-radius:12px;font-size:.72rem;background:#f0f0f0;color:var(--text2);cursor:pointer;transition:all .2s}
+.tag-chip:hover{background:var(--accent);color:#fff}
+.tag-chip.active{background:var(--accent);color:#fff}
+
+/* ===== Bookmark bar ===== */
+.bookmark-bar{max-width:1200px;margin:10px auto 0;padding:0 20px;display:none;align-items:center;gap:8px}
+.bookmark-bar.show{display:flex}
+.bookmark-bar .blabel{font-size:.82rem;color:var(--accent);font-weight:600}
+.bookmark-bar .bcount{font-size:.75rem;color:var(--text2);background:#f5f5f5;padding:2px 8px;border-radius:10px}
+.bookmark-bar .bclear{font-size:.75rem;color:var(--text2);cursor:pointer;text-decoration:underline;margin-left:auto}
+
+/* ===== Main content ===== */
 .main{max-width:1200px;margin:20px auto 60px;padding:0 20px}
-.result-info{color:var(--text2);font-size:.85rem;margin-bottom:16px}
-/* Grid view */
+.result-info{color:var(--text2);font-size:.82rem;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.result-actions{display:flex;gap:8px}
+.result-actions button{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);font-size:.75rem;cursor:pointer;color:var(--text2);transition:all .2s}
+.result-actions button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== Grid view ===== */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
 .card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--accent)}
-.card .era-tag{position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:.7rem;padding:3px 10px;border-radius:0 0 0 var(--radius)}
-.card h3{font-size:1.05rem;font-weight:600;margin-bottom:4px;padding-right:60px}
-.card .author{color:var(--accent);font-size:.85rem;margin-bottom:8px}
-.card .desc{color:var(--text2);font-size:.82rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.card .meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.card .meta span{font-size:.7rem;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:var(--text2)}
-/* Timeline view */
+.card .era-tag{position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:.68rem;padding:3px 10px;border-radius:0 0 0 var(--radius)}
+.card .card-bookmark{position:absolute;top:8px;right:8px;font-size:1.1rem;cursor:pointer;opacity:0;transition:opacity .2s;z-index:2}
+.card:hover .card-bookmark{opacity:1}
+.card .card-bookmark.bookmarked{opacity:1;color:var(--gold)}
+.card h3{font-size:1.02rem;font-weight:600;margin-bottom:3px;padding-right:60px}
+.card .author{color:var(--accent);font-size:.82rem;margin-bottom:6px}
+.card .desc{color:var(--text2);font-size:.8rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.card .meta span{font-size:.68rem;padding:2px 7px;border-radius:10px;background:#f5f5f5;color:var(--text2)}
+.card-excerpt{font-size:.75rem;color:#8e44ad;font-style:italic;margin:6px 0;padding:6px 10px;background:linear-gradient(135deg,#f5eef8,#ede7f6);border-radius:6px;border-left:3px solid #8e44ad;line-height:1.5}
+/* Reading status */
+.card .read-badge{position:absolute;top:0;left:0;background:#27ae60;color:#fff;font-size:.65rem;padding:2px 8px;border-radius:0 0 var(--radius) 0}
+
+/* ===== Timeline view ===== */
 .timeline{position:relative;padding-left:40px}
 .timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),#f39c12,var(--accent))}
-.tl-item{position:relative;margin-bottom:20px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .3s}
+.tl-item{position:relative;margin-bottom:18px;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .3s}
 .tl-item:hover{box-shadow:var(--shadow);border-color:var(--accent)}
-.tl-item::before{content:'';position:absolute;left:-28px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
-.tl-item .year{font-size:.75rem;color:var(--accent);font-weight:600;margin-bottom:4px}
-.tl-item h3{font-size:.95rem;font-weight:600;margin-bottom:2px}
-.tl-item .author{font-size:.8rem;color:var(--text2)}
-.tl-item .desc{font-size:.8rem;color:var(--text2);margin-top:6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* Chart view */
+.tl-item::before{content:'';position:absolute;left:-28px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
+.tl-item .year{font-size:.72rem;color:var(--accent);font-weight:600;margin-bottom:3px}
+.tl-item h3{font-size:.92rem;font-weight:600;margin-bottom:2px}
+.tl-item .author{font-size:.78rem;color:var(--text2)}
+.tl-item .desc{font-size:.78rem;color:var(--text2);margin-top:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ===== Chart view ===== */
 .chart-section{display:none}
 .chart-section.show{display:block}
-.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px;margin-top:16px}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.chart-card h3{font-size:.95rem;font-weight:600;margin-bottom:16px;color:var(--text)}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin-top:14px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.chart-card h3{font-size:.92rem;font-weight:600;margin-bottom:14px;color:var(--text)}
 canvas.chart{width:100%!important;height:260px!important}
-/* Modal */
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+
+/* ===== Modal ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.show{display:flex}
-.modal{background:var(--card);border-radius:16px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;padding:32px;position:relative;animation:modalIn .3s ease}
+.modal{background:var(--card);border-radius:16px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 32px;position:relative;animation:modalIn .3s ease}
 @keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.modal-close{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:var(--text2);border:none;background:none;line-height:1}
+.modal-close{position:absolute;top:10px;right:14px;font-size:1.5rem;cursor:pointer;color:var(--text2);border:none;background:none;line-height:1}
 .modal-close:hover{color:var(--text)}
-.modal h2{font-size:1.3rem;font-weight:700;margin-bottom:4px}
-.modal .m-author{color:var(--accent);font-size:1rem;margin-bottom:16px}
-.modal .m-desc{line-height:1.8;color:var(--text);margin-bottom:16px}
-.modal .m-tags{display:flex;gap:8px;flex-wrap:wrap}
-.modal .m-tags span{padding:4px 12px;border-radius:16px;font-size:.8rem;background:#f5f5f5;color:var(--text2)}
+.modal h2{font-size:1.3rem;font-weight:700;margin-bottom:3px;padding-right:60px}
+.modal .m-author{color:var(--accent);font-size:.95rem;margin-bottom:14px}
+.modal .m-desc{line-height:1.8;color:var(--text);margin-bottom:14px}
+.modal .m-tags{display:flex;gap:6px;flex-wrap:wrap}
+.modal .m-tags span{padding:3px 10px;border-radius:14px;font-size:.75rem;background:#f5f5f5;color:var(--text2)}
 .modal .m-tags span:first-child{background:var(--accent);color:#fff}
-/* Scroll to top */
+.modal .m-actions{display:flex;gap:8px;margin-top:14px}
+.modal .m-actions button{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:.82rem;cursor:pointer;transition:all .2s}
+.modal .m-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.modal .m-actions button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.m-section{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f8f9fa}
+.m-section-title{font-size:.78rem;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:1px}
+.m-intro{font-size:.85rem;line-height:1.8;color:#333;text-indent:2em}
+.m-thought{font-size:.85rem;line-height:1.8;color:#2c3e50;padding-left:12px;border-left:3px solid #e67e22}
+.m-excerpt{font-size:.85rem;line-height:2;color:#6c3483;font-style:italic;padding:8px 12px;background:linear-gradient(135deg,#fdf2f8,#f5eef8);border-radius:8px}
+/* Related recommendations in modal */
+.m-related{margin-top:16px;padding:14px;background:#f8f9fa;border-radius:10px}
+.m-related-title{font-size:.78rem;font-weight:700;color:#555;margin-bottom:10px;letter-spacing:1px}
+.m-related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.m-related-item{padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.m-related-item:hover{border-color:var(--accent);transform:translateY(-1px)}
+.m-related-item h5{font-size:.82rem;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-related-item .mri-a{font-size:.72rem;color:var(--accent)}
+.m-related-item .mri-e{font-size:.68rem;color:var(--text2)}
+
+/* ===== Scroll top ===== */
 .scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:1.2rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(192,57,43,.3);transition:all .3s;z-index:50}
 .scroll-top:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,57,43,.4)}
 .scroll-top.show{display:flex}
-/* Responsive */
+
+/* ===== Toast ===== */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 20px;border-radius:8px;font-size:.85rem;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* ===== Responsive ===== */
 @media(max-width:768px){
-.hero{min-height:50vh;padding:40px 16px 30px}
-.stats-row{gap:24px}
+.hero{min-height:45vh;padding:36px 16px 24px}
+.stats-row{gap:20px}
 .grid{grid-template-columns:1fr}
 .chart-grid{grid-template-columns:1fr}
 .filter-bar{flex-direction:column}
 .genre-filters{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+.discover-cards{grid-template-columns:1fr 1fr}
 }
 @media(max-width:480px){
-.hero h1{font-size:1.6rem}
-.stat .num{font-size:1.4rem}
-.era-btn{padding:5px 10px;font-size:.8rem}
+.hero h1{font-size:1.5rem}
+.stat .num{font-size:1.3rem}
+.era-btn{padding:5px 10px;font-size:.78rem}
+.discover-cards{grid-template-columns:1fr}
 }
-
-/* 卡片精选摘录 */
-.card-excerpt{font-size:12px;color:#8e44ad;font-style:italic;margin:6px 0;padding:6px 10px;background:linear-gradient(135deg,#f5eef8,#ede7f6);border-radius:6px;border-left:3px solid #8e44ad;line-height:1.5}
-/* Modal 扩展内容 */
-.m-section{margin-top:16px;padding:14px 16px;border-radius:10px;background:#f8f9fa}
-.m-section-title{font-size:13px;font-weight:700;color:#555;margin-bottom:8px;letter-spacing:1px}
-.m-intro{font-size:14px;line-height:1.8;color:#333;text-indent:2em}
-.m-thought{font-size:14px;line-height:1.8;color:#2c3e50;padding-left:12px;border-left:3px solid #e67e22}
-.m-excerpt{font-size:14px;line-height:2;color:#6c3483;font-style:italic;padding:8px 12px;background:linear-gradient(135deg,#fdf2f8,#f5eef8);border-radius:8px}
 @media(max-width:640px){
-  .card-excerpt{font-size:11px;padding:4px 8px}
-  .m-section{padding:10px 12px}
-  .m-intro,.m-thought,.m-excerpt{font-size:13px;line-height:1.7}
+.card-excerpt{font-size:.7rem;padding:4px 8px}
+.m-section{padding:10px 12px}
+.m-intro,.m-thought,.m-excerpt{font-size:.8rem;line-height:1.7}
 }
 </style>
 </head>
@@ -130,13 +192,26 @@ canvas.chart{width:100%!important;height:260px!important}
 <div class="brush-line"></div>
 <div class="stats-row" id="statsRow"></div>
 </div>
+
+<!-- Discover / Recommendations -->
+<div class="discover" id="discoverSection">
+<div class="discover-tabs">
+<button class="dtab active" data-dtab="picks">🎯 每日精选</button>
+<button class="dtab" data-dtab="random">🎲 随机发现</button>
+<button class="dtab" data-dtab="bookmarks">⭐ 我的收藏</button>
+<button class="dtab" data-dtab="unread">📖 未读清单</button>
+</div>
+<div class="discover-cards" id="discoverCards"></div>
+</div>
+
 <!-- Era Nav -->
 <div class="era-nav" id="eraNav">
 <div class="era-nav-inner" id="eraBtns"></div>
 </div>
+
 <!-- Filter -->
 <div class="filter-bar">
-<div class="search-box"><input id="searchInput" placeholder="搜索作品名、作者、关键词…"></div>
+<div class="search-box"><input id="searchInput" placeholder="搜索作品名、作者、关键词… （按 / 快捷搜索）"></div>
 <div class="genre-filters" id="genreBtns"></div>
 <div class="view-toggle">
 <button class="view-btn active" data-view="grid">⊞</button>
@@ -144,13 +219,31 @@ canvas.chart{width:100%!important;height:260px!important}
 <button class="view-btn" data-view="chart">▧</button>
 </div>
 </div>
+
+<!-- Tag Cloud -->
+<div class="tag-cloud" id="tagCloud"></div>
+
+<!-- Bookmark bar -->
+<div class="bookmark-bar" id="bookmarkBar">
+<span class="blabel">⭐ 已收藏</span>
+<span class="bcount" id="bmCount">0</span>
+<button class="bclear" id="bmClear">清除筛选</button>
+</div>
+
 <!-- Main -->
 <div class="main">
-<div class="result-info" id="resultInfo"></div>
+<div class="result-info">
+<span id="resultInfo"></span>
+<div class="result-actions">
+<button id="btnShuffle" title="随机排序">🔀 随机</button>
+<button id="btnReset" title="重置筛选">↺ 重置</button>
+</div>
+</div>
 <div id="gridView" class="grid"></div>
 <div id="timelineView" class="timeline" style="display:none"></div>
 <div id="chartView" class="chart-section"></div>
 </div>
+
 <!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
 <div class="modal" id="modal">
@@ -158,8 +251,14 @@ canvas.chart{width:100%!important;height:260px!important}
 <div id="modalBody"></div>
 </div>
 </div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <button class="scroll-top" id="scrollTop">↑</button>
+
 <script>
+// ===== DATA (injected) =====
 const W=[
 {id:1,t:"诗经",a:"佚名",y:-1000,e:"先秦",g:"诗歌",ty:"总集",d:"中国最早诗歌总集，收录西周初年至春秋中叶305篇，分风雅颂三类，开中国现实主义文学传统。",p:"陕西/河南"},
 {id:2,t:"楚辞",a:"屈原 等",y:-300,e:"先秦",g:"诗歌",ty:"总集",d:"中国第一部浪漫主义诗歌总集，以屈原作品为主，开创楚辞体，影响深远。",p:"湖北"},
@@ -364,11 +463,6 @@ const W=[
 
 ];
 
-// === App State ===
-let curEra='全部',curGenre='全部',curView='grid',searchQ='';
-
-// === Era & Genre lists ===
-const EXT={
 // 扩展数据：in=简介 th=主要思想 ex=精选段落
 const EXT={
 1:{in:"《诗经》是中国第一部诗歌总集，收录西周初年至春秋中叶约五百年间305篇诗歌。分风雅颂三部分：风为各地民歌，雅为宫廷乐歌，颂为祭祀颂歌。赋比兴的修辞手法影响中国诗歌数千年，是中国现实主义的源头。",th:"现实主义精神，以诗歌反映社会生活真实情感。思无邪的教化功能，诗可以兴观群怨。",ex:"关关雎鸠，在河之洲。窈窕淑女，君子好逑。\n昔我往矣，杨柳依依。今我来思，雨雪霏霏。\n蒹葭苍苍，白露为霜。所谓伊人，在水一方。"},
@@ -391,8 +485,7 @@ const EXT={
 18:{in:"《晏子春秋》记载齐国名相晏婴言行事迹，8篇215章。通过大量生动故事展现晏婴智慧节俭和敢于直谏的政治品格。",th:"以智谏君，强调节俭爱民礼贤下士，以幽默智慧劝谏君王修正过失。",ex:"橘生淮南则为橘，生于淮北则为枳。\n为者常成，行者常至。"},
 19:{in:"《九歌》是屈原在楚地民间祭歌基础上加工创作的祭祀诗歌，11篇。描写东皇太一云中君湘君湘夫人等神灵形象，融宗教神话爱情于一体，意境瑰丽。",th:"人神交融的浪漫想象，通过祭祀仪式沟通人神，表达对美好事物的渴望。",ex:"悲莫悲兮生别离，乐莫乐兮新相知。\n身既死兮神以灵，魂魄毅兮为鬼雄。"},
 20:{in:"《天问》全诗通篇设问，从天地开辟问到人类历史共170余个问题。涉及天文地理历史神话等各领域，体现先民对宇宙万物的强烈好奇和理性探索精神。",th:"求索精神，以根本性问题质疑传统认知，体现理性思辨和对真理的不懈追求。",ex:"遂古之初，谁传道之？上下未形，何由考之？"},
-21:{in:"《吕氏春秋》26卷160篇，战国末年吕不韦集合门客编撰的百科全书式著作。兼收儒道法墨兵农各家学说，以道家思想为主干构建宏大理论体系。一字千金出此。",th:"杂家融合，兼收并蓄各家之长以道统摄百家。强调顺应自然注重实效的治国理念。",ex:"流水不腐，户枢不蠹。\n竭泽而渔，岂不获得？而明年无鱼。"}
-};
+21:{in:"《吕氏春秋》26卷160篇，战国末年吕不韦集合门客编撰的百科全书式著作。兼收儒道法墨兵农各家学说，以道家思想为主干构建宏大理论体系。一字千金出此。",th:"杂家融合，兼收并蓄各家之长以道统摄百家。强调顺应自然注重实效的治国理念。",ex:"流水不腐，户枢不蠹。\n竭泽而渔，岂不获得？而明年无鱼。"},
 22:{in:"《史记》是中国第一部纪传体通史，记载上起黄帝下至汉武帝三千年历史。130篇52万余字，分本纪世家列传书表五种体例。首创以人物为中心的史学方法，叙事生动人物鲜明，被鲁迅誉为史家之绝唱无韵之离骚。",th:"究天人之际，通古今之变，成一家之言。以纪传体开创史学新范式，人物描写寄寓褒贬，史识史才史德兼具。",ex:"人固有一死，或重于泰山，或轻于鸿毛。\n桃李不言，下自成蹊。\n飞鸟尽，良弓藏；狡兔死，走狗烹。"},
 23:{in:"《汉书》是中国第一部纪传体断代史，100卷记载西汉230年历史。文笔洗练条理清晰，创立了断代为史的编纂方法，后世正史多沿其体例。",th:"断代为史的开创性贡献，以严谨笔法记录一朝兴衰。强调正统观念和历史鉴戒功能。",ex:"水至清则无鱼，人至察则无徒。\n绳锯木断，水滴石穿。"},
 24:{in:"《古诗十九首》是汉代无名氏所作的五言诗，标志着五言诗的成熟。内容多写离愁别恨、人生无常，情感真挚语言朴素，被誉为五言之冠冕。",th:"对生命短暂的深切感悟，在乱世中追求真情和人生意义。语言质朴而情味深远，开了抒情诗新境界。",ex:"行行重行行，与君生别离。\n人生天地间，忽如远行客。\n思君令人老，岁月忽已晚。"},
@@ -574,18 +667,47 @@ const EXT={
 200:{in:"《主角》是陈彦茅盾文学奖作品，讲述秦腔名伶忆秦娥半生的艺术人生。戏如人生人生如戏，以戏曲人的命运折射时代变迁。",th:"艺术与人生的交融，以戏曲人的命运折射时代的风云变幻。",ex:"戏演到深处，才知人生如戏，戏如人生。"}
 };
 
+// ===== App State =====
+let curEra='全部',curGenre='全部',curView='grid',searchQ='',curDtab='picks',tagFilter='';
+let bookmarks=JSON.parse(localStorage.getItem('cl_bm')||'[]');
+let readList=JSON.parse(localStorage.getItem('cl_read')||'[]');
+let shuffleMode=false;
+
 const ERAS=['全部','先秦','秦汉','魏晋南北朝','隋唐','五代十国','宋代','辽金元','明代','清代','民国','当代'];
 const GENRES=['全部','诗歌','小说','词','戏剧','散文','哲学','历史','辞赋','文学理论','科幻','军事','神话','地理','科技','其他'];
 
-// === Init ===
+// ===== Color palette by era =====
+const ERA_COLORS={'先秦':'#c0392b','秦汉':'#e67e22','魏晋南北朝':'#f1c40f','隋唐':'#27ae60','五代十国':'#2980b9','宋代':'#8e44ad','辽金元':'#1abc9c','明代':'#d35400','清代':'#2c3e50','民国':'#e74c3c','当代':'#3498db'};
+const GENRE_ICONS={'诗歌':'📜','小说':'📖','词':'🎵','戏剧':'🎭','散文':'✍️','哲学':'💭','历史':'🏛️','辞赋':'🖋️','文学理论':'📐','科幻':'🚀','军事':'⚔️','神话':'🐉','地理':'🗺️','科技':'⚙️'};
+
+// ===== Score system for recommendations =====
+function getScore(w){
+  let s=0;
+  // Masterpieces get higher scores
+  if([4,5,6,22,36,46,47,48,49,50,72,73,74,92,93,102,103,104,106,116,117,118,136,140,142,152,153,154,155,158].includes(w.id)) s+=3;
+  // Has extended content
+  if(EXT[w.id]) s+=2;
+  // Not read yet
+  if(!readList.includes(w.id)) s+=1;
+  return s;
+}
+
+// ===== Seed-based random (for "daily" picks) =====
+function seededRandom(seed){let x=Math.sin(seed)*10000;return x-Math.floor(x)}
+function getDailySeed(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
+
+// ===== Init =====
 window.addEventListener('DOMContentLoaded',()=>{
   renderStats();
   renderEraNav();
   renderGenreBtns();
+  renderDiscover('picks');
+  renderTagCloud();
   renderView();
   bindEvents();
 });
 
+// ===== Render Stats =====
 function renderStats(){
   const el=document.getElementById('statsRow');
   const span=W[W.length-1].y-W[0].y;
@@ -597,6 +719,57 @@ function renderStats(){
   `;
 }
 
+// ===== Discover Section =====
+function renderDiscover(tab){
+  curDtab=tab;
+  const c=document.getElementById('discoverCards');
+  let items=[];
+
+  if(tab==='picks'){
+    // Daily picks: use date seed to pick 6 diverse works
+    const seed=getDailySeed();
+    const scored=W.map(w=>({...w,score:getScore(w)+seededRandom(seed+w.id)*2})).sort((a,b)=>b.score-a.score);
+    items=scored.slice(0,6);
+  } else if(tab==='random'){
+    // Random 6
+    const shuffled=[...W].sort(()=>Math.random()-.5);
+    items=shuffled.slice(0,6);
+  } else if(tab==='bookmarks'){
+    items=W.filter(w=>bookmarks.includes(w.id));
+    if(!items.length){c.innerHTML='<div style="padding:20px;text-align:center;color:#999">还没有收藏，点击卡片上的 ⭐ 收藏喜欢的作品</div>';return;}
+  } else if(tab==='unread'){
+    items=W.filter(w=>!readList.includes(w.id));
+    if(!items.length){c.innerHTML='<div style="padding:20px;text-align:center;color:#999">所有作品都已标记为已读 🎉</div>';return;}
+    items=items.sort(()=>Math.random()-.5).slice(0,8);
+  }
+
+  c.innerHTML=items.map(w=>{
+    const color=ERA_COLORS[w.e]||'#999';
+    const icon=GENRE_ICONS[w.g]||'📄';
+    return `<div class="dcard" data-id="${w.id}">
+      <div class="dcard-color" style="background:${color}"></div>
+      <div class="dcard-body">
+        <h4>${icon} ${w.t}</h4>
+        <div class="dca">${w.a} · ${fmtYear(w.y)}</div>
+        <div class="dcd">${w.d}</div>
+      </div>
+      <div class="dcbadge" style="background:${color}">${w.e}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Tag Cloud =====
+function renderTagCloud(){
+  const tags=['必读经典','诗词巅峰','哲理深邃','爱情名篇','战争史诗','讽刺批判','田园隐逸','市井百态','家国情怀','奇幻想象','茅盾文学奖','先秦诸子','唐宋八大家','诺贝尔奖'];
+  const tagMap={'必读经典':[4,5,6,22,36,46,48,49,50,72,102,103,104,116,136,153,158],'诗词巅峰':[1,3,47,48,49,50,53,55,56,72,73,74],'哲理深邃':[4,5,6,12,14,86,165],'爱情名篇':[31,40,41,55,56,93,106,128,140],'战争史诗':[10,22,92,102,103,142,158],'讽刺批判':[65,117,118,125,126,136,142],'田园隐逸':[36,44,45,51,52],'市井百态':[109,110,169,179],'家国情怀':[28,75,80,89,90,154],'奇幻想象':[11,104,107,123,158],'茅盾文学奖':[139,154,155,157,160,167,168,169,173,180,184,186,187,199,200],'先秦诸子':[4,5,6,7,14,15,16,17,21],'唐宋八大家':[57,58,72,77,78,80,79,62],'诺贝尔奖':[156,157,158]};
+  const c=document.getElementById('tagCloud');
+  c.innerHTML=tags.map(t=>{
+    const cnt=tagMap[t]?tagMap[t].length:0;
+    return `<span class="tag-chip${tagFilter===t?' active':''}" data-tag="${t}" data-ids="${(tagMap[t]||[]).join(',')}">${t} (${cnt})</span>`;
+  }).join('');
+}
+
+// ===== Era Nav =====
 function renderEraNav(){
   const c=document.getElementById('eraBtns');
   c.innerHTML=ERAS.map(e=>{
@@ -612,6 +785,7 @@ function renderGenreBtns(){
   }).join('');
 }
 
+// ===== Filter =====
 function getFiltered(){
   let f=W;
   if(curEra!=='全部') f=f.filter(w=>w.e===curEra);
@@ -627,16 +801,28 @@ function getFiltered(){
     const q=searchQ.toLowerCase();
     f=f.filter(w=>(w.t+w.a+w.d+w.e+w.g+w.p).toLowerCase().includes(q));
   }
+  if(tagFilter){
+    const chip=document.querySelector(`.tag-chip[data-tag="${tagFilter}"]`);
+    if(chip){
+      const ids=chip.dataset.ids.split(',').map(Number);
+      f=f.filter(w=>ids.includes(w.id));
+    }
+  }
+  if(shuffleMode) return f.sort(()=>Math.random()-.5);
   return f.sort((a,b)=>a.y-b.y);
 }
 
+// ===== Render View =====
 function renderView(){
   const items=getFiltered();
-  document.getElementById('resultInfo').textContent=`共 ${items.length} 部作品`;
+  const info=document.getElementById('resultInfo');
+  info.innerHTML=`共 <strong>${items.length}</strong> 部作品` + (tagFilter?` · 标签: ${tagFilter}`:'') + (shuffleMode?' · 随机排序':'');
+
   document.getElementById('gridView').style.display=curView==='grid'?'grid':'none';
   document.getElementById('timelineView').style.display=curView==='timeline'?'block':'none';
   const cv=document.getElementById('chartView');
   cv.classList.toggle('show',curView==='chart');
+
   if(curView==='grid') renderGrid(items);
   else if(curView==='timeline') renderTimeline(items);
   else renderCharts(items);
@@ -646,10 +832,15 @@ function renderGrid(items){
   document.getElementById('gridView').innerHTML=items.map(w=>{
     const ext=EXT[w.id]||{};
     const excerpt=ext.ex?ext.ex.split('\\n')[0]:'';
+    const isBM=bookmarks.includes(w.id);
+    const isRead=readList.includes(w.id);
+    const icon=GENRE_ICONS[w.g]||'📄';
     return `
     <div class="card" data-id="${w.id}">
+      ${isRead?'<div class="read-badge">✓ 已读</div>':''}
+      <span class="card-bookmark${isBM?' bookmarked':''}" data-bid="${w.id}" title="${isBM?'取消收藏':'收藏'}">⭐</span>
       <div class="era-tag">${w.e}</div>
-      <h3>${w.t}</h3>
+      <h3>${icon} ${w.t}</h3>
       <div class="author">${w.a} · ${fmtYear(w.y)}</div>
       <div class="desc">${w.d}</div>
       ${excerpt?`<div class="card-excerpt">「${excerpt}」</div>`:''}
@@ -671,172 +862,200 @@ function renderTimeline(items){
   `).join('');
 }
 
+// ===== Charts =====
 function renderCharts(items){
   const cv=document.getElementById('chartView');
   cv.innerHTML=`<div class="chart-grid">
-    <div class="chart-card"><h3>时代分布</h3><canvas id="eraChart" class="chart"></canvas></div>
-    <div class="chart-card"><h3>体裁分布</h3><canvas id="genreChart" class="chart"></canvas></div>
-    <div class="chart-card"><h3>地域分布 Top 10</h3><canvas id="regionChart" class="chart"></canvas></div>
-    <div class="chart-card"><h3>时间线密度</h3><canvas id="timeChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>📊 时代分布</h3><canvas id="eraChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>📊 体裁分布</h3><canvas id="genreChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>📊 地域分布 Top 10</h3><canvas id="regionChart" class="chart"></canvas></div>
+    <div class="chart-card"><h3>📊 时间线密度</h3><canvas id="timeChart" class="chart"></canvas></div>
   </div>`;
   requestAnimationFrame(()=>drawCharts(items));
 }
 
-function drawCharts(items){
-  drawEraChart(items);
-  drawGenreChart(items);
-  drawRegionChart(items);
-  drawTimeChart(items);
-}
+function drawCharts(items){drawEraChart(items);drawGenreChart(items);drawRegionChart(items);drawTimeChart(items)}
 
 function drawEraChart(items){
-  const c=document.getElementById('eraChart');
-  if(!c) return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
+  const c=document.getElementById('eraChart');if(!c)return;
+  const ctx=c.getContext('2d');const dpr=window.devicePixelRatio||1;
   c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
-  const W2=c.offsetWidth,H=260;
-  const counts={};
+  const W2=c.offsetWidth,H=260;const counts={};
   ERAS.slice(1).forEach(e=>counts[e]=0);
   items.forEach(w=>{if(counts[w.e]!==undefined)counts[w.e]++});
-  const entries=Object.entries(counts);
-  const max=Math.max(...entries.map(e=>e[1]),1);
+  const entries=Object.entries(counts);const max=Math.max(...entries.map(e=>e[1]),1);
   const barW=W2/entries.length-8;
-  const colors=['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9','#8e44ad','#1abc9c','#d35400','#2c3e50','#e74c3c','#3498db'];
   entries.forEach(([era,cnt],i)=>{
-    const x=i*(barW+8)+4;
-    const h=Math.max((cnt/max)*(H-60),0);
-    ctx.fillStyle=colors[i%colors.length];
-    ctx.beginPath();
-    roundRect(ctx,x,H-30-h,barW,h,4);
-    ctx.fill();
+    const x=i*(barW+8)+4;const h=Math.max((cnt/max)*(H-60),0);
+    ctx.fillStyle=ERA_COLORS[era]||'#999';
+    ctx.beginPath();roundRect(ctx,x,H-30-h,barW,h,4);ctx.fill();
     ctx.fillStyle='#666';ctx.font='11px sans-serif';ctx.textAlign='center';
     ctx.fillText(era.slice(0,2),x+barW/2,H-12);
-    if(cnt>0){ctx.fillStyle='#333';ctx.font='bold 11px sans-serif';ctx.fillText(cnt,x+barW/2,H-34-h);}
+    if(cnt>0){ctx.fillStyle='#333';ctx.font='bold 11px sans-serif';ctx.fillText(cnt,x+barW/2,H-34-h)}
   });
 }
 
 function drawGenreChart(items){
-  const c=document.getElementById('genreChart');
-  if(!c) return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
+  const c=document.getElementById('genreChart');if(!c)return;
+  const ctx=c.getContext('2d');const dpr=window.devicePixelRatio||1;
   c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
-  const W2=c.offsetWidth,H=260;
-  const counts={};
+  const W2=c.offsetWidth,H=260;const counts={};
   items.forEach(w=>{counts[w.g]=(counts[w.g]||0)+1});
   const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const max=Math.max(...entries.map(e=>e[1]),1);
-  const barH=24;
+  const max=Math.max(...entries.map(e=>e[1]),1);const barH=24;
   const colors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#2980b9','#8e44ad','#1abc9c'];
   entries.forEach(([g,cnt],i)=>{
-    const y=i*(barH+6)+10;
-    const w2=Math.max((cnt/max)*(W2-120),0);
-    ctx.fillStyle=colors[i%colors.length];
-    ctx.beginPath();roundRect(ctx,80,y,w2,barH,4);ctx.fill();
-    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';
-    ctx.fillText(g,74,y+16);
-    ctx.fillStyle='#666';ctx.textAlign='left';
-    ctx.fillText(cnt,86+w2,y+16);
+    const y=i*(barH+6)+10;const w2=Math.max((cnt/max)*(W2-120),0);
+    ctx.fillStyle=colors[i%colors.length];ctx.beginPath();roundRect(ctx,80,y,w2,barH,4);ctx.fill();
+    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';ctx.fillText(g,74,y+16);
+    ctx.fillStyle='#666';ctx.textAlign='left';ctx.fillText(cnt,86+w2,y+16);
   });
 }
 
 function drawRegionChart(items){
-  const c=document.getElementById('regionChart');
-  if(!c) return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
+  const c=document.getElementById('regionChart');if(!c)return;
+  const ctx=c.getContext('2d');const dpr=window.devicePixelRatio||1;
   c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
-  const W2=c.offsetWidth,H=260;
-  const counts={};
+  const W2=c.offsetWidth,H=260;const counts={};
   items.forEach(w=>{w.p.split('/').forEach(p=>{counts[p]=(counts[p]||0)+1})});
   const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  const max=Math.max(...entries.map(e=>e[1]),1);
-  const barH=22;
+  const max=Math.max(...entries.map(e=>e[1]),1);const barH=22;
   const colors=['#c0392b','#e74c3c','#e67e22','#f39c12','#27ae60','#2980b9','#8e44ad','#1abc9c','#2c3e50','#d35400'];
   entries.forEach(([p,cnt],i)=>{
-    const y=i*(barH+5)+10;
-    const w2=Math.max((cnt/max)*(W2-100),0);
-    ctx.fillStyle=colors[i%colors.length];
-    ctx.beginPath();roundRect(ctx,70,y,w2,barH,4);ctx.fill();
-    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';
-    ctx.fillText(p,64,y+15);
-    ctx.fillStyle='#666';ctx.textAlign='left';
-    ctx.fillText(cnt,76+w2,y+15);
+    const y=i*(barH+5)+10;const w2=Math.max((cnt/max)*(W2-100),0);
+    ctx.fillStyle=colors[i%colors.length];ctx.beginPath();roundRect(ctx,70,y,w2,barH,4);ctx.fill();
+    ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='right';ctx.fillText(p,64,y+15);
+    ctx.fillStyle='#666';ctx.textAlign='left';ctx.fillText(cnt,76+w2,y+15);
   });
 }
 
 function drawTimeChart(items){
-  const c=document.getElementById('timeChart');
-  if(!c) return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
+  const c=document.getElementById('timeChart');if(!c)return;
+  const ctx=c.getContext('2d');const dpr=window.devicePixelRatio||1;
   c.width=c.offsetWidth*dpr;c.height=260*dpr;ctx.scale(dpr,dpr);
   const W2=c.offsetWidth,H=260;
-  const sorted=[...items].sort((a,b)=>a.y-b.y);
-  if(!sorted.length) return;
-  const minY=sorted[0].y,maxY=sorted[sorted.length-1].y;
-  const range=maxY-minY||1;
-  // Background line
-  ctx.strokeStyle='#eee';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(40,H-30);ctx.lineTo(W2-10,H-30);ctx.stroke();
-  // Era bands
-  const eraColors={'先秦':'#c0392b','秦汉':'#e67e22','魏晋南北朝':'#f1c40f','隋唐':'#27ae60','五代十国':'#2980b9','宋代':'#8e44ad','辽金元':'#1abc9c','明代':'#d35400','清代':'#2c3e50','民国':'#e74c3c','当代':'#3498db'};
-  let lastEra='';
+  const sorted=[...items].sort((a,b)=>a.y-b.y);if(!sorted.length)return;
+  const minY=sorted[0].y,maxY=sorted[sorted.length-1].y;const range=maxY-minY||1;
+  ctx.strokeStyle='#eee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(40,H-30);ctx.lineTo(W2-10,H-30);ctx.stroke();
   sorted.forEach((w,i)=>{
     const x=40+(w.y-minY)/range*(W2-60);
-    const color=eraColors[w.e]||'#999';
-    ctx.fillStyle=color;
+    ctx.fillStyle=ERA_COLORS[w.e]||'#999';
     ctx.beginPath();ctx.arc(x,H-30-8-Math.random()*80,3,0,Math.PI*2);ctx.fill();
   });
-  // Axis labels
   ctx.fillStyle='#999';ctx.font='10px sans-serif';ctx.textAlign='center';
   [sorted[0],sorted[Math.floor(sorted.length/2)],sorted[sorted.length-1]].forEach(w=>{
-    const x=40+(w.y-minY)/range*(W2-60);
-    ctx.fillText(fmtYear(w.y),x,H-14);
+    const x=40+(w.y-minY)/range*(W2-60);ctx.fillText(fmtYear(w.y),x,H-14);
   });
 }
 
+// ===== Utility =====
 function roundRect(ctx,x,y,w,h,r){
-  r=Math.min(r,Math.max(w,0)/2,Math.max(h,0)/2);
-  if(w<=0||h<=0) return;
+  r=Math.min(r,Math.max(w,0)/2,Math.max(h,0)/2);if(w<=0||h<=0)return;
   ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
   ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
   ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
   ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
 }
+function fmtYear(y){return y<0?'公元前'+Math.abs(y)+'年':y+'年'}
 
-function fmtYear(y){
-  if(y<0) return '公元前'+Math.abs(y)+'年';
-  return y+'年';
+// ===== Related recommendations =====
+function getRelated(w){
+  // Same era, same genre, or related authors
+  return W.filter(x=>x.id!==w.id).map(x=>{
+    let score=0;
+    if(x.e===w.e) score+=2;
+    if(x.g===w.g) score+=3;
+    if(x.a===w.a) score+=2;
+    if(x.p===w.p) score+=1;
+    return {...x,score};
+  }).sort((a,b)=>b.score-a.score).slice(0,4);
 }
 
+// ===== Modal =====
 function showModal(id){
-  const w=W.find(x=>x.id===id);
-  if(!w) return;
+  const w=W.find(x=>x.id===id);if(!w)return;
   const ext=EXT[id]||{};
+  const isBM=bookmarks.includes(w.id);
+  const isRead=readList.includes(w.id);
+  const related=getRelated(w);
+  const color=ERA_COLORS[w.e]||'#999';
   const introHtml=ext.in?`<div class="m-section"><div class="m-section-title">📖 作品简介</div><div class="m-intro">${ext.in}</div></div>`:'';
   const thoughtHtml=ext.th?`<div class="m-section"><div class="m-section-title">💡 主要思想</div><div class="m-thought">${ext.th}</div></div>`:'';
   const excerptHtml=ext.ex?`<div class="m-section"><div class="m-section-title">✨ 精选摘录</div><div class="m-excerpt">${ext.ex.replace(/\n/g,'<br>')}</div></div>`:'';
+  const relatedHtml=related.length?`<div class="m-related"><div class="m-related-title">🔗 相关推荐</div><div class="m-related-grid">${related.map(r=>`<div class="m-related-item" data-rid="${r.id}"><h5>${r.t}</h5><div class="mri-a">${r.a}</div><div class="mri-e">${r.e} · ${r.g}</div></div>`).join('')}</div></div>`:'';
+
   document.getElementById('modalBody').innerHTML=`
-    <h2>${w.t}</h2>
-    <div class="m-author">${w.a} · ${fmtYear(w.y)}</div>
-    <div class="m-desc">${w.d}</div>
-    <div class="m-tags">
-      <span>${w.e}</span><span>${w.g}</span><span>${w.ty}</span><span>${w.p}</span>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:4px;height:32px;background:${color};border-radius:2px"></div>
+      <div><h2>${w.t}</h2><div class="m-author">${w.a} · ${fmtYear(w.y)}</div></div>
     </div>
-    ${introHtml}
-    ${thoughtHtml}
-    ${excerptHtml}
+    <div class="m-desc">${w.d}</div>
+    <div class="m-tags"><span>${w.e}</span><span>${w.g}</span><span>${w.ty}</span><span>${w.p}</span></div>
+    <div class="m-actions">
+      <button class="${isBM?'primary':''}" id="modalBM" data-mid="${w.id}">${isBM?'⭐ 已收藏':'☆ 收藏'}</button>
+      <button class="${isRead?'primary':''}" id="modalRead" data-mid="${w.id}">${isRead?'✓ 已读':'📖 标记已读'}</button>
+    </div>
+    ${introHtml}${thoughtHtml}${excerptHtml}${relatedHtml}
   `;
   document.getElementById('modalOverlay').classList.add('show');
+
+  // Bind modal bookmark
+  document.getElementById('modalBM').addEventListener('click',function(){
+    toggleBookmark(+this.dataset.mid);
+    showModal(+this.dataset.mid); // re-render
+  });
+  document.getElementById('modalRead').addEventListener('click',function(){
+    toggleRead(+this.dataset.mid);
+    showModal(+this.dataset.mid); // re-render
+  });
+  // Related item click
+  document.querySelectorAll('.m-related-item').forEach(el=>{
+    el.addEventListener('click',()=>showModal(+el.dataset.rid));
+  });
 }
 
+// ===== Bookmark & Read =====
+function toggleBookmark(id){
+  const i=bookmarks.indexOf(id);
+  if(i>=0){bookmarks.splice(i,1);toast('已取消收藏')}
+  else{bookmarks.push(id);toast('⭐ 已收藏')}
+  localStorage.setItem('cl_bm',JSON.stringify(bookmarks));
+  updateBookmarkBar();
+  renderView();
+}
+function toggleRead(id){
+  const i=readList.indexOf(id);
+  if(i>=0){readList.splice(i,1);toast('已标记为未读')}
+  else{readList.push(id);toast('📖 已标记已读')}
+  localStorage.setItem('cl_read',JSON.stringify(readList));
+  renderView();
+}
+function updateBookmarkBar(){
+  const bar=document.getElementById('bookmarkBar');
+  document.getElementById('bmCount').textContent=bookmarks.length;
+  bar.classList.toggle('show',bookmarks.length>0);
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1500);
+}
+
+// ===== Events =====
 function bindEvents(){
+  // Discover tabs
+  document.querySelector('.discover-tabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.dtab');if(!btn)return;
+    document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDiscover(btn.dataset.dtab);
+  });
+  // Discover card click
+  document.getElementById('discoverCards').addEventListener('click',e=>{
+    const card=e.target.closest('.dcard');if(card) showModal(+card.dataset.id);
+  });
   // Era nav
   document.getElementById('eraBtns').addEventListener('click',e=>{
-    const btn=e.target.closest('.era-btn');
-    if(!btn) return;
+    const btn=e.target.closest('.era-btn');if(!btn)return;
     curEra=btn.dataset.era;
     document.querySelectorAll('.era-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
@@ -844,8 +1063,7 @@ function bindEvents(){
   });
   // Genre
   document.getElementById('genreBtns').addEventListener('click',e=>{
-    const btn=e.target.closest('.genre-btn');
-    if(!btn) return;
+    const btn=e.target.closest('.genre-btn');if(!btn)return;
     curGenre=btn.dataset.genre;
     document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
@@ -862,17 +1080,24 @@ function bindEvents(){
   });
   // Search
   document.getElementById('searchInput').addEventListener('input',e=>{
-    searchQ=e.target.value;
+    searchQ=e.target.value;renderView();
+  });
+  // Tag cloud
+  document.getElementById('tagCloud').addEventListener('click',e=>{
+    const chip=e.target.closest('.tag-chip');if(!chip)return;
+    tagFilter=tagFilter===chip.dataset.tag?'':chip.dataset.tag;
+    document.querySelectorAll('.tag-chip').forEach(c=>c.classList.toggle('active',c.dataset.tag===tagFilter));
     renderView();
   });
-  // Card click
+  // Grid card click & bookmark
   document.getElementById('gridView').addEventListener('click',e=>{
-    const card=e.target.closest('.card');
-    if(card) showModal(+card.dataset.id);
+    const bm=e.target.closest('.card-bookmark');
+    if(bm){e.stopPropagation();toggleBookmark(+bm.dataset.bid);return}
+    const card=e.target.closest('.card');if(card) showModal(+card.dataset.id);
   });
+  // Timeline click
   document.getElementById('timelineView').addEventListener('click',e=>{
-    const item=e.target.closest('.tl-item');
-    if(item) showModal(+item.dataset.id);
+    const item=e.target.closest('.tl-item');if(item) showModal(+item.dataset.id);
   });
   // Modal close
   document.getElementById('modalClose').addEventListener('click',()=>{
@@ -880,6 +1105,26 @@ function bindEvents(){
   });
   document.getElementById('modalOverlay').addEventListener('click',e=>{
     if(e.target===e.currentTarget) e.currentTarget.classList.remove('show');
+  });
+  // Shuffle & Reset
+  document.getElementById('btnShuffle').addEventListener('click',()=>{
+    shuffleMode=!shuffleMode;renderView();
+    toast(shuffleMode?'🔀 随机排序':'📊 时间排序');
+  });
+  document.getElementById('btnReset').addEventListener('click',()=>{
+    curEra='全部';curGenre='全部';searchQ='';tagFilter='';shuffleMode=false;
+    document.getElementById('searchInput').value='';
+    document.querySelectorAll('.era-btn').forEach(b=>b.classList.toggle('active',b.dataset.era==='全部'));
+    document.querySelectorAll('.genre-btn').forEach(b=>b.classList.toggle('active',b.dataset.genre==='全部'));
+    document.querySelectorAll('.tag-chip').forEach(c=>c.classList.remove('active'));
+    renderView();toast('↺ 已重置筛选');
+  });
+  // Bookmark clear filter
+  document.getElementById('bmClear').addEventListener('click',()=>{
+    // Switch discover tab to bookmarks
+    document.querySelectorAll('.dtab').forEach(b=>b.classList.toggle('active',b.dataset.dtab==='bookmarks'));
+    renderDiscover('bookmarks');
+    window.scrollTo({top:0,behavior:'smooth'});
   });
   // Scroll top
   const st=document.getElementById('scrollTop');
@@ -893,12 +1138,9 @@ function bindEvents(){
     if(e.key==='Escape') document.getElementById('modalOverlay').classList.remove('show');
     if(e.key==='/'&&!e.ctrlKey){e.preventDefault();document.getElementById('searchInput').focus();}
   });
+  // Init bookmark bar
+  updateBookmarkBar();
 }
 </script>
 </body>
 </html>
-
-
-
-
-
