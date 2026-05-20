@@ -942,6 +942,8 @@ function showQuestion() {
     optDiv.appendChild(btn);
   });
   updateFooter();
+  // Restart gesture cycling for new question
+  if (GestureMode.active) GestureMode.startCycling();
 }
 
 function handleAnswer(btn, selected, q) {
@@ -981,6 +983,8 @@ function handleAnswer(btn, selected, q) {
   document.getElementById('qExplain').className = 'q-explain show';
   document.getElementById('qNext').className = 'q-next show';
   updateFooter();
+  // Stop gesture cycling after answer
+  if (GestureMode.active) GestureMode.stopCycling();
 }
 
 function nextQuestion() {
@@ -1112,6 +1116,200 @@ document.addEventListener('touchend', e => {
     if (nb.classList.contains('show')) nextQuestion();
   }
 }, { passive: true });
+
+
+// === GESTURE MODE (体感操控) ===
+const GestureMode = {
+  active: false, loading: false, faceDetection: null, video: null, stream: null,
+  positions: [], bufferSize: 20, cooldown: 900, lastGestureTime: 0,
+  nodThresh: 0.028, shakeThresh: 0.045,
+  cycleTimer: null, cycleIndex: 0, sending: false, rafId: null,
+
+  async toggle() { this.active ? this.stop() : await this.start(); },
+
+  async start() {
+    const btn = document.getElementById('gestureBtn');
+    const overlay = document.getElementById('camOverlay');
+    const hint = document.getElementById('gestureHint');
+    this.loading = true;
+    btn.classList.add('loading');
+    overlay.classList.add('show');
+    document.getElementById('camStatus').textContent = '加载中...';
+
+    try {
+      // Lazy-load MediaPipe Face Detection
+      if (!window.FaceDetection) {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4/face_detection.js';
+          s.crossOrigin = 'anonymous';
+          s.onload = res;
+          s.onerror = () => rej(new Error('MediaPipe 加载失败'));
+          document.head.appendChild(s);
+        });
+      }
+
+      // Init detector
+      this.faceDetection = new FaceDetection({
+        locateFile: (f) => 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4/' + f
+      });
+      this.faceDetection.setOptions({ model: 'short', minDetectionConfidence: 0.5 });
+      this.faceDetection.onResults((r) => this.onResults(r));
+
+      // Camera
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } }
+      });
+      const ov = overlay.querySelector('video');
+      ov.srcObject = this.stream;
+      await ov.play();
+
+      this.video = ov;
+      document.getElementById('camStatus').textContent = '';
+      this.active = true; this.loading = false;
+      btn.classList.remove('loading');
+      btn.classList.add('active');
+      btn.querySelector('.btn-text').textContent = '体感 ✓';
+
+      // Show hint for 4s
+      hint.classList.add('show');
+      setTimeout(() => hint.classList.remove('show'), 4000);
+
+      this.processLoop();
+      if (!answered) this.startCycling();
+
+    } catch (e) {
+      this.loading = false;
+      btn.classList.remove('loading');
+      document.getElementById('camStatus').textContent = '摄像头不可用';
+      setTimeout(() => overlay.classList.remove('show'), 2500);
+      console.warn('GestureMode:', e);
+    }
+  },
+
+  stop() {
+    this.active = false;
+    if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
+    if (this.cycleTimer) { clearInterval(this.cycleTimer); this.cycleTimer = null; }
+    if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
+    this.positions = []; this.sending = false;
+
+    const btn = document.getElementById('gestureBtn');
+    btn.classList.remove('active');
+    btn.querySelector('.btn-text').textContent = '体感';
+    document.getElementById('camOverlay').classList.remove('show', 'face');
+    document.getElementById('gestureHint').classList.remove('show');
+    document.querySelectorAll('.q-opt.highlighted').forEach(o => o.classList.remove('highlighted'));
+  },
+
+  processLoop() {
+    if (!this.active) return;
+    if (!this.sending && this.video && this.video.readyState >= 2) {
+      this.sending = true;
+      this.faceDetection.send({ image: this.video }).then(() => { this.sending = false; }).catch(() => { this.sending = false; });
+    }
+    this.rafId = requestAnimationFrame(() => this.processLoop());
+  },
+
+  onResults(results) {
+    const overlay = document.getElementById('camOverlay');
+    if (results.detections && results.detections.length > 0) {
+      overlay.classList.add('face');
+      // Use nose tip (landmark index 2) for precise tracking
+      const nose = results.detections[0].landmarks[2];
+      this.addPos(nose.x, nose.y);
+      const g = this.detect();
+      if (g) this.handleGesture(g);
+    } else {
+      overlay.classList.remove('face');
+    }
+  },
+
+  addPos(x, y) {
+    this.positions.push({ x, y, t: Date.now() });
+    while (this.positions.length > this.bufferSize) this.positions.shift();
+  },
+
+  detect() {
+    if (this.positions.length < 8) return null;
+    if (Date.now() - this.lastGestureTime < this.cooldown) return null;
+
+    const r = this.positions.slice(-14);
+    const xs = r.map(p => p.x), ys = r.map(p => p.y);
+    const xR = Math.max(...xs) - Math.min(...xs);
+    const yR = Math.max(...ys) - Math.min(...ys);
+
+    // Count direction changes (oscillation)
+    let xC = 0, yC = 0;
+    for (let i = 2; i < r.length; i++) {
+      if ((r[i-1].x - r[i-2].x) * (r[i].x - r[i-1].x) < 0) xC++;
+      if ((r[i-1].y - r[i-2].y) * (r[i].y - r[i-1].y) < 0) yC++;
+    }
+
+    // Nod: vertical dominant
+    if (yR > this.nodThresh && yR > xR * 1.3 && (yC >= 1 || yR > this.nodThresh * 2.5)) {
+      this.lastGestureTime = Date.now();
+      this.positions = [];
+      return 'nod';
+    }
+    // Shake: horizontal dominant
+    if (xR > this.shakeThresh && xR > yR * 1.3 && (xC >= 1 || xR > this.shakeThresh * 2.5)) {
+      this.lastGestureTime = Date.now();
+      this.positions = [];
+      return 'shake';
+    }
+    return null;
+  },
+
+  handleGesture(g) {
+    const ind = document.getElementById('gestureIndicator');
+    if (g === 'nod') {
+      ind.textContent = '👆 选择!';
+      ind.className = 'gesture-indicator show';
+      const h = document.querySelector('.q-opt.highlighted');
+      if (h) h.click();
+      this.stopCycling();
+    } else if (g === 'shake') {
+      const nextBtn = document.getElementById('qNext');
+      if (answered && nextBtn.classList.contains('show')) {
+        ind.textContent = '➡️ 下一题';
+        ind.className = 'gesture-indicator show';
+        nextQuestion();
+        // Cycling restarts via showQuestion hook
+      } else if (!answered) {
+        // Skip current option, advance highlight
+        ind.textContent = '👋 跳过';
+        ind.className = 'gesture-indicator show';
+        this.advanceHighlight();
+      }
+    }
+    setTimeout(() => { ind.className = 'gesture-indicator'; }, 700);
+  },
+
+  startCycling() {
+    this.stopCycling();
+    this.cycleIndex = 0;
+    this.updateHL();
+    this.cycleTimer = setInterval(() => this.advanceHighlight(), 2000);
+  },
+
+  stopCycling() {
+    if (this.cycleTimer) { clearInterval(this.cycleTimer); this.cycleTimer = null; }
+    document.querySelectorAll('.q-opt.highlighted').forEach(o => o.classList.remove('highlighted'));
+  },
+
+  advanceHighlight() {
+    const opts = document.querySelectorAll('.q-opt:not(.disabled)');
+    if (opts.length === 0) return;
+    this.cycleIndex = (this.cycleIndex + 1) % opts.length;
+    this.updateHL();
+  },
+
+  updateHL() {
+    const opts = document.querySelectorAll('.q-opt:not(.disabled)');
+    opts.forEach((o, i) => o.classList.toggle('highlighted', i === this.cycleIndex));
+  }
+};
 
 // === INIT ===
 loadStats();
