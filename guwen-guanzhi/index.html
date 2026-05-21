@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>古文观止 · Classical Chinese Prose</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#faf8f5;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#8B4513;--accent2:#A0522D;--warm:#fef3e2;--border:#e8e4df;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:16px;--radius-sm:12px}
+body.dark{--bg:#1a1a2e;--surface:#16213e;--text:#e8e8e8;--text2:#a0a0b0;--text3:#6a6a7a;--warm:#2a1f0e;--border:#2a2a4a;--shadow:0 2px 16px rgba(0,0,0,.3)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Serif SC",serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-tap-highlight-color:transparent;min-height:100vh}
+body.dark nav{background:rgba(26,26,46,.9)}
+body.dark .search-box,body.dark .f-btn{background:var(--surface);color:var(--text)}
+body.dark .modal{background:var(--surface)}
+body.dark .stat{background:var(--surface)}
+body.dark .book-card{background:var(--surface)}
+body.dark .chart-section{background:var(--surface)}
+body.dark .tl-card{background:var(--surface)}
+body.dark .modal-close{background:rgba(255,255,255,.1);color:var(--text)}
+body.dark .related-item{background:var(--bg)}
+body.dark .bar-track{background:#2a2a4a}
+body.dark #randomBtn{background:var(--warm);border-color:var(--accent);color:var(--accent)}
+body.dark .classic-text{color:#c8c0b8}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,248,245,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px}
+nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
+nav .view-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text2);transition:all .2s}
+nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.hero{text-align:center;padding:72px 20px 32px;max-width:800px;margin:0 auto;animation:heroIn .6s ease}
+.hero .emoji{font-size:3.6em;margin-bottom:8px;display:inline-block;animation:float 3s ease-in-out infinite}
+.hero h1{font-size:2.2em;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,#8B4513 0%,#A0522D 40%,#DAA520 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-size:.92em;color:var(--text2);margin-top:6px}
+
+.stats{display:flex;gap:10px;max-width:800px;margin:0 auto;padding:0 20px;flex-wrap:wrap}
+.stat{flex:1;min-width:80px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;transition:transform .2s}
+.stat:hover{transform:translateY(-2px)}
+.stat .n{font-size:1.4em;font-weight:700;color:var(--accent)}
+.stat .l{font-size:.65em;color:var(--text2);margin-top:2px}
+
+.filters{max-width:800px;margin:16px auto 0;padding:0 20px}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.filter-row .label{font-size:.7em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:6px 0;min-width:40px}
+.f-btn{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--surface);font-size:.75em;cursor:pointer;transition:all .2s;color:var(--text2);white-space:nowrap}
+.f-btn:hover{border-color:var(--accent)}
+.f-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search-box{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.88em;background:var(--surface);margin-top:4px;transition:border .2s;outline:none}
+.search-box:focus{border-color:var(--accent)}
+.search-box::placeholder{color:var(--text3)}
+#randomBtn:hover{background:var(--accent);color:#fff;transform:scale(1.04)}
+#randomBtn:active{transform:scale(0.96)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;max-width:1200px;margin:20px auto;padding:0 20px 60px}
+.book-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .3s;position:relative;animation:fadeInUp .4s ease both}
+.book-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.book-cover{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.book-cover .cover-emoji{font-size:3.6em;z-index:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+.book-info{padding:14px}
+.book-info .title{font-size:.92em;font-weight:600;line-height:1.3;margin-bottom:3px}
+.book-info .author{font-size:.75em;color:var(--text2);margin-bottom:6px}
+.book-tags{display:flex;gap:4px;flex-wrap:wrap}
+.book-tag{font-size:.6em;padding:2px 7px;border-radius:10px;background:var(--warm);color:var(--accent);font-weight:500}
+.book-age{font-size:.6em;padding:2px 7px;border-radius:10px;background:#e7f5ff;color:#1971c2;font-weight:500}
+.book-dynasty{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.9);border-radius:12px;padding:2px 8px;font-size:.65em;font-weight:600;backdrop-filter:blur(4px)}
+.diff-tag{font-size:.6em;padding:2px 7px;border-radius:10px;font-weight:500}
+.diff-1{background:#ebfbee;color:#2f9e44}
+.diff-2{background:#fff4e6;color:#e8590c}
+.diff-3{background:#fff0f6;color:#c2255c}
+
+.timeline{max-width:800px;margin:20px auto;padding:0 20px 60px;position:relative}
+.timeline::before{content:'';position:absolute;left:30px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2),#DAA520)}
+.tl-item{display:flex;gap:16px;margin-bottom:20px;animation:fadeInUp .4s ease both}
+.tl-year{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65em;font-weight:700;flex-shrink:0;z-index:1;box-shadow:0 2px 8px rgba(139,69,19,.3)}
+.tl-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .2s}
+.tl-card:hover{box-shadow:var(--shadow);transform:translateX(4px)}
+.tl-card .t{font-weight:600;font-size:.9em}
+.tl-card .a{font-size:.75em;color:var(--text2)}
+.tl-card .d{font-size:.72em;color:var(--text3);margin-top:4px;line-height:1.4}
+.tl-card .c{font-size:.65em;color:var(--accent);font-weight:500}
+
+.chart{max-width:900px;margin:20px auto;padding:0 20px 60px}
+.chart-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.chart-section h3{font-size:.8em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;text-align:center}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-label{width:80px;font-size:.72em;text-align:right;color:var(--text2);flex-shrink:0}
+.bar-track{flex:1;height:24px;background:#f1f3f5;border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-left:8px;font-size:.65em;color:#fff;font-weight:600;min-width:24px}
+.bar-count{font-size:.72em;color:var(--text2);width:28px;text-align:left}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;inset:8px;z-index:201;background:var(--surface);border-radius:20px;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal.show{transform:translateY(0)}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 16px 0;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.06);border:none;font-size:18px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(0,0,0,.12)}
+.modal-hero{height:260px;display:flex;align-items:center;justify-content:center;position:relative;margin:-52px 0 0}
+.modal-hero .m-emoji{font-size:5em;z-index:1;filter:drop-shadow(0 8px 16px rgba(0,0,0,.2))}
+.modal-body{padding:0 24px 40px;max-width:640px;margin:0 auto}
+.modal-body .m-title{font-size:1.6em;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.modal-body .m-orig{font-size:.85em;color:var(--text3);font-style:italic;margin-bottom:12px}
+.modal-body .m-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:.82em;color:var(--text2)}
+.modal-body .m-meta span{display:flex;align-items:center;gap:4px}
+.modal-body .m-quote{font-size:1.05em;font-weight:500;line-height:1.8;padding:16px 20px;background:var(--warm);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;margin-bottom:16px;font-style:italic}
+.modal-body .m-desc{font-size:.9em;line-height:1.7;color:var(--text2);margin-bottom:16px}
+.modal-body .classic-text{font-size:.92em;line-height:2;color:var(--text);margin-bottom:16px;padding:20px;background:var(--bg);border-radius:var(--radius-sm);white-space:pre-wrap;border:1px solid var(--border)}
+.modal-body .m-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.m-tag{padding:4px 12px;border-radius:16px;font-size:.72em;font-weight:500}
+.m-tag.genre{background:#e7f5ff;color:#1971c2}
+.m-tag.age{background:#ebfbee;color:#2f9e44}
+.modal-body .m-section{margin-top:20px}
+.modal-body .m-section h3{font-size:.78em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.related-item{padding:10px;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;font-size:.82em}
+.related-item:hover{background:var(--warm)}
+.related-item .ri-t{font-weight:600}
+.related-item .ri-a{font-size:.8em;color:var(--text2)}
+
+.no-result{text-align:center;padding:60px 20px;color:var(--text3)}
+.no-result .emoji{font-size:3em;margin-bottom:12px}
+.footer{text-align:center;padding:40px 20px;color:var(--text3);font-size:.78em}
+
+.fav-btn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);border:none;font-size:14px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px);padding:0}
+.fav-btn:hover{transform:scale(1.2)}
+.fav-btn.on{background:#ffd43b}
+body.dark .fav-btn{background:rgba(0,0,0,.4)}
+
+@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.6em}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .book-cover{height:140px}
+  .modal-hero{height:200px}
+  .modal-body .m-title{font-size:1.3em}
+  .stats{gap:6px}
+  .stat{padding:10px 6px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="back">← 首页</a>
+  <span class="title">📜 古文观止</span>
+  <button class="view-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="收藏夹">⭐<span id="favCount"></span></button>
+  <button class="view-btn" onclick="toggleDark()" title="暗黑模式" id="darkBtn">🌙</button>
+  <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
+  <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
+  <button class="view-btn" data-view="chart" onclick="setView('chart')">统计</button>
+</nav>
+
+<div class="hero">
+  <div class="emoji">📜</div>
+  <h1>古文观止</h1>
+  <div class="sub" id="heroSub">中华散文三千年 · 从左传到项脊轩志 · 名篇鉴赏与原文赏析</div>
+</div>
+
+<div class="stats" id="statsBar"></div>
+
+<div class="filters">
+  <div class="filter-row">
+    <span class="label">朝代</span>
+    <div id="dynastyFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="label">难度</span>
+    <div id="diffFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="label">类型</span>
+    <div id="genreFilters"></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <input class="search-box" type="text" placeholder="🔍 搜索篇名、作者、名句..." id="searchBox" oninput="applyFilters()" style="flex:1;margin-top:0">
+    <button id="randomBtn" onclick="randomPick()" style="white-space:nowrap;padding:0 16px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--warm);color:var(--accent);font-size:.82em;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px">🎲<span>读哪篇</span></button>
+  </div>
+</div>
+
+<div id="content"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+<div class="modal" id="modal">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div id="modalContent"></div>
+</div>
+
+<div class="footer">古文观止 · 中华散文三千年名篇鉴赏 ✨</div>
+
+<script>
+// ===== DATA =====
+B=[
+{t:"郑伯克段于鄢",a:"左丘明",dy:"春秋·左传",y:-722,g:["记叙","权谋"],e:"⚔️",diff:2,bg:"linear-gradient(135deg,#8B4513,#A0522D)",q:"多行不义必自毙，子姑待之。",d:"郑庄公隐忍多年，终于灭掉叛乱的弟弟共叔段。全文以冷峻笔法写兄弟相残的政治悲剧，是左传开篇最精彩的篇章之一。",txt:"初，郑武公娶于申，曰武姜。生庄公及共叔段。庄公寤生，惊姜氏，故名曰寤生，遂恶之。爱共叔段，欲立之。"},
+{t:"周郑交质",a:"左丘明",dy:"春秋·左传",y:-720,g:["论说","政治"],e:"📜",diff:2,bg:"linear-gradient(135deg,#6B3A2A,#8B5E3C)",q:"信不由中，质无益也。明恕而行，要之以礼，虽无质，谁能间之？",d:"周天子与郑国交换人质以表信任，左丘明一针见血指出：没有发自内心的诚信，人质毫无意义。君子以礼治国，信任是根基。",txt:"郑武公、庄公为平王卿士。王贰于虢，郑伯怨王。王曰：无之。故周郑交质。王子狐为质于郑，郑公子忽为质于周。"},
+{t:"石碏谏宠州吁",a:"左丘明",dy:"春秋·左传",y:-719,g:["论说","教育"],e:"💡",diff:2,bg:"linear-gradient(135deg,#7B3F00,#A0522D)",q:"爱子，教之以义方，弗纳于邪。",d:"卫庄公宠爱庶子州吁，大臣石碏劝谏：爱孩子就要用正道教育他，不能让他走上邪路。可惜庄公不听，州吁后来弑君自立。",txt:"卫庄公娶于齐东宫得臣之妹，曰庄姜。美而无子，卫人所为赋《硕人》也。又娶于陈，曰厉妫。生孝伯，早死。"},
+{t:"曹刿论战",a:"左丘明",dy:"春秋·左传",y:-684,g:["记叙","军事"],e:"🏹",diff:1,bg:"linear-gradient(135deg,#556B2F,#6B8E23)",q:"一鼓作气，再而衰，三而竭。彼竭我盈，故克之。",d:"齐国大军压境，平民曹刿求见鲁庄公，以取信于民为战争前提。长勺之战中，曹刿抓住三鼓之后士气衰竭的时机反击大胜。全文仅二百余字，堪称军事散文典范。",txt:"十年春，齐师伐我。公将战。曹刿请见。其乡人曰：肉食者谋之，又何间焉？刿曰：肉食者鄙，未能远谋。"},
+{t:"齐桓公伐楚盟屈完",a:"左丘明",dy:"春秋·左传",y:-656,g:["记叙","外交"],e:"🤝",diff:2,bg:"linear-gradient(135deg,#2F4F4F,#4F7F7F)",q:"君处北海，寡人处南海，唯是风马牛不相及也。不虞君之涉吾地也，何故？",d:"齐桓公率八国联军伐楚，楚国使者屈完不卑不亢，以犀利的辞令化解危机。双方在召陵订立盟约，这是春秋外交辞令的经典之作。",txt:"四年春，齐侯以诸侯之师侵蔡。蔡溃。遂伐楚。楚子使与师言曰：君处北海，寡人处南海，唯是风马牛不相及也。"},
+{t:"宫之奇谏假道",a:"左丘明",dy:"春秋·左传",y:-655,g:["论说","政治"],e:"🛡️",diff:2,bg:"linear-gradient(135deg,#4A4A4A,#696969)",q:"辅车相依，唇亡齿寒。",d:"晋国向虞国借道攻打虢国，虞国大臣宫之奇以唇齿相依的道理劝谏虞君，指出所谓神灵保佑不可信，唯有修德才能自保。虞君不听，结果晋灭虢后顺手灭虞。",txt:"晋侯复假道于虞以伐虢。宫之奇谏曰：虢，虞之表也。虢亡，虞必从之。晋不可启，寇不可玩。"},
+{t:"烛之武退秦师",a:"左丘明",dy:"春秋·左传",y:-630,g:["论说","外交"],e:"🕯️",diff:1,bg:"linear-gradient(135deg,#DAA520,#B8860B)",q:"邻之厚，君之薄也。",d:"秦晋联军围攻郑国，老臣烛之武夜缒而出，只身赴秦营。他不说郑国可怜，而分析灭郑对秦不利的利害关系，终使秦军退兵。三寸之舌退百万之师的外交名篇。",txt:"九月甲午，晋侯、秦伯围郑。以其无礼于晋，且贰于楚也。晋军函陵，秦军氾南。佚之狐言于郑伯曰：国危矣，若使烛之武见秦君，师必退。"},
+{t:"蹇叔哭师",a:"左丘明",dy:"春秋·左传",y:-627,g:["记叙","军事"],e:"😭",diff:2,bg:"linear-gradient(135deg,#483D8B,#6A5ACD)",q:"劳师以袭远，非所闻也。师劳力竭，远主备之，无乃不可乎？",d:"秦穆公不顾老臣蹇叔的苦苦劝阻，执意出兵偷袭郑国。蹇叔在军队出发时痛哭，预言必败。果不其然，秦军在崤山遭遇惨败。忠言逆耳的悲壮名篇。",txt:"杞子自郑使告于秦曰：郑人使我掌其北门之管，若潜师以来，国可得也。穆公访诸蹇叔。蹇叔曰：劳师以袭远，非所闻也。"},
+{t:"邹忌讽齐王纳谏",a:"刘向",dy:"战国·战国策",y:-370,g:["论说","政治"],e:"🪞",diff:1,bg:"linear-gradient(135deg,#BC8F8F,#CD853F)",q:"吾妻之美我者，私我也；妾之美我者，畏我也；客之美我者，欲有求于我也。",d:"齐相邹忌照镜子，发现身边人都因私心而说他比徐公美。他将这个道理推及治国，劝说齐王广开言路，悬赏纳谏。齐国因此大治，燕赵韩魏皆来朝见。",txt:"邹忌修八尺有余，而形貌昳丽。朝服衣冠，窥镜，谓其妻曰：我孰与城北徐公美？其妻曰：君美甚，徐公何能及君也？"},
+{t:"触龙言太后",a:"刘向",dy:"战国·战国策",y:-265,g:["论说","政治"],e:"👵",diff:2,bg:"linear-gradient(135deg,#9370DB,#BA55D3)",q:"父母之爱子，则为之计深远。",d:"赵太后溺爱幼子长安君，不肯让他到齐国做人质。老臣触龙巧妙地从关心太后饮食起居入手，再以父母应为子女做长远打算的道理打动太后。温柔敦厚的说服艺术典范。",txt:"赵太后新用事，秦急攻之。赵氏求救于齐。齐曰：必以长安君为质，兵乃出。太后不肯，大臣强谏。"},
+{t:"唐雎不辱使命",a:"刘向",dy:"战国·战国策",y:-225,g:["记叙","外交"],e:"🗡️",diff:1,bg:"linear-gradient(135deg,#DC143C,#B22222)",q:"若士必怒，伏尸二人，流血五步，天下缟素，今日是也。",d:"秦王以五百里之地诱换安陵，安陵君派唐雎出使秦国。面对秦王的威逼，唐雎以布衣之怒对抗天子之怒，拔剑而起，终使秦王屈服。小国使者不辱使命的壮烈篇章。",txt:"秦王使人谓安陵君曰：寡人欲以五百里之地易安陵，安陵君其许寡人。安陵君曰：大王加惠，以大易小，甚善。"},
+{t:"李斯谏逐客书",a:"李斯",dy:"秦",y:-237,g:["论说","政治"],e:"📝",diff:2,bg:"linear-gradient(135deg,#2C3E50,#34495E)",q:"泰山不让土壤，故能成其大；河海不择细流，故能就其深。",d:"秦王下令驱逐所有外国客卿，楚国人李斯上书力谏。他列举秦国历代用外人而强大的事实，以排山倒海的气势和无可辩驳的论证说服秦王收回成命。秦代政论文的巅峰之作。",txt:"臣闻吏议逐客，窃以为过矣。昔穆公求士，西取由余于戎，东得百里奚于宛，迎蹇叔于宋，来邳豹、公孙支于晋。"},
+{t:"过秦论(上)",a:"贾谊",dy:"西汉",y:-178,g:["论说","史论"],e:"🏰",diff:3,bg:"linear-gradient(135deg,#1a1a2e,#16213e)",q:"仁义不施而攻守之势异也。",d:"贾谊以磅礴的气势回顾秦从孝公到二世由盛而衰的全过程，指出秦之灭亡在于不施仁义。文章气势恢宏，对比强烈，是千古政论之祖，被鲁迅誉为西汉鸿文。",txt:"秦孝公据崤函之固，拥雍州之地，君臣固守以窥周室，有席卷天下、包举宇内、囊括四海之意，并吞八荒之心。"},
+{t:"陈涉世家(节选)",a:"司马迁",dy:"西汉",y:-91,g:["记叙","史传"],e:"🔥",diff:1,bg:"linear-gradient(135deg,#FF4500,#FF6347)",q:"王侯将相宁有种乎！",d:"陈胜吴广在大泽乡揭竿而起，喊出中国历史上最震撼的口号之一。司马迁以饱含同情的笔触，记录了这场中国历史上第一次农民起义。慷慨悲壮，荡气回肠。",txt:"二世元年七月，发闾左适戍渔阳九百人，屯大泽乡。陈胜、吴广皆次当行，为屯长。会天大雨，道不通，度已失期。"},
+{t:"报任安书(节选)",a:"司马迁",dy:"西汉",y:-91,g:["书信","抒情"],e:"✊",diff:3,bg:"linear-gradient(135deg,#800000,#A52A2A)",q:"人固有一死，或重于泰山，或轻于鸿毛，用之所趋异也。",d:"司马迁因替李陵辩护而遭受宫刑，在给好友任安的信中倾诉了忍辱著书的心路历程。他列举周文王、孔子、屈原等先贤在困境中著书立说的事迹，表明自己以完成史记为使命的坚定决心。",txt:"太史公牛马走司马迁再拜言。少卿足下：曩者辱赐书，教以慎于接物，推贤进士为务。意气勤勤恳恳，若望仆不相师用，而流俗人之言。"}
+];
+
+B=B.concat([
+{t:"出师表",a:"诸葛亮",dy:"蜀汉",y:227,g:["疏表","抒情"],e:"🎯",diff:1,bg:"linear-gradient(135deg,#2E8B57,#3CB371)",q:"鞠躬尽瘁，死而后已。",d:"诸葛亮在北伐前上书后主刘禅，以恳切的语气劝勉后主亲贤远佞、修明政治。全文情真意切，忠肝义胆跃然纸上。千载之下读之，犹令人泪下。中学课本必背名篇。",txt:"先帝创业未半而中道崩殂。今天下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。"},
+{t:"陈情表",a:"李密",dy:"西晋",y:267,g:["疏表","抒情"],e:"💧",diff:1,bg:"linear-gradient(135deg,#4682B4,#5F9EA0)",q:"臣无祖母，无以至今日；祖母无臣，无以终余年。母孙二人，更相为命。",d:"晋武帝征召李密入朝为官，李密以祖母年迈无人照料为由婉拒。全文以孝情打动君王，文字质朴感人，情真意切。据说晋武帝读后深受感动，特准其请求。",txt:"臣密言：臣以险衅，夙遭闵凶。生孩六月，慈父见背；行年四岁，舅夺母志。祖母刘愍臣孤弱，躬亲抚养。"},
+{t:"兰亭集序",a:"王羲之",dy:"东晋",y:353,g:["序","抒情"],e:"🎋",diff:1,bg:"linear-gradient(135deg,#228B22,#32CD32)",q:"固知一死生为虚诞，齐彭殇为妄作。后之视今，亦犹今之视昔，悲夫！",d:"永和九年暮春之初，王羲之与友人聚会兰亭，曲水流觞。文章由乐而悲，从聚会的欢畅转到对生命无常的感慨，被誉为天下第一行书的文字原本。书法与文学的双重巅峰。",txt:"永和九年，岁在癸丑，暮春之初，会于会稽山阴之兰亭，修禊事也。群贤毕至，少长咸集。此地有崇山峻岭，茂林修竹。"},
+{t:"归去来兮辞",a:"陶渊明",dy:"东晋",y:405,g:["辞赋","抒情"],e:"🏡",diff:1,bg:"linear-gradient(135deg,#6B8E23,#808000)",q:"归去来兮，田园将芜胡不归！既自以心为形役，奚惆怅而独悲？",d:"陶渊明辞去彭泽县令，回归田园。文章从辞官的决然写起，到归家途中的轻快，再到田园生活的悠然自得。通篇洋溢着脱离官场后自由自在的欣喜，是中国隐逸文学的圣经。",txt:"归去来兮，田园将芜胡不归！既自以心为形役，奚惆怅而独悲？悟已往之不谏，知来者之可追。实迷途其未远，觉今是而昨非。"},
+{t:"桃花源记",a:"陶渊明",dy:"东晋",y:421,g:["记叙","寓言"],e:"🌸",diff:1,bg:"linear-gradient(135deg,#FF69B4,#FF1493)",q:"忽逢桃花林，夹岸数百步，中无杂树，芳草鲜美，落英缤纷。",d:"渔人沿溪而行，穿过桃花林发现一个与世隔绝的村庄，那里人人安乐、不知魏晋。这是中国人心中永恒的乌托邦。全文仅三百余字，却创造了一个影响千年的理想世界。",txt:"晋太元中，武陵人捕鱼为业。缘溪行，忘路之远近。忽逢桃花林，夹岸数百步，中无杂树，芳草鲜美，落英缤纷。"},
+{t:"五柳先生传",a:"陶渊明",dy:"东晋",y:420,g:["传","自况"],e:"🌿",diff:1,bg:"linear-gradient(135deg,#3CB371,#2E8B57)",q:"不戚戚于贫贱，不汲汲于富贵。极陈皇甫谧之言，其言兹若人之俦乎？",d:"陶渊明以第三人称描写一位不知何许人的五柳先生，好读书不求甚解，性嗜酒，家贫常不余。其实是作者自画像，以诙谐淡泊的笔调写出不慕荣利的人生态度。",txt:"先生不知何许人也，亦不详其姓字。宅边有五柳树，因以为号焉。闲静少言，不慕荣利。好读书，不求甚解。"},
+{t:"谏太宗十思疏",a:"魏征",dy:"唐",y:637,g:["疏表","政治"],e:"⚖️",diff:2,bg:"linear-gradient(135deg,#4169E1,#6495ED)",q:"思国之安者，必积其德义。",d:"唐太宗盛世之中，名相魏征上疏告诫皇帝要居安思危，提出十项必须深思的问题。全文以水可以载舟也可以覆舟为喻，告诫帝王要戒奢以俭、虚心纳谏。贞观之治的理论基石。",txt:"臣闻求木之长者，必固其根本；欲流之远者，必浚其泉源；思国之安者，必积其德义。源不深而望流之远，根不固而求木之长，德不厚而思国之治，臣虽下愚，知其不可。"},
+{t:"滕王阁序",a:"王勃",dy:"唐",y:675,g:["序","骈文"],e:"🏛️",diff:3,bg:"linear-gradient(135deg,#4B0082,#8A2BE2)",q:"落霞与孤鹜齐飞，秋水共长天一色。",d:"王勃十四岁参加滕王阁宴会，即兴挥毫写下这篇千古名序。全文骈偶精工、文采华美，从阁的壮丽写到人的感慨，由宇宙无穷而叹人生短暂。天才少年的绝唱，被誉为天下第一骈文。",txt:"豫章故郡，洪都新府。星分翼轸，地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。物华天宝，龙光射牛斗之墟；人杰地灵，徐孺下陈蕃之榻。"},
+{t:"春夜宴从弟桃花园序",a:"李白",dy:"唐",y:740,g:["序","抒情"],e:"🌙",diff:1,bg:"linear-gradient(135deg,#FF8C00,#FFA500)",q:"夫天地者，万物之逆旅也；光阴者，百代之过客也。而浮生若梦，为欢几何？",d:"李白在桃花园中宴请堂弟们，感叹天地是旅店、光阴是过客，人生如梦应当及时行乐。全文仅百余字，却气象万千，豪迈中带飘逸，展现了诗仙的散文功力。",txt:"夫天地者，万物之逆旅也；光阴者，百代之过客也。而浮生若梦，为欢几何？古人秉烛夜游，良有以也。"}
+]);
+
+B=B.concat([
+{t:"陋室铭",a:"刘禹锡",dy:"唐",y:824,g:["铭","抒情"],e:"🏠",diff:1,bg:"linear-gradient(135deg,#708090,#778899)",q:"山不在高，有仙则名；水不在深，有龙则灵。",d:"刘禹锡被贬和州，知县故意刁难让他住在简陋的小屋。他愤而写下这篇铭文：房子虽陋，但有德者居之则不陋。全文仅八十一字，字字珠玑，是中国最短的散文名篇之一。",txt:"山不在高，有仙则名；水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。"},
+{t:"马说",a:"韩愈",dy:"唐",y:795,g:["论说","寓言"],e:"🐎",diff:1,bg:"linear-gradient(135deg,#8B6914,#B8860B)",q:"世有伯乐，然后有千里马。千里马常有，而伯乐不常有。",d:"韩愈以千里马比喻人才，以食马者比喻当权者。千里马吃不饱跑不动，却被怪罪没有才能。文章短小精悍，字字辛辣，写尽了怀才不遇者的愤懑与无奈。",txt:"世有伯乐，然后有千里马。千里马常有，而伯乐不常有。故虽有名马，祗辱于奴隶人之手，骈死于槽枥之间，不以千里称也。"},
+{t:"师说",a:"韩愈",dy:"唐",y:802,g:["论说","教育"],e:"📚",diff:1,bg:"linear-gradient(135deg,#8B4513,#D2691E)",q:"师者，所以传道受业解惑也。闻道有先后，术业有专攻。",d:"韩愈针对当时士大夫耻于从师的风气，写了这篇振聋发聩的文章。他提出道之所存师之所存的理念，打破了年龄、地位的限制。唐宋古文运动的宣言书。",txt:"古之学者必有师。师者，所以传道受业解惑也。人非生而知之者，孰能无惑？惑而不从师，其为惑也终不解矣。"},
+{t:"进学解",a:"韩愈",dy:"唐",y:812,g:["论说","抒怀"],e:"📖",diff:3,bg:"linear-gradient(135deg,#5D3A1A,#8B5E3C)",q:"业精于勤，荒于嬉；行成于思，毁于随。",d:"韩愈以国子监博士的身份设问答疑，借学生之口诉说自己的不幸遭遇，又以自己的回答阐述勤学苦思的道理。文中大量运用对偶排比，气势雄浑，是韩愈古文的代表作。",txt:"国子先生晨入太学，招诸生立馆下，诲之曰：业精于勤，荒于嬉；行成于思，毁于随。方今圣贤相逢，治具毕张。"},
+{t:"送董邵南游河北序",a:"韩愈",dy:"唐",y:810,g:["序","赠别"],e:"🛤️",diff:2,bg:"linear-gradient(135deg,#696969,#808080)",q:"燕赵古称多感慨悲歌之士。董生举进士，连不得志于有司。",d:"韩愈送别好友董邵南赴河北，通篇只说燕赵多慷慨之士，劝他到那里去碰碰运气。但言外之意是暗示朝廷用人不当，致使人才外流。含蓄婉转，言有尽而意无穷。",txt:"燕赵古称多感慨悲歌之士。董生举进士，连不得志于有司，怀抱利器，郁郁适兹土。吾知其必有合也。董生勉乎哉！"},
+{t:"捕蛇者说",a:"柳宗元",dy:"唐",y:805,g:["论说","寓言"],e:"🐍",diff:2,bg:"linear-gradient(135deg,#2F4F4F,#556B2F)",q:"孰知赋敛之毒有甚是蛇者乎！",d:"柳宗元记录了一个以捕蛇为生的蒋姓农民的自述。捕蛇虽然危险，祖父和父亲都死于蛇毒，但比起沉重的赋税，捕蛇反而算好日子了。全文以毒蛇衬托赋税之毒，力透纸背。",txt:"永州之野产异蛇，黑质而白章，触草木尽死，以啮人，无御之者。然得而腊之以为饵，可以已大风、挛踠、瘘疠，去死肌，杀三虫。"},
+{t:"种树郭橐驼传",a:"柳宗元",dy:"唐",y:805,g:["传","寓言"],e:"🌳",diff:1,bg:"linear-gradient(135deg,#228B22,#006400)",q:"能顺木之天，以致其性焉尔。凡植木之性，其本欲舒，其培欲平，其土欲故，其筑欲密。",d:"柳宗元写了一个善于种树的驼背老人，他的秘诀是顺应树木天性，不过度干预。以此比喻治民之道：不要过度管理扰民。以小见大，深入浅出，是中国最早的系统管理学寓言。",txt:"郭橐驼，不知始何名。病偻，隆然伏行，有类橐驼者，故乡人号之曰驼。驼闻之曰：甚善，名我固当。因舍其名，亦自谓橐驼云。"},
+{t:"小石潭记",a:"柳宗元",dy:"唐",y:809,g:["记","游记"],e:"💎",diff:1,bg:"linear-gradient(135deg,#00CED1,#20B2AA)",q:"潭中鱼可百许头，皆若空游无所依。日光下澈，影布石上，佁然不动。",d:"柳宗元被贬永州时发现了一处幽美的小石潭。文章用极精练的笔触写潭水之清、游鱼之乐、岸势之犬牙差互，最后以凄神寒骨悄怆幽邃收尾。永州八记中最著名的一篇。",txt:"从小丘西行百二十步，隔篁竹，闻水声，如鸣珮环，心乐之。伐竹取道，下见小潭，水尤清冽。全石以为底，近岸卷石底以出。"},
+{t:"岳阳楼记",a:"范仲淹",dy:"北宋",y:1046,g:["记","抒情"],e:"🌅",diff:1,bg:"linear-gradient(135deg,#FF8C00,#FF6347)",q:"先天下之忧而忧，后天下之乐而乐。",d:"范仲淹应好友滕子京之请写下的千古名篇。文章从岳阳楼的大观写到迁客骚人的悲喜，最后以先忧后乐的崇高境界升华全文。不以物喜不以己悲的人生哲学，影响了无数后来者。",txt:"庆历四年春，滕子京谪守巴陵郡。越明年，政通人和，百废具兴。乃重修岳阳楼，增其旧制，刻唐贤今人诗赋于其上。"},
+{t:"醉翁亭记",a:"欧阳修",dy:"北宋",y:1046,g:["记","游记"],e:"🍶",diff:1,bg:"linear-gradient(135deg,#6B8E23,#556B2F)",q:"醉翁之意不在酒，在乎山水之间也。山水之乐，得之心而寓之酒也。",d:"欧阳修被贬滁州，在琅琊山建醉翁亭。文章用了二十一个也字，如连珠般贯穿全文，写尽山水之乐、宴饮之欢、与民同乐的悠然。中国散文音乐美的极致之作。",txt:"环滁皆山也。其西南诸峰，林壑尤美。望之蔚然而深秀者，琅琊也。山行六七里，渐闻水声潺潺而泻出于两峰之间者，酿泉也。"},
+{t:"秋声赋",a:"欧阳修",dy:"北宋",y:1056,g:["赋","抒怀"],e:"🍂",diff:2,bg:"linear-gradient(135deg,#B8860B,#DAA520)",q:"百忧感其心，万事劳其形。而况思其力之所不及，忧其智之所不能。",d:"欧阳修夜里读书，听到秋声悲切。他从秋天的肃杀联想到人生的衰老：人受百忧万事之累，比草木更容易枯萎。以有声写无声，以有形写无形，是对人生无常的深沉感叹。",txt:"欧阳子方夜读书，闻有声自西南来者，悚然而听之，曰：异哉！初淅沥以萧飒，忽奔腾而砰湃，如波涛夜惊，风雨骤至。"},
+{t:"六国论",a:"苏洵",dy:"北宋",y:1056,g:["论说","史论"],e:"⚔️",diff:2,bg:"linear-gradient(135deg,#8B0000,#B22222)",q:"六国破灭，非兵不利、战不善，弊在赂秦。",d:"苏洵分析六国灭亡的原因，一语破的：弊在赂秦。割地事秦如同抱薪救火，薪不尽火不灭。文章以严密的逻辑、排山倒海的气势论证观点，是古代政论文的教科书。",txt:"六国破灭，非兵不利、战不善，弊在赂秦。赂秦而力亏，破灭之道也。或曰：六国互丧，率赂秦耶？曰：不赂者以赂者丧。"},
+{t:"前赤壁赋",a:"苏轼",dy:"北宋",y:1082,g:["赋","抒怀"],e:"🚣",diff:2,bg:"linear-gradient(135deg,#191970,#4169E1)",q:"且夫天地之间，物各有主。苟非吾之所有，虽一毫而莫取。惟江上之清风，与山间之明月。",d:"苏轼被贬黄州，与友人泛舟赤壁。文章从月夜泛舟的旷达写起，经客人的悲观，最终达到造物者之无尽藏的哲学超越。全文骈散兼行，情景交融，代表了中国古典散文的最高成就。",txt:"壬戌之秋，七月既望，苏子与客泛舟游于赤壁之下。清风徐来，水波不兴。举酒属客，诵明月之诗，歌窈窕之章。"},
+{t:"后赤壁赋",a:"苏轼",dy:"北宋",y:1082,g:["赋","抒怀"],e:"🏔️",diff:2,bg:"linear-gradient(135deg,#2F4F4F,#708090)",q:"山高月小，水落石出。",d:"前赋之后三月，苏轼再次游赤壁。这一次风景不同——山高月小、水落石出，情绪也从旷达转为孤寂。文末写到一只孤鹤掠舟而过，梦中化为道士。意境空灵，如入仙境。",txt:"是岁十月之望，步自雪堂，将归于临皋。二客从予，过黄泥之坂。霜露既降，木叶尽脱。人影在地，仰见明月，顾而乐之，行歌相答。"},
+{t:"留侯论",a:"苏轼",dy:"北宋",y:1061,g:["论说","史论"],e:"🧠",diff:2,bg:"linear-gradient(135deg,#483D8B,#6A5ACD)",q:"古之所谓豪杰之士，必有过人之节。人情有所不能忍者，匹夫见辱，拔剑而起，挺身而斗，此不足为勇也。",d:"苏轼论张良，认为他最大的才能不是奇谋妙计，而是能忍。圯上老人授书的故事，考验的正是张良的忍耐力。天下有大勇者，猝然临之而不惊，无故加之而不怒。",txt:"古之所谓豪杰之士，必有过人之节。人情有所不能忍者，匹夫见辱，拔剑而起，挺身而斗，此不足为勇也。"},
+{t:"游褒禅山记",a:"王安石",dy:"北宋",y:1054,g:["记","论说"],e:"🏔️",diff:2,bg:"linear-gradient(135deg,#4682B4,#5F9EA0)",q:"世之奇伟瑰怪非常之观，常在于险远，而人之所罕至焉。故非有志者不能至也。",d:"王安石游褒禅山，因同行者害怕而未能深入洞穴。他由此感悟：最壮观的景色往往在最艰险的地方，要达到必须有不退缩的意志。以游记为载体阐述志与力的哲学。",txt:"褒禅山亦谓之华山。唐浮图慧褒始舍于其址，而卒葬之，以故其后名之曰褒禅。距其院东五里，所谓华阳洞者，以其乃华山之阳名之也。"},
+{t:"读孟尝君传",a:"王安石",dy:"北宋",y:1060,g:["论说","史论"],e:"📝",diff:2,bg:"linear-gradient(135deg,#8B7355,#A0522D)",q:"孟尝君特鸡鸣狗盗之首耳，岂足以言得士？",d:"王安石翻案孟尝君的故事，认为所谓的门下三千客不过是鸡鸣狗盗之徒，真正的人才一个也没有。否则凭借齐国之力，完全可以制服秦国。全文仅九十字，笔力千钧，被誉为千古第一短论。",txt:"世皆称孟尝君能得士，士以故归之，而卒赖其力以脱于虎豹之秦。嗟乎！孟尝君特鸡鸣狗盗之首耳，岂足以言得士？"}
+]);
+
+B=B.concat([
+{t:"送天台陈庭学序",a:"宋濂",dy:"明",y:1370,g:["序","赠别"],e:"🛣️",diff:2,bg:"linear-gradient(135deg,#556B2F,#6B8E23)",q:"其气充乎其中，而溢乎其貌，动乎其言，而见乎其文，而不自知也。",d:"明初文臣宋濂送别好友陈庭学。文章论及游历与学问的关系：山水之气可以陶冶性情，丰富文章。但更重要的是要有内心修养，否则走过再多路也白搭。明代散文的领军之作。",txt:"西南山水，惟川蜀最奇。然去中州万里，陆有剑阁栈道之险，水有瞿塘滟滪之虞。"},
+{t:"卖柑者言",a:"刘基",dy:"明",y:1360,g:["论说","寓言"],e:"🍊",diff:1,bg:"linear-gradient(135deg,#FF8C00,#FFA500)",q:"金玉其外，败絮其中。",d:"刘基（刘伯温）买了一个外表金黄的柑橘，剖开却发现里面干枯如破絮。卖柑者反问：那些巍冠博带的文武官员，哪一个不是金玉其外败絮其中？短短数百字的讽刺名篇。",txt:"杭有卖果者，善藏柑，涉寒暑不溃。出之烨然，玉质而金色。置于市，贾十倍，人争鬻之。予贸得其一，剖之如有烟扑口鼻。"},
+{t:"项脊轩志",a:"归有光",dy:"明",y:1535,g:["记","抒情"],e:"🏠",diff:1,bg:"linear-gradient(135deg,#DEB887,#D2B48C)",q:"庭有枇杷树，吾妻死之年所手植也，今已亭亭如盖矣。",d:"归有光以一间小小的书斋为线索，串联起祖母、母亲、妻子三代人的深情回忆。文末那句枇杷树的描写，不着一字悲伤，却令人潸然泪下。中国古典散文中写情最深的文字。",txt:"项脊轩，旧南阁子也。室仅方丈，可容一人居。百年老屋，尘泥渗漉，雨泽下注，每移案，顾视无可置者。"},
+{t:"沧浪亭记",a:"归有光",dy:"明",y:1530,g:["记","游记"],e:"🏯",diff:2,bg:"linear-gradient(135deg,#5F9EA0,#4682B4)",q:"古今之变，朝市改易，独此沧浪之水，宛然如故。",d:"归有光寻访沧浪亭，追溯从苏舜钦到如今的变迁。亭台屡毁屡建，唯有沧浪之水亘古不变。文章以小见大，从一处园林的兴废感慨世事无常。",txt:"浮图文瑛，居大云庵，环水之中，为苏子美沧浪亭之地也。亟求余作沧浪亭记，曰：昔子美之记，记亭之胜也，请子记吾所以为亭者。"},
+{t:"寒花葬志",a:"归有光",dy:"明",y:1530,g:["志","抒情"],e:"🌺",diff:1,bg:"linear-gradient(135deg,#DB7093,#FF69B4)",q:"回思是时，奄忽便已十年。吁，可悲也已！",d:"归有光为亡妻的婢女寒花写的一篇小小的墓志。寥寥数笔写她生前的两件小事——削荸荠时的娇态和吃饭时的偷偷一笑。在最日常的细节里藏着最深的思念。",txt:"婢，魏孺人媵也。嘉靖丁酉五月四日死，葬虚丘。事我而不卒，命也夫！婢初媵时，年十岁，垂双鬟，曳深绿布裳。"},
+{t:"登泰山记",a:"姚鼐",dy:"清",y:1774,g:["记","游记"],e:"⛰️",diff:2,bg:"linear-gradient(135deg,#4A4A4A,#696969)",q:"苍山负雪，明烛天南。望晚日照城郭，汶水、徂徕如画，而半山居雾若带然。",d:"桐城派大家姚鼐冬日登泰山的游记。文章以极精炼的文字写泰山日出之壮丽、松柏之奇古、山石之怪特。通篇白描，不施铅华，却在朴素中见出大美。桐城派散文的典范之作。",txt:"泰山之阳，汶水西流；其阴，济水东流。阳谷皆入汶，阴谷皆入济。当其南北分者，古长城也。最高日观峰，在长城南十五里。"},
+{t:"病梅馆记",a:"龚自珍",dy:"清",y:1830,g:["论说","寓言"],e:"🌸",diff:1,bg:"linear-gradient(135deg,#C71585,#DB7093)",q:"梅以曲为美，直则无姿；以欹为美，正则无景；以疏为美，密则无态。",d:"龚自珍借梅花被人为扭曲畸形以求美的现象，痛斥当时社会压抑人才、束缚个性的弊端。他买了三百盆病梅，誓要解放它们。这是中国最早的思想解放宣言之一。",txt:"江宁之龙蟠，苏州之邓尉，杭州之西溪，皆产梅。或曰：梅以曲为美，直则无姿；以欹为美，正则无景；以疏为美，密则无态。"},
+{t:"黄冈竹楼记",a:"王禹偁",dy:"北宋",y:998,g:["记","抒怀"],e:"🎋",diff:2,bg:"linear-gradient(135deg,#2E8B57,#3CB371)",q:"黄冈之地多竹，大者如椽。竹工破之，刳去其节，用代陶瓦。",d:"王禹偁被贬黄州，用竹子建了一座小楼。他在楼中远眺山水、听雨读书、焚香品茶，虽处江湖之远却怡然自得。全文以竹楼的简朴寄托文人的精神追求，与岳阳楼记遥相呼应。",txt:"黄冈之地多竹，大者如椽。竹工破之，刳去其节，用代陶瓦。比屋皆然，以其价廉而工省也。"},
+{t:"黄州快哉亭记",a:"苏辙",dy:"北宋",y:1082,g:["记","抒怀"],e:"🌊",diff:2,bg:"linear-gradient(135deg,#006400,#228B22)",q:"士生于世，使其中不自得，将何往而非病？使其中坦然，不以物伤性，将何适而非快？",d:"苏辙为哥哥苏轼被贬黄州时建的快哉亭作记。文章从亭名快哉写起，引出楚襄王披襟当之的典故，最后归结到心中坦然则无处不快的哲理。行文流畅，气势不凡。",txt:"江出西陵，始得平地，其流奔放肆大。南合沅湘，北合汉沔，其势益张。至于赤壁之下，波流浸灌，与海相若。"},
+{t:"前出师表(后表)",a:"诸葛亮",dy:"蜀汉",y:228,g:["疏表","抒情"],e:"🔥",diff:2,bg:"linear-gradient(135deg,#B22222,#CD5C5C)",q:"鞠躬尽瘁，死而后已。至于成败利钝，非臣之明所能逆睹也。",d:"诸葛亮第二次北伐前的上表。相比前表的恳切劝诫，后表更显悲壮决绝：我知道北伐未必成功，但为了先帝的遗愿，只能鞠躬尽瘁死而后已。忠臣义士的绝唱。",txt:"先帝虑汉贼不两立，王业不偏安，故托臣以讨贼也。以先帝之明，量臣之才，固知臣伐贼，才弱敌强也。"},
+{t:"泷冈阡表",a:"欧阳修",dy:"北宋",y:1070,g:["表","祭文"],e:"🪦",diff:3,bg:"linear-gradient(135deg,#556B2F,#6B8E23)",q:"祭而丰，不如养之薄也。",d:"欧阳修在父亲墓道上刻下的表文。他借母亲之口讲述父亲为官清廉、断案谨慎的品格，以及母亲安贫守节的坚韧。全文不事雕琢，以真情实感打动人心，被誉为千古祭文之冠。",txt:"呜呼！惟我皇考崇公，卜吉于泷冈之六十年，其子修始克表于其阡。非敢缓也，盖有待也。"},
+{t:"送李愿归盘谷序",a:"韩愈",dy:"唐",y:801,g:["序","赠别"],e:"🌄",diff:2,bg:"linear-gradient(135deg,#8B6914,#B8860B)",q:"太行之阳有盘谷。盘谷之间，泉甘而土肥，草木丛茂，居民鲜少。",d:"韩愈送友人李愿隐居盘谷。文章先写隐居之地之美，再借李愿之口讽刺官场的蝇营狗苟，最后以归隐的逍遥作结。苏轼评价此文为唐代第一文。",txt:"太行之阳有盘谷。盘谷之间，泉甘而土肥，草木丛茂，居民鲜少。或曰：谓其环两山之间，故曰盘。或曰：谷也，宅幽而势阻，隐者之所盘旋。"}
+]);
+
+// ===== ENGINE =====
+var activeDynasty='all',activeDiff='all',activeGenre='all',showFavOnly=false;
+
+// Favorites (localStorage)
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem('gw_favs')||'[]')}catch(e){favs=[]}
+function saveFavs(){localStorage.setItem('gw_favs',JSON.stringify(favs));updateFavBadge()}
+function toggleFav(idx){var i=favs.indexOf(idx);if(i>=0)favs.splice(i,1);else favs.push(idx);saveFavs();applyFilters()}
+function updateFavBadge(){var el=document.getElementById('favCount');if(el)el.textContent=favs.length?'('+favs.length+')':''}
+function toggleFavFilter(){showFavOnly=!showFavOnly;document.getElementById('favFilterBtn').classList.toggle('active',showFavOnly);applyFilters()}
+
+// Dark mode
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  var isDark=document.body.classList.contains('dark');
+  localStorage.setItem('gw_dark',isDark?'1':'0');
+  document.getElementById('darkBtn').textContent=isDark?'☀️':'🌙';
+}
+(function(){if(localStorage.getItem('gw_dark')==='1'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️'}})();
+
+// Stats
+function buildStats(){
+  var dynasties={},genres={};
+  B.forEach(function(b){
+    var d=b.dy.replace(/[·].*/,'');
+    dynasties[d]=(dynasties[d]||0)+1;
+    b.g.forEach(function(t){genres[t]=(genres[t]||0)+1});
+  });
+  var h='';
+  h+='<div class="stat"><div class="n">'+B.length+'</div><div class="l">名篇</div></div>';
+  h+='<div class="stat"><div class="n">'+Object.keys(dynasties).length+'</div><div class="l">朝代</div></div>';
+  h+='<div class="stat"><div class="n">'+Object.keys(genres).length+'</div><div class="l">文体类型</div></div>';
+  var minY=B.reduce(function(m,b){var v=Math.abs(b.y);return v<m?v:m},9999);
+  var maxY=B.reduce(function(m,b){return b.y>m?b.y:m},0);
+  var span=maxY+minY;
+  h+='<div class="stat"><div class="n">'+span+'</div><div class="l">年跨度</div></div>';
+  document.getElementById('statsBar').innerHTML=h;
+  document.getElementById('heroSub').textContent='中华散文名篇 · 收录'+B.length+'篇 · 覆盖'+Object.keys(dynasties).length+'个朝代 · 原文赏析与名句鉴赏';
+}
+
+// Filter buttons
+function buildFilters(){
+  var dynasties=['春秋','战国','秦','西汉','东汉','蜀汉','西晋','东晋','南北朝','唐','北宋','南宋','明','清'];
+  var dyns=[];
+  B.forEach(function(b){var d=b.dy.replace(/[·].*/,'');if(dyns.indexOf(d)<0)dyns.push(d)});
+  dyns.sort(function(a,b){
+    var order={春秋:0,战国:1,秦:2,西汉:3,东汉:4,蜀汉:5,西晋:6,东晋:7,南北朝:8,唐:9,北宋:10,南宋:11,明:12,清:13};
+    return (order[a]||99)-(order[b]||99);
+  });
+  var dh='<button class="f-btn active" onclick="setFilter(\'dynasty\',\'all\',this)">全部</button>';
+  dyns.forEach(function(d){dh+='<button class="f-btn" onclick="setFilter(\'dynasty\',\''+d+'\',this)\">'+d+'</button>'});
+  document.getElementById('dynastyFilters').innerHTML=dh;
+
+  var diffs=[{v:'1',l:'🌱 入门'},{v:'2',l:'📚 进阶'},{v:'3',l:'🔬 精研'}];
+  var dfh='<button class="f-btn active" onclick="setFilter(\'diff\',\'all\',this)">全部</button>';
+  diffs.forEach(function(d){dfh+='<button class="f-btn" onclick="setFilter(\'diff\',\''+d.v+'\',this)\">'+d.l+'</button>'});
+  document.getElementById('diffFilters').innerHTML=dfh;
+
+  var genres=[];
+  B.forEach(function(b){b.g.forEach(function(t){if(genres.indexOf(t)<0)genres.push(t)})});
+  genres.sort();
+  var gh='<button class="f-btn active" onclick="setFilter(\'genre\',\'all\',this)">全部</button>';
+  genres.forEach(function(g){gh+='<button class="f-btn" onclick="setFilter(\'genre\',\''+g+'\',this)\">'+g+'</button>'});
+  document.getElementById('genreFilters').innerHTML=gh;
+}
+
+function setFilter(type,val,btn){
+  if(type==='dynasty')activeDynasty=val;
+  else if(type==='diff')activeDiff=val;
+  else activeGenre=val;
+  var row=btn.parentNode;
+  var btns=row.querySelectorAll('.f-btn');
+  btns.forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function getFiltered(){
+  var q=document.getElementById('searchBox').value.toLowerCase();
+  return B.filter(function(b,idx){
+    if(activeDynasty!=='all'&&b.dy.indexOf(activeDynasty)<0)return false;
+    if(activeDiff!=='all'&&String(b.diff)!==activeDiff)return false;
+    if(activeGenre!=='all'&&b.g.indexOf(activeGenre)<0)return false;
+    if(showFavOnly&&favs.indexOf(idx)<0)return false;
+    if(q){
+      var txt=(b.t+b.a+b.dy+b.q+b.d+b.g.join(' ')).toLowerCase();
+      if(txt.indexOf(q)<0)return false;
+    }
+    return true;
+  });
+}
+
+var currentView='grid';
+function setView(v){
+  currentView=v;
+  document.querySelectorAll('.view-btn[data-view]').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-view')===v);
+  });
+  applyFilters();
+}
+
+function applyFilters(){
+  var books=getFiltered();
+  var el=document.getElementById('content');
+  if(books.length===0){
+    el.innerHTML='<div class="no-result"><div class="emoji">📭</div><div>没有找到匹配的篇章</div></div>';
+    return;
+  }
+  if(currentView==='grid')renderGrid(books,el);
+  else if(currentView==='timeline')renderTimeline(books,el);
+  else renderChart(books,el);
+}
+
+function renderGrid(books,el){
+  var h='<div class="grid">';
+  books.forEach(function(b,i){
+    var idx=B.indexOf(b);
+    var isFav=favs.indexOf(idx)>=0;
+    var tags='';
+    b.g.forEach(function(t){tags+='<span class="book-tag">'+t+'</span>'});
+    tags+='<span class="diff-tag diff-'+b.diff+'">'+(['','🌱入门','📚进阶','🔬精研'])[b.diff]+'</span>';
+    h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+idx+')">';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-dynasty">'+b.dy+'</div><button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button></div>';
+    h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function renderTimeline(books,el){
+  var sorted=books.slice().sort(function(a,b){return a.y-b.y});
+  var h='<div class="timeline">';
+  sorted.forEach(function(b,i){
+    var yr=b.y<0?'前'+Math.abs(b.y):b.y;
+    h+='<div class="tl-item" style="animation-delay:'+(i*0.05)+'s">';
+    h+='<div class="tl-year">'+yr+'</div>';
+    h+='<div class="tl-card" onclick="openDetail('+B.indexOf(b)+')">';
+    h+='<div class="t">'+b.e+' '+b.t+'</div>';
+    h+='<div class="a">'+b.a+' · '+b.dy+'</div>';
+    h+='<div class="d">'+b.q+'</div>';
+    h+='<div class="c">'+b.g.join(' · ')+'</div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function renderChart(books,el){
+  var dc={},gc={};
+  books.forEach(function(b){
+    var d=b.dy.replace(/[·].*/,'');
+    dc[d]=(dc[d]||0)+1;
+    b.g.forEach(function(t){gc[t]=(gc[t]||0)+1});
+  });
+  var colors=['#8B4513','#A0522D','#DAA520','#556B2F','#2E8B57','#4682B4','#4169E1','#6A5ACD','#9370DB','#DC143C','#B22222','#FF8C00','#FF6347','#2F4F4F','#708090'];
+  var max=Math.max.apply(null,Object.values(dc));
+  var h='<div class="chart">';
+  h+='<div class="chart-section"><h3>🏯 朝代分布</h3>';
+  Object.entries(dc).sort(function(a,b){return b[1]-a[1]}).forEach(function(e,i){
+    var pct=Math.round(e[1]/max*100);
+    h+='<div class="bar-row"><div class="bar-label">'+e[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[i%colors.length]+'">'+e[1]+'</div></div></div>';
+  });
+  h+='</div>';
+  var gmax=Math.max.apply(null,Object.values(gc));
+  h+='<div class="chart-section"><h3>📝 文体类型</h3>';
+  Object.entries(gc).sort(function(a,b){return b[1]-a[1]}).forEach(function(e,i){
+    var pct=Math.round(e[1]/gmax*100);
+    h+='<div class="bar-row"><div class="bar-label">'+e[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[(i+5)%colors.length]+'">'+e[1]+'</div></div></div>';
+  });
+  h+='</div>';
+  // Difficulty
+  var dfc={1:0,2:0,3:0};
+  books.forEach(function(b){dfc[b.diff]=(dfc[b.diff]||0)+1});
+  var dfmax=Math.max.apply(null,Object.values(dfc));
+  var dfnames={1:'🌱 入门',2:'📚 进阶',3:'🔬 精研'};
+  var dfcolors={1:'#2f9e44',2:'#e8590c',3:'#c2255c'};
+  h+='<div class="chart-section"><h3>📊 难度分布</h3>';
+  [1,2,3].forEach(function(k){
+    var pct=dfmax?Math.round(dfc[k]/dfmax*100):0;
+    h+='<div class="bar-row"><div class="bar-label">'+dfnames[k]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+dfcolors[k]+'">'+(dfc[k]||0)+'</div></div></div>';
+  });
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+
+// Detail modal
+function openDetail(idx){
+  var b=B[idx];
+  var h='';
+  h+='<div class="modal-hero" style="background:'+b.bg+'"><div class="m-emoji">'+b.e+'</div></div>';
+  h+='<div class="modal-body">';
+  h+='<div class="m-title">'+b.t+'</div>';
+  h+='<div class="m-meta">';
+  h+='<span>✍️ '+b.a+'</span>';
+  h+='<span>🏯 '+b.dy+'</span>';
+  if(b.y)h+='<span>📅 '+(b.y<0?'公元前'+Math.abs(b.y)+'年':'公元'+b.y+'年')+'</span>';
+  h+='<span>'+(['','🌱 入门','📚 进阶','🔬 精研'])[b.diff]+'</span>';
+  h+='</div>';
+  h+='<div class="m-quote">"'+b.q+'"</div>';
+  h+='<div class="m-desc">'+b.d+'</div>';
+  // Original text
+  h+='<div class="m-section"><h3>📜 原文节选</h3><div class="classic-text">'+b.txt+'</div></div>';
+  h+='<div class="m-tags">';
+  b.g.forEach(function(t){h+='<span class="m-tag genre">'+t+'</span>'});
+  var isFav=favs.indexOf(idx)>=0;
+  h+='<span class="m-tag" style="background:'+(isFav?'#fff4e6':'#f1f3f5')+';color:'+(isFav?'#8B4513':'#6e6e73')+';cursor:pointer" onclick="toggleFav('+idx+');openDetail('+idx+')">'+(isFav?'⭐ 已收藏':'☆ 收藏')+'</span>';
+  h+='</div>';
+  // Related
+  var related=B.filter(function(ob,i){
+    if(i===idx)return false;
+    var common=0;
+    ob.g.forEach(function(t){if(b.g.indexOf(t)>=0)common++});
+    return common>=1;
+  }).slice(0,4);
+  if(related.length){
+    h+='<div class="m-section"><h3>📖 你可能也喜欢</h3><div class="related-grid">';
+    related.forEach(function(rb){
+      h+='<div class="related-item" onclick="openDetail('+B.indexOf(rb)+')"><div class="ri-t">'+rb.e+' '+rb.t+'</div><div class="ri-a">'+rb.a+' · '+rb.dy+'</div></div>';
+    });
+    h+='</div></div>';
+  }
+  h+='</div>';
+  document.getElementById('modalContent').innerHTML=h;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('modal').classList.remove('show');
+}
+
+// Random pick
+function randomPick(){
+  var books=getFiltered();
+  if(!books.length)return;
+  var btn=document.getElementById('randomBtn');
+  btn.disabled=true;
+  btn.style.transform='scale(0.95)';
+  var count=0,total=12;
+  var interval=setInterval(function(){
+    var rb=books[Math.floor(Math.random()*books.length)];
+    btn.querySelector('span').textContent=rb.e+' '+rb.t;
+    count++;
+    if(count>=total){
+      clearInterval(interval);
+      var pick=books[Math.floor(Math.random()*books.length)];
+      btn.querySelector('span').textContent='读哪篇';
+      btn.disabled=false;
+      btn.style.transform='';
+      openDetail(B.indexOf(pick));
+    }
+  },80);
+}
+
+// Keyboard
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('modal').classList.contains('show')){
+    if(e.key==='Escape')closeModal();
+  }
+});
+
+// Init
+buildStats();
+buildFilters();
+updateFavBadge();
+applyFilters();
+</script>
+
+</body>
+</html>
