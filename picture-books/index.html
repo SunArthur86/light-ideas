@@ -35,6 +35,8 @@ nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--acce
 .search-box{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.88em;background:var(--surface);margin-top:4px;transition:border .2s;outline:none}
 .search-box:focus{border-color:var(--accent)}
 .search-box::placeholder{color:var(--text3)}
+#randomBtn:hover{background:var(--accent);color:#fff;transform:scale(1.04)}
+#randomBtn:active{transform:scale(0.96)}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;max-width:1200px;margin:20px auto;padding:0 20px 60px}
 .book-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .3s;position:relative;animation:fadeInUp .4s ease both}
@@ -167,7 +169,10 @@ nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--acce
     <span class="label">类型</span>
     <div id="genreFilters"></div>
   </div>
-  <input class="search-box" type="text" placeholder="🔍 搜索书名、作者、国家..." id="searchBox" oninput="applyFilters()">
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <input class="search-box" type="text" placeholder="🔍 搜索书名、作者、国家..." id="searchBox" oninput="applyFilters()" style="flex:1;margin-top:0">
+    <button id="randomBtn" onclick="randomPick()" style="white-space:nowrap;padding:0 16px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--warm);color:var(--accent);font-size:.82em;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px">🎲<span>今天读什么</span></button>
+  </div>
 </div>
 
 <div id="content"></div>
@@ -769,6 +774,31 @@ document.addEventListener('touchend',function(e){
   var dx=e.changedTouches[0].clientX-touchStartX;
   if(Math.abs(dx)>50){dx<0?readPage(1):readPage(-1)}
 });
+
+// Random pick with dice animation
+function randomPick(){
+  var books=getFiltered();
+  if(!books.length)return;
+  var btn=document.getElementById('randomBtn');
+  btn.disabled=true;
+  btn.style.transform='scale(0.95)';
+  // Dice animation: rapidly cycle through random books
+  var count=0,total=12;
+  var interval=setInterval(function(){
+    var rb=books[Math.floor(Math.random()*books.length)];
+    btn.querySelector('span').textContent=rb.e+' '+rb.t;
+    count++;
+    if(count>=total){
+      clearInterval(interval);
+      // Final pick
+      var pick=books[Math.floor(Math.random()*books.length)];
+      btn.querySelector('span').textContent='今天读什么';
+      btn.disabled=false;
+      btn.style.transform='';
+      openDetail(B.indexOf(pick));
+    }
+  },80);
+}
 
 // Init
 buildStats();
