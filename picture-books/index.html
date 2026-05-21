@@ -469,6 +469,29 @@ var B=[
 {t:"水墨中国——千里江山",o:"千里江山图绘本",a:"中国美术绘本",co:"🇨🇳中国",y:2018,g:["艺术","传统"],e:"🏔️",ag:"5-10",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"中国美术绘本。以北宋王希孟《千里江山图》为蓝本，用儿童视角展现这幅传世名画。青绿山水中的渔村、桥梁、楼阁，带孩子走进中国绘画的巅峰之作。传统艺术启蒙的绝佳绘本。",q:"千里江山入画卷，少年天才绘河山。",lk:"https://search.bilibili.com/all?keyword=水墨中国——千里江山+绘本"}
 ];
 
+// Stats
+function buildStats(){
+  var c={},r={},g={},co={};
+  B.forEach(function(b){
+    b.g.forEach(function(t){g[t]=(g[t]||0)+1});
+    var cn=b.co.replace(/[^\u4e00-\u9fff]/g,'').replace(/[a-zA-Z]/g,'');
+    c[cn]=(c[cn]||0)+1;
+    var ag=b.ag.replace(/\+.*/,'').split('-');
+    var lo=parseInt(ag[0])||0;
+    r[lo<3?'0-2':lo<5?'3-4':lo<7?'5-6':'7+']=(r[lo<3?'0-2':lo<5?'3-4':lo<7?'5-6':'7+']||0)+1;
+  });
+  var h='';
+  h+='<div class="stat"><div class="n">'+B.length+'</div><div class="l">经典绘本</div></div>';
+  var countries=B.reduce(function(a,b){var n=b.co.replace(/[^\u4e00-\u9fff]/g,'').replace(/[a-zA-Z]/g,'');if(a.indexOf(n)<0)a.push(n);return a},[]);
+  h+='<div class="stat"><div class="n">'+countries.length+'</div><div class="l">国家地区</div></div>';
+  var genres=Object.keys(g).length;
+  h+='<div class="stat"><div class="n">'+genres+'</div><div class="l">主题类型</div></div>';
+  var years=B.filter(function(b){return b.y>0});
+  var span=years.length?Math.max.apply(null,years.map(function(b){return b.y}))-Math.min.apply(null,years.map(function(b){return b.y})):0;
+  h+='<div class="stat"><div class="n">'+span+'</div><div class="l">年跨度</div></div>';
+  document.getElementById('statsBar').innerHTML=h;
+}
+
 // Filter buttons
 var activeAge='all',activeRegion='all',activeGenre='all',activeSource='all',showFavOnly=false;
 
