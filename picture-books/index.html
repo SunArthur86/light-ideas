@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>世界绘本馆 · World Picture Books</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#faf9f7;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#e8590c;--accent2:#f76707;--warm:#fff4e6;--border:#e5e5ea;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:16px;--radius-sm:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-tap-highlight-color:transparent;min-height:100vh}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,249,247,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px}
+nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
+nav .title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1}
+nav .view-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text2);transition:all .2s}
+nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.hero{text-align:center;padding:72px 20px 32px;max-width:800px;margin:0 auto;animation:heroIn .6s ease}
+.hero .emoji{font-size:3.6em;margin-bottom:8px;display:inline-block;animation:float 3s ease-in-out infinite}
+.hero h1{font-size:2.2em;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,#e8590c 0%,#f76707 40%,#ffd43b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-size:.92em;color:var(--text2);margin-top:6px}
+
+.stats{display:flex;gap:10px;max-width:800px;margin:0 auto;padding:0 20px;flex-wrap:wrap}
+.stat{flex:1;min-width:80px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;transition:transform .2s}
+.stat:hover{transform:translateY(-2px)}
+.stat .n{font-size:1.4em;font-weight:700;color:var(--accent)}
+.stat .l{font-size:.65em;color:var(--text2);margin-top:2px}
+
+.filters{max-width:800px;margin:16px auto 0;padding:0 20px}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.filter-row .label{font-size:.7em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:6px 0;min-width:40px}
+.f-btn{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--surface);font-size:.75em;cursor:pointer;transition:all .2s;color:var(--text2);white-space:nowrap}
+.f-btn:hover{border-color:var(--accent)}
+.f-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search-box{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.88em;background:var(--surface);margin-top:4px;transition:border .2s;outline:none}
+.search-box:focus{border-color:var(--accent)}
+.search-box::placeholder{color:var(--text3)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;max-width:1200px;margin:20px auto;padding:0 20px 60px}
+.book-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .3s;position:relative;animation:fadeInUp .4s ease both}
+.book-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.book-cover{height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.book-cover .cover-emoji{font-size:4em;z-index:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+.book-info{padding:14px}
+.book-info .title{font-size:.92em;font-weight:600;line-height:1.3;margin-bottom:3px}
+.book-info .author{font-size:.75em;color:var(--text2);margin-bottom:6px}
+.book-tags{display:flex;gap:4px;flex-wrap:wrap}
+.book-tag{font-size:.6em;padding:2px 7px;border-radius:10px;background:var(--warm);color:var(--accent);font-weight:500}
+.book-age{font-size:.6em;padding:2px 7px;border-radius:10px;background:#e7f5ff;color:#1971c2;font-weight:500}
+.book-country{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.9);border-radius:12px;padding:2px 8px;font-size:.65em;font-weight:600;backdrop-filter:blur(4px)}
+
+.timeline{max-width:800px;margin:20px auto;padding:0 20px 60px;position:relative}
+.timeline::before{content:'';position:absolute;left:30px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2),#ffd43b)}
+.tl-item{display:flex;gap:16px;margin-bottom:20px;animation:fadeInUp .4s ease both}
+.tl-year{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:700;flex-shrink:0;z-index:1;box-shadow:0 2px 8px rgba(232,89,12,.3)}
+.tl-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .2s}
+.tl-card:hover{box-shadow:var(--shadow);transform:translateX(4px)}
+.tl-card .t{font-weight:600;font-size:.9em}
+.tl-card .a{font-size:.75em;color:var(--text2)}
+.tl-card .d{font-size:.72em;color:var(--text3);margin-top:4px;line-height:1.4}
+.tl-card .c{font-size:.65em;color:var(--accent);font-weight:500}
+
+.chart{max-width:900px;margin:20px auto;padding:0 20px 60px}
+.chart-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.chart-section h3{font-size:.8em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;text-align:center}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-label{width:80px;font-size:.72em;text-align:right;color:var(--text2);flex-shrink:0}
+.bar-track{flex:1;height:24px;background:#f1f3f5;border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-left:8px;font-size:.65em;color:#fff;font-weight:600;min-width:24px}
+.bar-count{font-size:.72em;color:var(--text2);width:28px;text-align:left}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;inset:8px;z-index:201;background:var(--surface);border-radius:20px;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal.show{transform:translateY(0)}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 16px 0;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.06);border:none;font-size:18px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(0,0,0,.12)}
+.modal-hero{height:280px;display:flex;align-items:center;justify-content:center;position:relative;margin:-52px 0 0}
+.modal-hero .m-emoji{font-size:6em;z-index:1;filter:drop-shadow(0 8px 16px rgba(0,0,0,.2))}
+.modal-body{padding:0 24px 40px;max-width:640px;margin:0 auto}
+.modal-body .m-title{font-size:1.6em;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.modal-body .m-orig{font-size:.85em;color:var(--text3);font-style:italic;margin-bottom:12px}
+.modal-body .m-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:.82em;color:var(--text2)}
+.modal-body .m-meta span{display:flex;align-items:center;gap:4px}
+.modal-body .m-quote{font-size:1.1em;font-weight:500;line-height:1.6;padding:16px 20px;background:var(--warm);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;margin-bottom:16px;font-style:italic}
+.modal-body .m-desc{font-size:.9em;line-height:1.7;color:var(--text2);margin-bottom:16px}
+.modal-body .m-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.m-tag{padding:4px 12px;border-radius:16px;font-size:.72em;font-weight:500}
+.m-tag.genre{background:#e7f5ff;color:#1971c2}
+.m-tag.art{background:#fff0f6;color:#c2255c}
+.m-tag.age{background:#ebfbee;color:#2f9e44}
+.modal-body .m-section{margin-top:20px}
+.modal-body .m-section h3{font-size:.78em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.related-item{padding:10px;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;font-size:.82em}
+.related-item:hover{background:var(--warm)}
+.related-item .ri-t{font-weight:600}
+.related-item .ri-a{font-size:.8em;color:var(--text2)}
+
+.reading-mode{display:none;position:fixed;inset:0;z-index:300;background:#fff;overflow-y:auto}
+.reading-mode.show{display:block;animation:fadeIn .3s ease}
+.reading-close{position:fixed;top:16px;right:16px;z-index:301;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.08);border:none;font-size:20px;cursor:pointer;transition:all .2s}
+.reading-close:hover{background:rgba(0,0,0,.15)}
+.rm-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
+.rm-emoji{font-size:8em;margin-bottom:24px;animation:float 4s ease-in-out infinite}
+.rm-text{max-width:500px;font-size:1.3em;font-weight:500;line-height:1.8;color:var(--text)}
+.rm-text .highlight{color:var(--accent);font-weight:700}
+.rm-page-num{position:absolute;bottom:24px;font-size:.75em;color:var(--text3)}
+.rm-nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:301}
+.rm-nav button{width:48px;height:48px;border-radius:50%;background:var(--surface);border:1px solid var(--border);font-size:18px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .2s}
+.rm-nav button:hover{transform:scale(1.1);box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.rm-nav button:disabled{opacity:.3;cursor:default;transform:none}
+
+.no-result{text-align:center;padding:60px 20px;color:var(--text3)}
+.no-result .emoji{font-size:3em;margin-bottom:12px}
+
+.footer{text-align:center;padding:40px 20px;color:var(--text3);font-size:.78em}
+
+@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.6em}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .book-cover{height:160px}
+  .modal-hero{height:200px}
+  .modal-body .m-title{font-size:1.3em}
+  .stats{gap:6px}
+  .stat{padding:10px 6px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="back">← 首页</a>
+  <span class="title">📚 世界绘本馆</span>
+  <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
+  <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
+  <button class="view-btn" data-view="chart" onclick="setView('chart')">统计</button>
+</nav>
+
+<div class="hero">
+  <div class="emoji">📖</div>
+  <h1>世界绘本馆</h1>
+  <div class="sub" id="heroSub">收录全球经典绘本 · 用故事点亮童年</div>
+</div>
+
+<div class="stats" id="statsBar"></div>
+
+<div class="filters">
+  <div class="filter-row">
+    <span class="label">年龄</span>
+    <div id="ageFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="label">地区</span>
+    <div id="regionFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="label">类型</span>
+    <div id="genreFilters"></div>
+  </div>
+  <input class="search-box" type="text" placeholder="🔍 搜索书名、作者、国家..." id="searchBox" oninput="applyFilters()">
+</div>
+
+<div id="content"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+<div class="modal" id="modal">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div id="modalContent"></div>
+</div>
+
+<div class="reading-mode" id="readingMode">
+  <button class="reading-close" onclick="closeReading()">✕</button>
+  <div id="readingContent"></div>
+  <div class="rm-nav">
+    <button onclick="readPage(-1)" id="rmPrev">◀</button>
+    <button onclick="toggleAutoPlay()" id="rmAuto">⏸</button>
+    <button onclick="readPage(1)" id="rmNext">▶</button>
+  </div>
+</div>
+
+<div class="footer">世界绘本馆 · 收录全球经典绘本 · 用故事点亮童年 ✨</div>
+
+<script>
+// ===== DATA =====
+
+var B=[
+{t:"好饿的毛毛虫",o:"The Very Hungry Caterpillar",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1969,g:["认知","经典"],e:"🐛",ag:"2-5",bg:"linear-gradient(135deg,#51cf66,#20c997)",d:"一只毛毛虫吃穿各种食物，最终变成美丽蝴蝶的经典之作。独特的镂空设计让每一页都充满惊喜。",q:"他不再是一条饥饿的小毛毛虫了，他是一条又胖又大的毛毛虫。"},
+{t:"猜猜我有多爱你",o:"Guess How Much I Love You",a:"山姆·麦克布雷尼",co:"🇬🇧英国",y:1994,g:["亲情","经典"],e:"🐰",ag:"2-6",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"大兔子和小兔子用各种方式比较爱的深度，温馨感人。全球销量超过4000万册。",q:"我爱你一直到月亮那里，再从月亮上回到这里来。"},
+{t:"逃家小兔",o:"The Runaway Bunny",a:"玛格丽特·怀兹·布朗",co:"🇺🇸美国",y:1942,g:["亲情","经典"],e:"🐇",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小兔子说要离家出走，妈妈说无论它变成什么都会追随。永恒的母爱故事。",q:"如果你变成小鸟飞走，我就变成树，让你飞回家。"},
+{t:"爱心树",o:"The Giving Tree",a:"谢尔·希尔弗斯坦",co:"🇺🇸美国",y:1964,g:["哲学","经典"],e:"🌳",ag:"4+",bg:"linear-gradient(135deg,#69db7c,#2b8a3e)",d:"一棵树用尽一生给予男孩所需的一切——关于无条件的爱与奉献的寓言。",q:"树很快乐。"},
+{t:"小蓝和小黄",o:"Little Blue and Little Yellow",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1959,g:["友谊","艺术"],e:"🔵",ag:"2-5",bg:"linear-gradient(135deg,#74c0fc,#ffd43b)",d:"蓝色和黄色的色块拥抱后变成绿色——极简的视觉叙事，讲述友谊与身份认同。",q:"他们紧紧抱在一起，结果变成了绿色！"},
+{t:"大卫不可以",o:"No, David!",a:"大卫·香农",co:"🇺🇸美国",y:1998,g:["幽默","日常"],e:"👦",ag:"3-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"调皮的大卫总是做各种被禁止的事，但妈妈依然爱他。每个孩子的写照。",q:"大卫，不可以！但是……我爱你，大卫。"},
+{t:"我在妈妈肚子里的时候",o:"Before You Were Born",a:"珍妮弗·戴维斯",co:"🇺🇸美国",y:2006,g:["生命","科普"],e:"🤰",ag:"3-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"用温暖的水彩画描绘宝宝在妈妈肚子里的九个月旅程。",q:"在你来到这个世界之前，你已经是我最期待的事。"},
+{t:"狮子和老鼠",o:"The Lion & the Mouse",a:"杰瑞·平克尼",co:"🇺🇸美国",y:2009,g:["寓言","无字"],e:"🦁",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#e8590c)",d:"无字绘本经典——弱小的老鼠报答强大狮子的救命之恩。凯迪克金奖作品。",q:"（无字绘本，用图画讲述善意与回报的故事）"},
+{t:"小房子",o:"The Little House",a:"维吉尼亚·李·伯顿",co:"🇺🇸美国",y:1942,g:["自然","经典"],e:"🏠",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"一座小房子看着乡村变成城市，又重回田园。关于时光流逝与自然之美。",q:"她再也看不到星星了，因为城市的灯光太亮了。"},
+{t:"彼得兔的故事",o:"The Tale of Peter Rabbit",a:"毕翠克丝·波特",co:"🇬🇧英国",y:1902,g:["冒险","经典"],e:"🐰",ag:"3-6",bg:"linear-gradient(135deg,#a9e34b,#5c940d)",d:"淘气的彼得兔溜进麦格雷戈先生的菜园——世界上最早的绘本之一。",q:"彼得兔的爸爸被麦格雷戈太太做成了馅饼。"},
+{t:"野兽国",o:"Where the Wild Things Are",a:"莫里斯·桑达克",co:"🇺🇸美国",y:1963,g:["想象","经典"],e:"👹",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#9c36b5)",d:"调皮的马克斯被罚回房间后，在想象中远航到野兽的国度，成为野兽之王。",q:"我要吃掉你！野兽们咆哮着。"},
+{t:"爱心小熊",o:"Corduroy",a:"唐·弗里曼",co:"🇺🇸美国",y:1968,g:["温馨","经典"],e:"🧸",ag:"2-6",bg:"linear-gradient(135deg,#66d9e8,#1098ad)",d:"玩具店里的灯芯绒小熊等着有人带他回家，一个小女孩给了他想要的一切。",q:"我要这个名字！丽莎说。},
+{t:"拍拍小兔子",o:"Pat the Bunny",a:"多萝西·昆哈特",co:"🇺🇸美国",y:1940,g:["触摸","互动"],e:"✋",ag:"0-3",bg:"linear-gradient(135deg,#ffc9c9,#f783ac)",d:"世界上第一本互动触摸绘本。通过触摸、翻页、闻花香来探索。",q:"你可以拍拍小兔子。"},
+{t:"晚安月亮",o:"Goodnight Moon",a:"玛格丽特·怀兹·布朗",co:"🇺🇸美国",y:1947,g:["睡前","经典"],e:"🌙",ag:"0-4",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"绿色大房间里，小兔子向每样东西道晚安。最经典的睡前故事。",q:"晚安月亮。晚安星星。晚安空气。"},
+{t:"绿 eggs 和 ham",o:"Green Eggs and Ham",a:"苏斯博士",co:"🇺🇸美国",y:1960,g:["幽默","认知"],e:"🍳",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#2f9e44)",d:"山姆用尽一切办法让人尝试绿鸡蛋和火腿。苏斯博士最畅销的绘本。",q:"你不想在雨中试试吗？不想在火车上试试吗？"},
+{t:"雪人",o:"The Snowman",a:"雷蒙德·布里格斯",co:"🇬🇧英国",y:1978,g:["友谊","无字"],e:"⛄",ag:"3-7",bg:"linear-gradient(135deg,#d0ebff,#74c0fc)",d:"无字绘本——男孩堆的雪人在夜晚活了过来，他们一起飞翔在城市的上空。",q:"（无字绘本，用画面讲述一段温暖的冬日友谊）"},
+{t:"咕噜牛",o:"The Gruffalo",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:1999,g:["智慧","幽默"],e:"怪物",ag:"3-7",bg:"linear-gradient(135deg,#845ef7,#5f3dc4)",d:"小老鼠编造了一个可怕怪兽的故事来吓退天敌，没想到咕噜牛竟然是真实存在的！",q:"一只咕噜牛？什么是一个咕噜牛？"},
+{t:"我们要去捉狗熊",o:"We're Going on a Bear Hunt",a:"迈克尔·罗森",co:"🇬🇧英国",y:1989,g:["冒险","互动"],e:"🐻",ag:"2-6",bg:"linear-gradient(135deg,#a9e34b,#5c940d)",d:"一家人出发去捉熊，经过草地、河流、泥巴地……充满节奏感的冒险故事。",q:"我们要去捉狗熊！我们要捉一只大大的！"},
+{t:"长袜子皮皮",o:"Pippi Longstocking",a:"阿斯特丽德·林格伦",co:"🇸🇪瑞典",y:1945,g:["冒险","经典"],e:"🧒",ag:"5-9",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"力大无穷、独自生活的红发女孩皮皮——世界上最著名的儿童角色之一。",q:"我是一个寻找奇迹的人，但奇迹从来不来找我。"},
+{t:"姆明",o:"Moomin",a:"托芙·扬松",co:"🇫🇮芬兰",y:1945,g:["冒险","温馨"],e:"🦛",ag:"4-8",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"姆明谷里一群温柔可爱的精灵们的日常生活与冒险，蕴含深刻的人生哲学。",q:"在姆明谷里，一切都安详而美好。"},
+{t:"小王子",o:"Le Petit Prince",a:"安托万·德·圣埃克苏佩里",co:"🇫🇷法国",y:1943,g:["哲学","经典"],e:"🌹",ag:"6+",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"来自B612小行星的小王子游历宇宙，用孩子的眼睛看待成人世界。全球最畅销的绘本之一。",q:"真正重要的东西是眼睛看不见的，只有用心才能看清楚。"},
+{t:"巴巴爸爸",o:"Barbapapa",a:"阿努斯·泰勒",co:"🇫🇷法国",y:1970,g:["想象","经典"],e:"🫧",ag:"2-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"可以变成任何形状的巴巴爸爸一家的故事。充满创意和温暖。",q:"点击克拉！巴巴爸爸说。这就是一切的开始。"},
+{t:"妈妈的红沙发",o:"A Chair for My Mother",a:"薇拉·B·威廉姆斯",co:"🇺🇸美国",y:1982,g:["家庭","温馨"],e:"🛋️",ag:"4-7",bg:"linear-gradient(135deg,#ff8787,#fa5252)",d:"火灾后祖孙三代攒钱买一张最漂亮的红沙发——关于希望与重建。",q:"奶奶坐在大瓶子里数硬币的时候，最喜欢哼歌了。"},
+{t:"彼得潘",o:"Peter Pan",a:"J.M.巴里",co:"🇬🇧英国",y:1904,g:["冒险","经典"],e:"🧚",ag:"5-9",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"永远长不大的男孩彼得潘带领温蒂一家飞向梦幻岛，与虎克船长斗智斗勇。",q:"只要想着快乐的事情，你就能飞起来。"},
+{t:"苏斯博士的ABC",o:"Dr. Seuss's ABC",a:"苏斯博士",co:"🇺🇸美国",y:1963,g:["认知","幽默"],e:"🔤",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"用苏斯博士标志性的韵文和奇想教孩子们认识字母，从A到Z充满惊喜。",q:"大A，小a，在苹果上有什么？"},
+{t:"云朵面包",o:"구름빵",a:"白希那",co:"🇰🇷韩国",y:2004,g:["想象","日常"],e:"☁️",ag:"3-6",bg:"linear-gradient(135deg,#d0ebff,#74c0fc)",d:"下雨天的早晨，孩子们发现树枝上挂着一朵小云，妈妈用它做了云朵面包。",q:"吃了云朵面包，我们竟然飘起来了！"},
+{t:"隧道",o:"The Tunnel",a:"安东尼·布朗",co:"🇬🇧英国",y:1989,g:["亲情","想象"],e:"🕳️",ag:"4-8",bg:"linear-gradient(135deg,#868e96,#495057)",d:"性格迥异的兄妹通过一条神秘隧道，哥哥变成了石头，妹妹用勇气和爱救了他。",q:"她抱住那块冰冷的石头，眼泪流了下来。"},
+{t:"桃太郎",o:"桃太郎",a:"日本传统故事",co:"🇯🇵日本",y:0,g:["民间","经典"],e:"🍑",ag:"3-7",bg:"linear-gradient(135deg,#ffc9c9,#f783ac)",d:"从桃子里出生的桃太郎踏上讨伐鬼岛的冒险之旅，日本最著名的民间故事。",q:"我要去鬼岛，为民除害！"},
+{t:"小黑鱼",o:"Swimmy",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1963,g:["勇气","智慧"],e:"🐟",ag:"3-6",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"一条独特的小黑鱼带领一群小红鱼团结合作，用智慧吓跑大鱼。",q:"我们可以一起游，成为海里最大的鱼！"},
+{t:"动物绝对不应该穿衣服",o:"Animals Should Definitely Not Wear Clothing",a:"朱蒂·巴瑞特",co:"🇺🇸美国",y:1970,g:["幽默","认知"],e:"👔",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"用滑稽的理由解释为什么动物不应该穿衣服——绵羊穿衣服会热晕，母鸡下蛋会被卡住！",q:"因为一条蛇穿上裤子会很难为情。"},
+{t:"彩色的乌鸦",o:"The Rainbow Crow",a:"南希·范·劳恩",co:"🇺🇸美国",y:1989,g:["民间","自然"],e:"🐦",ag:"4-7",bg:"linear-gradient(135deg,#e599f7,#ae3ec9)",d:"美丽的乌鸦为拯救森林而牺牲了自己的彩色羽毛——关于奉献与内在美。",q:"从此以后，乌鸦的羽毛变成了黑色，但他的心依然是彩色的。"},
+{t:"活了100万次的猫",o:"100万回生きたねこ",a:"佐野洋子",co:"🇯🇵日本",y:1977,g:["哲学","生命"],e:"🐱",ag:"5+",bg:"linear-gradient(135deg,#868e96,#343a40)",d:"一只活了一百万次、却从未真正活过的猫，直到它遇到了一只白猫。",q:"猫哭了，他第一次哭了。他哭了一百万次。"},
+{t:"好脏的哈利",o:"Harry the Dirty Dog",a:"吉恩·锡安",co:"🇺🇸美国",y:1956,g:["日常","幽默"],e:"🐕",ag:"2-6",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"讨厌洗澡的哈利从家里跑出去，在脏地方玩了一天，变成了一只黑狗。",q:"哈利从铁轨下面钻过去，在运煤车上玩了一整天。"},
+{t:"摇摇晃晃的桥",o:"The Bridge",a:"海因茨·雅尼什",co:"🇦🇹奥地利",y:2003,g:["哲学","友谊"],e:"🌉",ag:"4-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"一只兔子和一只熊在摇晃的桥上相遇，敌人变成了朋友。",q:"我们怎么办？我们只能一起过桥。"},
+{t:"绿野仙踪",o:"The Wonderful Wizard of Oz",a:"L.弗兰克·鲍姆",co:"🇺🇸美国",y:1900,g:["冒险","经典"],e:"🌪️",ag:"5+",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"多萝西被龙卷风带到奥兹国，与稻草人、铁皮人、胆小狮子一起寻找回家的路。",q:"没有一个地方比得上家。"},
+{t:"卖帽子",o:"Caps for Sale",a:"艾丝菲·斯劳博德卡",co:"🇺🇸美国",y:1940,g:["幽默","经典"],e:"🎩",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"一个卖帽子的男人在树下打盹，醒来发现猴子们偷走了所有的帽子！",q:"你看，他想，猴子们学他做的每一件事。"},
+{t:"第一次提问",o:"はじめての質問",a:"长田弘",co:"🇯🇵日本",y:2013,g:["哲学","诗意"],e:"❓",ag:"5+",bg:"linear-gradient(135deg,#d0ebff,#74c0fc)",d:"三十个关于生命、自然与日常的诗意提问，唤醒人们对世界的感知力。",q:"你有没有认真看过一滴露水？"},
+{t:"安徒生童话",o:"Hans Christian Andersen's Tales",a:"安徒生",co:"🇩🇰丹麦",y:1835,g:["经典","童话"],e:"🦢",ag:"4+",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"丑小鸭、美人鱼、卖火柴的小女孩……世界上最伟大的童话作家的经典作品集。",q:"只要你是一只天鹅蛋，就算生在养鸡场里也没关系。"},
+{t:"格林童话",o:"Grimm's Fairy Tales",a:"格林兄弟",co:"🇩🇪德国",y:1812,g:["经典","童话"],e:"🏰",ag:"4+",bg:"linear-gradient(135deg,#845ef7,#5f3dc4)",d:"灰姑娘、白雪公主、小红帽、青蛙王子……200年来陪伴无数孩子的经典故事。",q:"魔镜魔镜告诉我，谁是世界上最美的女人？"},
+{t:"蝴蝶·豌豆花",o:"蝴蝶·豌豆花",a:"金波",co:"🇨🇳中国",y:2010,g:["诗歌","自然"],e:"🦋",ag:"3-7",bg:"linear-gradient(135deg,#e599f7,#ae3ec9)",d:"精选中国经典童诗，配以当代画家精美插画。郭风、叶圣陶等名家作品。",q:"一只蝴蝶从竹篱外飞进来，豌豆花问它：你是一朵飞起来的花吗？"},
+{t:"外婆家的马",o:"外婆家的马",a:"矮矮",co:"🇨🇳中国",y:2018,g:["亲情","想象"],e:"🐴",ag:"3-7",bg:"linear-gradient(135deg,#ffc9c9,#f783ac)",d:"小男孩在外婆家假装养了一群马，外婆用智慧和爱来配合他的游戏。",q:"外婆，我的马要吃草。好，让它们去院子里吃。"},
+{t:"桃花源记",o:"桃花源记",a:"蔡皋",co:"🇨🇳中国",y:2015,g:["古典","艺术"],e:"🌸",ag:"5+",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"绘本大师蔡皋根据陶渊明名篇创作的绘本，再现世外桃源的东方意境。",q:"忽逢桃花林，夹岸数百步，中无杂树，芳草鲜美。"},
+{t:"窗边的小豆豆",o:"窓ぎわのトットちゃん",a:"黑柳彻子",co:"🇯🇵日本",y:1981,g:["成长","经典"],e:"👧",ag:"6+",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"淘气的小豆豆被学校退学后进入巴学园，遇到改变她一生的小林校长。",q:"你真是一个好孩子！小林校长总是这样说。"},
+{t:"月亮的味道",o:"Smak Księżyca",a:"麦克·格雷涅茨",co:"🇵🇱波兰",y:1995,g:["想象","合作"],e:"🌙",ag:"2-6",bg:"linear-gradient(135deg,#d0ebff,#748ffc)",d:"动物们一个叠一个，想尝尝月亮的味道。最后小老鼠咬下了一片。",q:"月亮是什么味道的？是甜的还是咸的？"},
+{t:"米菲",o:"Nijntje",a:"迪克·布鲁纳",co:"🇳🇱荷兰",y:1955,g:["认知","经典"],e:"🐰",ag:"0-3",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"极简线条和明亮色彩创造的米菲兔，世界上最著名的绘本角色之一。",q:"米菲，米菲兔，住在小小的房子里。"},
+{t:"小象巴贝尔",o:"Babar",a:"让·德·布伦霍夫",co:"🇫🇷法国",y:1931,g:["冒险","经典"],e:"🐘",ag:"3-7",bg:"linear-gradient(135deg,#66d9e8,#1098ad)",d:"小象巴贝尔母亲被猎人杀害后逃到城市，最终回到森林成为大象之王。",q:"巴贝尔穿上了一套漂亮的绿色西装。"},
+{t:"我只是一只老鼠",o:"Frederick",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1967,g:["哲学","艺术"],e:"🐭",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#f59f00)",d:"别的田鼠忙着收集粮食过冬，弗雷德里克却在收集阳光、颜色和词语。",q:"我收集阳光。冬天来的时候，我们需要它。"},
+{t:"隧道"而且",o:"Du Iz Tak?",a:"卡森·埃利斯",co:"🇺🇸美国",y:2016,g:["语言","想象"],e:"🌺",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#2f9e44)",d:"用虚构的虫语讲述昆虫们发现一棵嫩芽、搭建家园的故事。",q:"Du iz tak? Ma nazoot.（这是什么？我不知道。）"},
+{t:"我的连衣裙",o:"わたしのワンピース",a:"五味太郎",co:"🇯🇵日本",y:1977,g:["认知","想象"],e:"👗",ag:"1-4",bg:"linear-gradient(135deg,#ffc9c9,#f783ac)",d:"小兔子穿上雪白的连衣裙走过花田、雨滴、草地，裙子也跟着变化。",q:"走在花田里，连衣裙变成花朵的样子。"},
+{t:"极地特快",o:"The Polar Express",a:"克里斯·范·奥尔斯伯格",co:"🇺🇸美国",y:1985,g:["圣诞","经典"],e:"🚂",ag:"4-8",bg:"linear-gradient(135deg,#748ffc,#364fc7)",d:"平安夜一列神秘的火车载着孩子们去北极见圣诞老人。凯迪克金奖作品。",q:"任何时候只要仔细听，你都能听到那清脆的铃声。"},
+{t:"猜谜旅行",o:"にゃーご",a:"宫西达也",co:"🇯🇵日本",y:2003,g:["幽默","互动"],e:"🦖",ag:"2-6",bg:"linear-gradient(135deg,#845ef7,#5f3dc4)",d:"宫西达也最受欢迎的恐龙系列——凶猛的霸王龙用温柔感动每一个读者。",q:"很好吃，我也能变得像你一样强壮吗？"},
+{t:"抵岸",o:"The Arrival",a:"陈志勇",co:"🇦🇺澳大利亚",y:2006,g:["移民","无字"],e:"🚢",ag:"8+",bg:"linear-gradient(135deg,#868e96,#495057)",d:"无字绘本大师作——一个移民在陌生国度寻找归属感，描绘人类共通的情感。",q:"（无字绘本，用超现实画面讲述每个移民的故事）"},
+{t:"树洞",o:"Du Iz Tak",a:"布伦达·瓜里诺",co:"🇺🇸美国",y:2014,g:["自然","诗意"],e:"🦉",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#2b8a3e)",d:"一棵橡树在四季中变换，住在树上的动物们也随着自然节律生活。",q:"在一棵老橡树里，住着一只猫头鹰。"},
+{t:"云朵的来信",o:"Sector 7",a:"大卫·威斯纳",co:"🇺🇸美国",y:1999,g:["想象","无字"],e:"☁️",ag:"4-8",bg:"linear-gradient(135deg,#d0ebff,#4dabf7)",d:"无字绘本——男孩在帝国大厦遇到一朵云，被带到天空中的云朵工厂。",q:"（无字绘本，用画面构建一个天空中的奇幻世界）"},
+{t:"那个夏天",o:"Flight of the Hummingbird",a:"迈克尔·尼科",co:"🇨🇦加拿大",y:2008,g:["寓言","自然"],e:"🐦",ag:"4-7",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"一只小蜂鸟尽其所能扑灭森林大火——关于每个人都能做出改变的寓言。",q:"我尽我所能。小蜂鸟说。"},
+{t:"花格子大象艾玛",o:"Elmer",a:"大卫·麦基",co:"🇬🇧英国",y:1968,g:["个性","经典"],e:"🐘",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#e8590c)",d:"花格子大象艾玛与众不同，他想变成灰色跟别人一样，但朋友们爱他的独特。",q:"艾玛不是普通的象，他是花格子的。"},
+{t:"熊的琴声",o:"The Bear and the Piano",a:"大卫·利奇菲尔德",co:"🇬🇧英国",y:2015,g:["梦想","友谊"],e:"🎹",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#9c36b5)",d:"森林里的小熊发现了一架钢琴，多年后成为著名的钢琴家，但他思念家乡。",q:"他弹奏的是关于森林、关于老朋友们的旋律。"},
+{t:"再见，小兔子",o:"合力",a:"约克·米勒",co:"🇨🇭瑞士",y:1979,g:["环保","哲学"],e:"🐰",ag:"5+",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"工厂化的兔子养殖场里，一只兔子向往自由和自然——关于工业化与自由。",q:"在月光下，野兔子跳出了栅栏。"},
+{t:"美丽的小城",o:"Alice in Wonderland",a:"刘易斯·卡罗尔",co:"🇬🇧英国",y:1865,g:["冒险","经典"],e:"🐇",ag:"6+",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"爱丽丝掉进兔子洞，在奇幻仙境中遇到疯帽匠、红心皇后和柴郡猫。",q:"我们这里都是疯子。我是疯子。你也是疯子。"},
+{t:"小牛的春天",o:"小牛の春",a:"五味太郎",co:"🇯🇵日本",y:1984,g:["自然","认知"],e:"🐄",ag:"1-4",bg:"linear-gradient(135deg,#b2f2bb,#51cf66)",d:"用极简的线条描绘四季轮转，小牛身上的花纹随着季节变化。",q:"春天来了。雪融化了。小牛的身上冒出了嫩芽。"},
+{t:"想看海的小火车",o:"The Little Engine That Could",a:"华蒂·派普",co:"🇺🇸美国",y:1930,g:["勇气","经典"],e:"🚂",ag:"3-6",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"一列小火车克服困难翻山越岭给孩子们送玩具——关于自信与坚持。",q:"我想我能做到，我想我能做到！"},
+{t:"你看起来好像很好吃",o:"おまえうまそうだな",a:"宫西达也",co:"🇯🇵日本",y:2003,g:["温情","恐龙"],e:"🦕",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#2b8a3e)",d:"凶猛的霸王龙遇到刚出生的甲龙宝宝，被叫爸爸后心变得柔软。",q:"很好吃，我会永远永远爱着你。"},
+{t:"爷爷一定有办法",o:"Something from Nothing",a:"菲比·吉尔曼",co:"🇨🇦加拿大",y:1992,g:["亲情","智慧"],e:"👴",ag:"3-7",bg:"linear-gradient(135deg,#66d9e8,#1098ad)",d:"爷爷用巧妙的手艺把旧毯子变成外套、背心、领带、手帕和纽扣。",q:"爷爷一定有办法。约瑟夫总是这样说。"},
+{t:"我爸爸",o:"My Dad",a:"安东尼·布朗",co:"🇬🇧英国",y:2000,g:["亲情","幽默"],e:"👨",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"用夸张的想象描绘一个无所不能的爸爸——他赶走大灰狼、走钢丝、唱歌。",q:"我爸爸什么都不怕，连大灰狼都不怕。"},
+{t:"我妈妈",o:"My Mum",a:"安东尼·布朗",co:"🇬🇧英国",y:2005,g:["亲情","温馨"],e:"👩",ag:"2-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"用同样夸张的想象描绘一个无所不能的妈妈——她是了不起的厨师、杂技演员。",q:"我妈妈是一个神奇的画家，她是一个最强的女人。"},
+{t:"绘本中国寓言",o:"中国寓言故事",a:"熊亮",co:"🇨🇳中国",y:2008,g:["寓言","传统"],e:"🐉",ag:"4-8",bg:"linear-gradient(135deg,#e8590c,#c92a2a)",d:"中国绘本大师熊亮用水墨风格重新诠释经典寓言——井底之蛙、守株待兔等。",q:"天只有井口那么大，青蛙说。"},
+{t:"让路给小鸭子",o:"Make Way for Ducklings",a:"罗伯特·麦克洛斯基",co:"🇺🇸美国",y:1941,g:["自然","温馨"],e:"🦆",ag:"3-7",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"马拉德太太带八只小鸭子穿过波士顿街头，警察指挥交通为它们让路。",q:"嘎嘎嘎！马拉德太太带着她的八只小鸭子排成一队。"},
+{t:"快乐王子",o:"The Happy Prince",a:"奥斯卡·王尔德",co:"🇮🇪爱尔兰",y:1888,g:["善良","经典"],e:"🕊️",ag:"5+",bg:"linear-gradient(135deg,#ffd43b,#fd7e14)",d:"快乐王子的金像请小燕子把身上的宝石和金箔送给穷苦的人们。",q:"比大海更珍贵的，是一颗善良的心。"},
+{t:"世界上最好的家",o:"家",a:"弗兰克·阿什",co:"🇺🇸美国",y:1968,g:["家庭","温馨"],e:"🏠",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#e8590c)",d:"小熊觉得一定有比自己的家更好的地方，走遍世界后发现最好的家就在身边。",q:"世界上最好的家，就是我自己的家。"},
+{t:"千万别去当海盗",o:"How I Became a Pirate",a:"梅林达·朗",co:"🇺🇸美国",y:2003,g:["冒险","幽默"],e:"🏴‍☠️",ag:"3-7",bg:"linear-gradient(135deg,#868e96,#343a40)",d:"在海滩上建沙堡的杰里米被海盗招募了——海盗生活很酷但没有睡前故事。",q:"海盗不刷牙，不讲睡前故事，也不吃蔬菜。"},
+{t:"老鼠娶新娘",o:"老鼠娶新娘",a:"中国民间故事",co:"🇨🇳中国",y:0,g:["民间","传统"],e:"🐀",ag:"3-6",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"老鼠村长想找世界上最厉害的人把女儿嫁给他，找来找去最厉害的还是老鼠！经典民间故事。",q:"太阳怕乌云，乌云怕风，风怕墙，墙怕老鼠！"},
+{t:"等待",o:"Waiting",a:"凯文·汉克斯",co:"🇺🇸美国",y:2015,g:["诗意","日常"],e:"🧸",ag:"2-6",bg:"linear-gradient(135deg,#d0ebff,#74c0fc)",d:"五个玩具坐在窗台上等待各自期待的事情——下雪、起风、下雨……关于耐心的诗意绘本。",q:"有的等月亮，有的等雪，有的什么都不等。"},
+{t:"公主的月亮",o:"Many Moons",a:"詹姆斯·瑟伯",co:"🇺🇸美国",y:1943,g:["幽默","经典"],e:"👸",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#9c36b5)",d:"公主说想要月亮，国王问遍所有智者都说不可能，但小丑直接问公主她想要的月亮是什么样的。",q:"月亮有多大？公主说，大概跟我的大拇指指甲一样大。"},
+{t:"狼婆婆",o:"Lon Po Po",a:"杨志成",co:"🇺🇸美国",y:1989,g:["民间","智慧"],e:"🐺",ag:"4-8",bg:"linear-gradient(135deg,#868e96,#495057)",d:"中国版小红帽——三姐妹用智慧战胜伪装成外婆的狼。凯迪克金奖作品。",q:"那声音，低低的、柔柔的，是外婆来了吗？"},
+{t:"给小鸟的歌",o:"Birdsong",a:"崔恩罗",co:"🇰🇷韩国",y:2019,g:["友谊","自然"],e:"🐦",ag:"3-6",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"一只失去歌声的鸟和一个孤独的老人相遇，用音乐治愈彼此。",q:"当老人吹响口琴时，鸟儿终于又开口唱歌了。"},
+{t:"地下花园",o:"The Curious Garden",a:"彼得·布朗",co:"🇺🇸美国",y:2009,g:["自然","想象"],e:"🌱",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#2b8a3e)",d:"灰暗城市里，小男孩发现了一小片废弃的花园，花园慢慢蔓延到整个城市。",q:"花园并不想停下来。它不停地探索新的地方。"},
+{t:"阿文的小毯子",o:"Owen",a:"凯文·汉克斯",co:"🇺🇸美国",y:1993,g:["成长","日常"],e:"🧣",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"阿文走到哪里都带着他的黄色小毯子，邻居说他太大了不该这样——妈妈想了个好主意。",q:"毛毯小精灵！妈妈把毯子变成了手帕。"},
+{t:"小塞尔采蓝莓",o:"Blueberries for Sal",a:"罗伯特·麦克洛斯基",co:"🇺🇸美国",y:1948,g:["自然","日常"],e:"🫐",ag:"2-6",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"小女孩和妈妈上山采蓝莓，小熊和熊妈妈也来吃蓝莓，两组母子走散又重逢。",q:" kuplink, kuplank, kuplunk! 蓝莓掉进桶里的声音。"},
+{t:"长颈鹿不会跳舞",o:"Giraffes Can't Dance",a:"吉尔斯·安德烈",co:"🇬🇧英国",y:1999,g:["自信","友谊"],e:"🦒",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"长颈鹿杰拉德不会跳舞被嘲笑，直到一只蟋蟀帮他找到属于自己的音乐。",q:"我们都可以随着不同的音乐起舞。"},
+{t:"影子",o:"Shadow",a:"布莱斯·桑德拉尔",co:"🇫🇷法国",y:2010,g:["艺术","想象"],e:"🌑",ag:"4-8",bg:"linear-gradient(135deg,#343a40,#868e96)",d:"光与影的对话——影子在黑暗中获得自由的生命，充满神秘与诗意。凯迪克奖作品。",q:"影子什么都知道，影子什么都不怕。"}
+];
+
+// ===== ENGINE =====
+// Stats
+function buildStats(){
+  var c={},r={},g={},co={};
+  B.forEach(function(b){
+    b.g.forEach(function(t){g[t]=(g[t]||0)+1});
+    var cn=b.co.replace(/[^\u4e00-\u9fff]/g,'').replace(/[a-zA-Z]/g,'');
+    c[cn]=(c[cn]||0)+1;
+    var ag=b.ag.replace(/\+.*/,'').split('-');
+    var lo=parseInt(ag[0])||0;
+    r[lo<3?'0-2':lo<5?'3-4':lo<7?'5-6':'7+']=(r[lo<3?'0-2':lo<5?'3-4':lo<7?'5-6':'7+']||0)+1;
+  });
+  var h='';
+  h+='<div class="stat"><div class="n">'+B.length+'</div><div class="l">经典绘本</div></div>';
+  var countries=B.reduce(function(a,b){var n=b.co.replace(/[^\u4e00-\u9fff]/g,'').replace(/[a-zA-Z]/g,'');if(a.indexOf(n)<0)a.push(n);return a},[]);
+  h+='<div class="stat"><div class="n">'+countries.length+'</div><div class="l">国家地区</div></div>';
+  var genres=Object.keys(g).length;
+  h+='<div class="stat"><div class="n">'+genres+'</div><div class="l">主题类型</div></div>';
+  var years=B.filter(function(b){return b.y>0});
+  var span=years.length?Math.max.apply(null,years.map(function(b){return b.y}))-Math.min.apply(null,years.map(function(b){return b.y})):0;
+  h+='<div class="stat"><div class="n">'+span+'</div><div class="l">年跨度</div></div>';
+  document.getElementById('statsBar').innerHTML=h;
+}
+
+// Filter buttons
+var activeAge='all',activeRegion='all',activeGenre='all';
+function buildFilters(){
+  var ages=['0-3','3-5','5-7','7+'];
+  var regions=['美国','英国','法国','日本','中国','北欧','其他'];
+  var genres=[];
+  B.forEach(function(b){b.g.forEach(function(t){if(genres.indexOf(t)<0)genres.push(t)})});
+  genres.sort();
+  var ah='<button class="f-btn active" onclick="setFilter(\'age\',\'all\',this)">全部</button>';
+  ages.forEach(function(a){ah+='<button class="f-btn" onclick="setFilter(\'age\',\''+a+'\',this)">'+a+'</button>'});
+  document.getElementById('ageFilters').innerHTML=ah;
+  var rh='<button class="f-btn active" onclick="setFilter(\'region\',\'all\',this)">全部</button>';
+  regions.forEach(function(r){rh+='<button class="f-btn" onclick="setFilter(\'region\',\''+r+'\',this)">'+r+'</button>'});
+  document.getElementById('regionFilters').innerHTML=rh;
+  var gh='<button class="f-btn active" onclick="setFilter(\'genre\',\'all\',this)">全部</button>';
+  genres.forEach(function(g){gh+='<button class="f-btn" onclick="setFilter(\'genre\',\''+g+'\',this)">'+g+'</button>'});
+  document.getElementById('genreFilters').innerHTML=gh;
+}
+
+function setFilter(type,val,btn){
+  if(type==='age')activeAge=val;
+  else if(type==='region')activeRegion=val;
+  else activeGenre=val;
+  var row=btn.parentNode;
+  var btns=row.querySelectorAll('.f-btn');
+  btns.forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function matchAge(b,filter){
+  if(filter==='all')return true;
+  var ag=b.ag.replace(/\+.*/,'');
+  if(filter==='0-3')return ag==='0-3'||ag==='1-3'||ag==='2-5'||ag==='2-6'||ag==='1-4'||ag==='2-3';
+  if(filter==='3-5')return ag.indexOf('3')>=0||ag.indexOf('4')>=0||ag==='2-5'||ag==='2-6';
+  if(filter==='5-7')return ag.indexOf('5')>=0||ag.indexOf('6')>=0||ag.indexOf('7')>=0||ag.indexOf('+')>=0;
+  if(filter==='7+')return ag.indexOf('7')>=0||ag.indexOf('+')>=0||ag.indexOf('8')>=0||ag.indexOf('9')>=0;
+  return true;
+}
+
+function matchRegion(b,filter){
+  if(filter==='all')return true;
+  var co=b.co;
+  if(filter==='美国')return co.indexOf('美国')>=0;
+  if(filter==='英国')return co.indexOf('英国')>=0;
+  if(filter==='法国')return co.indexOf('法国')>=0;
+  if(filter==='日本')return co.indexOf('日本')>=0;
+  if(filter==='中国')return co.indexOf('中国')>=0;
+  if(filter==='北欧')return co.indexOf('瑞典')>=0||co.indexOf('芬兰')>=0||co.indexOf('丹麦')>=0||co.indexOf('挪威')>=0;
+  if(filter==='其他')return co.indexOf('美国')<0&&co.indexOf('英国')<0&&co.indexOf('法国')<0&&co.indexOf('日本')<0&&co.indexOf('中国')<0&&co.indexOf('瑞典')<0&&co.indexOf('芬兰')<0&&co.indexOf('丹麦')<0&&co.indexOf('挪威')<0;
+  return true;
+}
+
+function getFiltered(){
+  var q=document.getElementById('searchBox').value.toLowerCase();
+  return B.filter(function(b){
+    if(!matchAge(b,activeAge))return false;
+    if(!matchRegion(b,activeRegion))return false;
+    if(activeGenre!=='all'&&b.g.indexOf(activeGenre)<0)return false;
+    if(q){
+      var txt=(b.t+b.a+b.co+b.o+b.g.join(' ')).toLowerCase();
+      if(txt.indexOf(q)<0)return false;
+    }
+    return true;
+  });
+}
+
+var currentView='grid';
+function setView(v){
+  currentView=v;
+  document.querySelectorAll('.view-btn').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-view')===v);
+  });
+  applyFilters();
+}
+
+function applyFilters(){
+  var books=getFiltered();
+  var el=document.getElementById('content');
+  if(books.length===0){
+    el.innerHTML='<div class="no-result"><div class="emoji">📭</div><div>没有找到匹配的绘本</div></div>';
+    return;
+  }
+  if(currentView==='grid')renderGrid(books,el);
+  else if(currentView==='timeline')renderTimeline(books,el);
+  else renderChart(books,el);
+}
+
+function renderGrid(books,el){
+  var h='<div class="grid">';
+  books.forEach(function(b,i){
+    var tags='';
+    b.g.slice(0,2).forEach(function(t){tags+='<span class="book-tag">'+t+'</span>'});
+    tags+='<span class="book-age">'+b.ag+'岁</span>';
+    h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+B.indexOf(b)+')">';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div></div>';
+    h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function renderTimeline(books,el){
+  var sorted=books.slice().sort(function(a,b){return (a.y||1900)-(b.y||1900)});
+  var h='<div class="timeline">';
+  sorted.forEach(function(b,i){
+    var yr=b.y||'传统';
+    h+='<div class="tl-item" style="animation-delay:'+(i*0.05)+'s">';
+    h+='<div class="tl-year">'+yr+'</div>';
+    h+='<div class="tl-card" onclick="openDetail('+B.indexOf(b)+')">';
+    h+='<div class="t">'+b.e+' '+b.t+'</div>';
+    h+='<div class="a">'+b.a+' · '+b.co+'</div>';
+    h+='<div class="d">'+b.d.substring(0,60)+'...</div>';
+    h+='<div class="c">'+b.g.join(' · ')+'</div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function renderChart(books,el){
+  // Country distribution
+  var cc={};
+  books.forEach(function(b){var n=b.co.replace(/[^\u4e00-\u9fff]/g,'').replace(/[a-zA-Z]/g,'');cc[n]=(cc[n]||0)+1});
+  var colors=['#e8590c','#f76707','#fd7e14','#ffa94d','#ffd43b','#69db7c','#40c057','#20c997','#66d9e8','#74c0fc','#748ffc','#845ef7','#e599f7','#f783ac','#ff8787'];
+  var max=Math.max.apply(null,Object.values(cc));
+  var h='<div class="chart">';
+  h+='<div class="chart-section"><h3>🌍 国家分布</h3>';
+  Object.entries(cc).sort(function(a,b){return b[1]-a[1]}).forEach(function(e,i){
+    var pct=Math.round(e[1]/max*100);
+    h+='<div class="bar-row"><div class="bar-label">'+e[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[i%colors.length]+'">'+e[1]+'</div></div></div>';
+  });
+  h+='</div>';
+  // Genre distribution
+  var gc={};
+  books.forEach(function(b){b.g.forEach(function(t){gc[t]=(gc[t]||0)+1})});
+  var gmax=Math.max.apply(null,Object.values(gc));
+  h+='<div class="chart-section"><h3>📚 类型分布</h3>';
+  Object.entries(gc).sort(function(a,b){return b[1]-a[1]}).forEach(function(e,i){
+    var pct=Math.round(e[1]/gmax*100);
+    h+='<div class="bar-row"><div class="bar-label">'+e[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[(i+5)%colors.length]+'">'+e[1]+'</div></div></div>';
+  });
+  h+='</div>';
+  // Age distribution
+  var ac={'0-3':0,'3-5':0,'5-7':0,'7+':0};
+  books.forEach(function(b){
+    var ag=b.ag;
+    if(ag.indexOf('0-')>=0||ag==='1-3'||ag==='1-4')ac['0-3']++;
+    if(ag.indexOf('2-')>=0||ag.indexOf('3-')>=0||ag.indexOf('4')>=0)ac['3-5']++;
+    if(ag.indexOf('5')>=0||ag.indexOf('6')>=0)ac['5-7']++;
+    if(ag.indexOf('7')>=0||ag.indexOf('8')>=0||ag.indexOf('+')>=0||ag.indexOf('9')>=0)ac['7+']++;
+  });
+  var amax=Math.max.apply(null,Object.values(ac));
+  h+='<div class="chart-section"><h3>👶 年龄分布</h3>';
+  Object.entries(ac).forEach(function(e,i){
+    var pct=amax?Math.round(e[1]/amax*100):0;
+    h+='<div class="bar-row"><div class="bar-label">'+e[0]+'岁</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[(i+10)%colors.length]+'">'+e[1]+'</div></div></div>';
+  });
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+
+// Detail modal
+function openDetail(idx){
+  var b=B[idx];
+  var h='';
+  h+='<div class="modal-hero" style="background:'+b.bg+'"><div class="m-emoji">'+b.e+'</div></div>';
+  h+='<div class="modal-body">';
+  h+='<div class="m-title">'+b.t+'</div>';
+  if(b.o)h+='<div class="m-orig">'+b.o+'</div>';
+  h+='<div class="m-meta">';
+  if(b.y)h+='<span>📅 '+b.y+'年</span>';
+  h+='<span>✍️ '+b.a+'</span>';
+  h+='<span>📍 '+b.co+'</span>';
+  h+='<span>👶 '+b.ag+'岁</span>';
+  h+='</div>';
+  h+='<div class="m-quote">"'+b.q+'"</div>';
+  h+='<div class="m-desc">'+b.d+'</div>';
+  h+='<div class="m-tags">';
+  b.g.forEach(function(t){h+='<span class="m-tag genre">'+t+'</span>'});
+  h+='</div>';
+  // Related books
+  var related=B.filter(function(ob,i){
+    if(i===idx)return false;
+    var common=0;
+    ob.g.forEach(function(t){if(b.g.indexOf(t)>=0)common++});
+    return common>=1;
+  }).slice(0,4);
+  if(related.length){
+    h+='<div class="m-section"><h3>📖 你可能也喜欢</h3><div class="related-grid">';
+    related.forEach(function(rb){
+      h+='<div class="related-item" onclick="openDetail('+B.indexOf(rb)+')"><div class="ri-t">'+rb.e+' '+rb.t+'</div><div class="ri-a">'+rb.a+'</div></div>';
+    });
+    h+='</div></div>';
+  }
+  h+='<div style="text-align:center;margin-top:24px"><button onclick="startReading('+idx+')" style="background:'+b.bg+';color:#fff;border:none;padding:12px 32px;border-radius:24px;font-size:1em;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15)">📖 开始阅读</button></div>';
+  h+='</div>';
+  document.getElementById('modalContent').innerHTML=h;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('modal').classList.remove('show');
+}
+
+// Reading mode
+var readingBook=null,readingPage=0,autoPlayTimer=null;
+
+function startReading(idx){
+  closeModal();
+  readingBook=B[idx];
+  readingPage=0;
+  // Generate 5 reading pages from book data
+  var pages=[
+    {e:readingBook.e,t:'<span class="highlight">'+readingBook.t+'</span><br><span style="font-size:.7em;color:var(--text2)">'+readingBook.a+' · '+readingBook.co+'</span>'},
+    {e:'📖',t:'很久很久以前……<br>有一个关于<br><span class="highlight">'+readingBook.t+'</span>的故事。'},
+    {e:readingBook.e,t:readingBook.d},
+    {e:'💭',t:'"<span class="highlight">'+readingBook.q+'</span>"'},
+    {e:'✨',t:'故事结束了。<br>你觉得'+readingBook.t+'的冒险怎么样呢？'}
+  ];
+  readingBook._pages=pages;
+  showReadingPage();
+  document.getElementById('readingMode').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function showReadingPage(){
+  var p=readingBook._pages[readingPage];
+  var total=readingBook._pages.length;
+  var h='<div class="rm-page"><div class="rm-emoji">'+p.e+'</div><div class="rm-text">'+p.t+'</div><div class="rm-page-num">'+(readingPage+1)+' / '+total+'</div></div>';
+  document.getElementById('readingContent').innerHTML=h;
+  document.getElementById('rmPrev').disabled=readingPage===0;
+  document.getElementById('rmNext').disabled=readingPage===total-1;
+}
+
+function readPage(dir){
+  readingPage+=dir;
+  if(readingPage<0)readingPage=0;
+  if(readingPage>=readingBook._pages.length)readingPage=readingBook._pages.length-1;
+  showReadingPage();
+}
+
+function toggleAutoPlay(){
+  var btn=document.getElementById('rmAuto');
+  if(autoPlayTimer){
+    clearInterval(autoPlayTimer);
+    autoPlayTimer=null;
+    btn.textContent='▶';
+  }else{
+    btn.textContent='⏸';
+    autoPlayTimer=setInterval(function(){
+      if(readingPage<readingBook._pages.length-1)readPage(1);
+      else{clearInterval(autoPlayTimer);autoPlayTimer=null;btn.textContent='▶'}
+    },3000);
+  }
+}
+
+function closeReading(){
+  document.getElementById('readingMode').classList.remove('show');
+  document.body.style.overflow='';
+  if(autoPlayTimer){clearInterval(autoPlayTimer);autoPlayTimer=null}
+  document.getElementById('rmAuto').textContent='▶';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('readingMode').classList.contains('show')){
+    if(e.key==='ArrowLeft')readPage(-1);
+    else if(e.key==='ArrowRight')readPage(1);
+    else if(e.key==='Escape')closeReading();
+  }else if(document.getElementById('modal').classList.contains('show')){
+    if(e.key==='Escape')closeModal();
+  }
+});
+
+// Touch swipe for reading mode
+var touchStartX=0;
+document.addEventListener('touchstart',function(e){touchStartX=e.touches[0].clientX});
+document.addEventListener('touchend',function(e){
+  if(!document.getElementById('readingMode').classList.contains('show'))return;
+  var dx=e.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(dx)>50){dx<0?readPage(1):readPage(-1)}
+});
+
+// Init
+buildStats();
+buildFilters();
+applyFilters();
+</script>
+
+</body>
+</html>
