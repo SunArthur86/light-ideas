@@ -7,6 +7,22 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#faf9f7;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#e8590c;--accent2:#f76707;--warm:#fff4e6;--border:#e5e5ea;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:16px;--radius-sm:12px}
+body.dark{--bg:#1a1a2e;--surface:#16213e;--text:#e8e8e8;--text2:#a0a0b0;--text3:#6a6a7a;--warm:#2a1f0e;--border:#2a2a4a;--shadow:0 2px 16px rgba(0,0,0,.3)}
+body.dark nav{background:rgba(26,26,46,.9)}
+body.dark .search-box,body.dark .f-btn{background:var(--surface);color:var(--text)}
+body.dark .modal{background:var(--surface)}
+body.dark .stat{background:var(--surface)}
+body.dark .book-card{background:var(--surface)}
+body.dark .chart-section{background:var(--surface)}
+body.dark .tl-card{background:var(--surface)}
+body.dark .modal-close{background:rgba(255,255,255,.1);color:var(--text)}
+body.dark .related-item{background:var(--bg)}
+body.dark .bar-track{background:#2a2a4a}
+body.dark #randomBtn{background:var(--warm);border-color:var(--accent);color:var(--accent)}
+.fav-btn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);border:none;font-size:14px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px);padding:0}
+.fav-btn:hover{transform:scale(1.2)}
+.fav-btn.on{background:#ffd43b}
+body.dark .fav-btn{background:rgba(0,0,0,.4)}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-tap-highlight-color:transparent;min-height:100vh}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,249,247,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px}
@@ -139,6 +155,8 @@ nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--acce
 <nav>
   <a href="../index.html" class="back">← 首页</a>
   <span class="title">📚 世界绘本馆</span>
+  <button class="view-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="收藏夹">⭐<span id="favCount"></span></button>
+  <button class="view-btn" onclick="toggleDark()" title="暗黑模式" id="darkBtn">🌙</button>
   <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
   <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
   <button class="view-btn" data-view="chart" onclick="setView('chart')">统计</button>
@@ -474,7 +492,24 @@ function buildStats(){
 }
 
 // Filter buttons
-var activeAge='all',activeRegion='all',activeGenre='all',activeSource='all';
+var activeAge='all',activeRegion='all',activeGenre='all',activeSource='all',showFavOnly=false;
+
+// Favorites (localStorage)
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem('pb_favs')||'[]')}catch(e){favs=[]}
+function saveFavs(){localStorage.setItem('pb_favs',JSON.stringify(favs));updateFavBadge()}
+function toggleFav(idx){var i=favs.indexOf(idx);if(i>=0)favs.splice(i,1);else favs.push(idx);saveFavs();applyFilters()}
+function updateFavBadge(){var el=document.getElementById('favCount');if(el)el.textContent=favs.length?'('+favs.length+')':''}
+function toggleFavFilter(){showFavOnly=!showFavOnly;document.getElementById('favFilterBtn').classList.toggle('active',showFavOnly);applyFilters()}
+
+// Dark mode (localStorage)
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  var isDark=document.body.classList.contains('dark');
+  localStorage.setItem('pb_dark',isDark?'1':'0');
+  document.getElementById('darkBtn').textContent=isDark?'☀️':'🌙';
+}
+(function(){if(localStorage.getItem('pb_dark')==='1'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️'}})();
 function buildFilters(){
   var ages=['0-3','3-5','5-7','7+'];
   var regions=['美国','英国','法国','日本','中国','北欧','德国','其他'];
@@ -535,13 +570,14 @@ function matchRegion(b,filter){
 
 function getFiltered(){
   var q=document.getElementById('searchBox').value.toLowerCase();
-  return B.filter(function(b){
+  return B.filter(function(b,idx){
     if(!matchAge(b,activeAge))return false;
     if(!matchRegion(b,activeRegion))return false;
     if(activeGenre!=='all'&&b.g.indexOf(activeGenre)<0)return false;
     if(activeSource==='online'&&!b.lk)return false;
     if(activeSource==='cn'&&b.co.indexOf('中国')<0)return false;
     if(activeSource==='trans'&&b.co.indexOf('中国')>=0)return false;
+    if(showFavOnly&&favs.indexOf(idx)<0)return false;
     if(q){
       var txt=(b.t+b.a+b.co+b.o+b.g.join(' ')).toLowerCase();
       if(txt.indexOf(q)<0)return false;
@@ -577,8 +613,10 @@ function renderGrid(books,el){
     var tags='';
     b.g.slice(0,2).forEach(function(t){tags+='<span class="book-tag">'+t+'</span>'});
     tags+='<span class="book-age">'+b.ag+'岁</span>';
-    h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+B.indexOf(b)+')">';
-    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div>'+(b.lk?'<div style="position:absolute;bottom:8px;left:8px;background:rgba(81,207,102,.9);color:#fff;border-radius:10px;padding:2px 8px;font-size:.6em;font-weight:700;backdrop-filter:blur(4px)">📺可观看</div>':'')+'</div>';
+    var idx=B.indexOf(b);
+    var isFav=favs.indexOf(idx)>=0;
+    h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+idx+')">';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div>'+(b.lk?'<div style="position:absolute;bottom:8px;left:8px;background:rgba(81,207,102,.9);color:#fff;border-radius:10px;padding:2px 8px;font-size:.6em;font-weight:700;backdrop-filter:blur(4px)">📺可观看</div>':'')+'<button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button></div>';
     h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
     h+='</div>';
   });
@@ -664,6 +702,8 @@ function openDetail(idx){
   h+='<div class="m-desc">'+b.d+'</div>';
   h+='<div class="m-tags">';
   b.g.forEach(function(t){h+='<span class="m-tag genre">'+t+'</span>'});
+  var isFav=favs.indexOf(idx)>=0;
+  h+='<span class="m-tag" style="background:'+(isFav?'#fff4e6':'#f1f3f5')+';color:'+(isFav?'#e8590c':'#6e6e73')+';cursor:pointer" onclick="toggleFav('+idx+');openDetail('+idx+')">'+(isFav?'⭐ 已收藏':'☆ 收藏')+'</span>';
   h+='</div>';
   // Related books
   var related=B.filter(function(ob,i){
@@ -803,6 +843,7 @@ function randomPick(){
 // Init
 buildStats();
 buildFilters();
+updateFavBadge();
 applyFilters();
 </script>
 
