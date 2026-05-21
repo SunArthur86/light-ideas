@@ -156,6 +156,8 @@ nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--acce
   <a href="../index.html" class="back">← 首页</a>
   <span class="title">📚 世界绘本馆</span>
   <button class="view-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="收藏夹">⭐<span id="favCount"></span></button>
+  <button class="view-btn read-filter-btn" data-status="reading" onclick="toggleReadFilter('reading')" title="在读">📖</button>
+  <button class="view-btn read-filter-btn" data-status="read" onclick="toggleReadFilter('read')" title="已读">✅</button>
   <button class="view-btn" onclick="toggleDark()" title="暗黑模式" id="darkBtn">🌙</button>
   <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
   <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
@@ -467,6 +469,46 @@ var B=[
 {t:"水墨中国——千里江山",o:"千里江山图绘本",a:"中国美术绘本",co:"🇨🇳中国",y:2018,g:["艺术","传统"],e:"🏔️",ag:"5-10",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"中国美术绘本。以北宋王希孟《千里江山图》为蓝本，用儿童视角展现这幅传世名画。青绿山水中的渔村、桥梁、楼阁，带孩子走进中国绘画的巅峰之作。传统艺术启蒙的绝佳绘本。",q:"千里江山入画卷，少年天才绘河山。",lk:"https://search.bilibili.com/all?keyword=水墨中国——千里江山+绘本"}
 ];
 
+// Filter buttons
+var activeAge='all',activeRegion='all',activeGenre='all',activeSource='all',showFavOnly=false;
+
+// Favorites (localStorage)
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem('pb_favs')||'[]')}catch(e){favs=[]}
+function saveFavs(){localStorage.setItem('pb_favs',JSON.stringify(favs));updateFavBadge()}
+function toggleFav(idx){var i=favs.indexOf(idx);if(i>=0)favs.splice(i,1);else favs.push(idx);saveFavs();applyFilters()}
+function updateFavBadge(){var el=document.getElementById('favCount');if(el)el.textContent=favs.length?'('+favs.length+')':''}
+function toggleFavFilter(){showFavOnly=!showFavOnly;document.getElementById('favFilterBtn').classList.toggle('active',showFavOnly);applyFilters()}
+
+// Cycle read status: '' → 'reading' → 'read' → ''
+function cycleReadStatus(idx){
+  var rs=getReadStatus(idx);
+  if(rs==='')setReadStatus(idx,'reading');
+  else if(rs==='reading')setReadStatus(idx,'read');
+  else clearReadStatus(idx);
+  openDetail(idx);
+}
+
+// Reading progress (localStorage)
+var readStatus={};
+try{readStatus=JSON.parse(localStorage.getItem('pb_read')||'{}')}catch(e){readStatus={}}
+function saveReadStatus(){localStorage.setItem('pb_read',JSON.stringify(readStatus))}
+function setReadStatus(idx,status){
+  readStatus[idx]=status;
+  saveReadStatus();
+  applyFilters();
+}
+function getReadStatus(idx){return readStatus[idx]||''}
+function clearReadStatus(idx){delete readStatus[idx];saveReadStatus();applyFilters()}
+function toggleReadFilter(status){
+  if(activeReadFilter===status)activeReadFilter='';
+  else activeReadFilter=status;
+  document.querySelectorAll('.read-filter-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-status')===activeReadFilter)});
+  applyFilters();
+}
+var activeReadFilter='';
+
+// Dark mode (localStorage)
 (function(){if(localStorage.getItem('pb_dark')==='1'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️'}})();
 function buildFilters(){
   var ages=['0-3','3-5','5-7','7+'];
@@ -536,6 +578,7 @@ function getFiltered(){
     if(activeSource==='cn'&&b.co.indexOf('中国')<0)return false;
     if(activeSource==='trans'&&b.co.indexOf('中国')>=0)return false;
     if(showFavOnly&&favs.indexOf(idx)<0)return false;
+    if(activeReadFilter&&getReadStatus(idx)!==activeReadFilter)return false;
     if(q){
       var txt=(b.t+b.a+b.co+b.o+b.g.join(' ')).toLowerCase();
       if(txt.indexOf(q)<0)return false;
@@ -573,8 +616,10 @@ function renderGrid(books,el){
     tags+='<span class="book-age">'+b.ag+'岁</span>';
     var idx=B.indexOf(b);
     var isFav=favs.indexOf(idx)>=0;
+    var rs=getReadStatus(idx);
+    var rsIcon=rs==='read'?'✅':rs==='reading'?'📖':'';
     h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+idx+')">';
-    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div>'+(b.lk?'<div style="position:absolute;bottom:8px;left:8px;background:rgba(81,207,102,.9);color:#fff;border-radius:10px;padding:2px 8px;font-size:.6em;font-weight:700;backdrop-filter:blur(4px)">📺可观看</div>':'')+'<button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button></div>';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div>'+(b.lk?'<div style="position:absolute;bottom:8px;left:8px;background:rgba(81,207,102,.9);color:#fff;border-radius:10px;padding:2px 8px;font-size:.6em;font-weight:700;backdrop-filter:blur(4px)">📺可观看</div>':'')+(rsIcon?'<div style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;backdrop-filter:blur(4px)">'+rsIcon+'</div>':'')+'<button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button></div>';
     h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
     h+='</div>';
   });
@@ -662,6 +707,8 @@ function openDetail(idx){
   b.g.forEach(function(t){h+='<span class="m-tag genre">'+t+'</span>'});
   var isFav=favs.indexOf(idx)>=0;
   h+='<span class="m-tag" style="background:'+(isFav?'#fff4e6':'#f1f3f5')+';color:'+(isFav?'#e8590c':'#6e6e73')+';cursor:pointer" onclick="toggleFav('+idx+');openDetail('+idx+')">'+(isFav?'⭐ 已收藏':'☆ 收藏')+'</span>';
+  var rs=getReadStatus(idx);
+  h+='<span class="m-tag" style="background:'+(rs==='read'?'#d3f9d8':rs==='reading'?'#fff3bf':'#f1f3f5')+';color:'+(rs==='read'?'#2b8a3e':rs==='reading'?'#e67700':'#6e6e73')+';cursor:pointer" onclick="cycleReadStatus('+idx+')">'+(rs==='read'?'✅ 已读':rs==='reading'?'📖 在读':'📋 标记状态')+'</span>';
   h+='</div>';
   // Related books
   var related=B.filter(function(ob,i){

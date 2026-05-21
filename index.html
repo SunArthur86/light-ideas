@@ -227,24 +227,122 @@ footer{text-align:center;padding:40px 24px;border-top:1px solid #e5e5e5;color:#8
 /* 5) Footer年份 */
 document.getElementById('yr').textContent=new Date().getFullYear();
 
-/* 6) 快速跳转搜索 */
+/* 6) 全站搜索弹窗 */
 (function(){
-  var names={'四梦':0,'小说':0,'atlas':1,'地图':1,'字阵':2,'卡牌':2,'声音':3,'音乐':3,'名著':4,'经典':4,'星图':5,'关系':5,'咖啡':6,'对话':6,'空白':7,'书':7,'喜剧':8,'搞笑':8,'时间轴':9,'timeline':9};
+  // Site-wide index
+  var index=[
+    // Picture Books (partial key titles)
+    {t:'好饿的毛毛虫',p:'picture-books/',c:'绘本馆',e:'🐛'},
+    {t:'猜猜我有多爱你',p:'picture-books/',c:'绘本馆',e:'🐰'},
+    {t:'逃家小兔',p:'picture-books/',c:'绘本馆',e:'🐰'},
+    {t:'爱心树',p:'picture-books/',c:'绘本馆',e:'🌳'},
+    {t:'大卫不可以',p:'picture-books/',c:'绘本馆',e:'👦'},
+    {t:'野兽国',p:'picture-books/',c:'绘本馆',e:'👹'},
+    {t:'小王子',p:'picture-books/',c:'绘本馆',e:'👑'},
+    {t:'咕噜牛',p:'picture-books/',c:'绘本馆',e:'🐂'},
+    {t:'你看起来好像很好吃',p:'picture-books/',c:'绘本馆',e:'🦕'},
+    {t:'爷爷一定有办法',p:'picture-books/',c:'绘本馆',e:'👴'},
+    {t:'我爸爸',p:'picture-books/',c:'绘本馆',e:'👨'},
+    {t:'我妈妈',p:'picture-books/',c:'绘本馆',e:'👩'},
+    {t:'团圆',p:'picture-books/',c:'绘本馆',e:'🧧'},
+    {t:'小蝌蚪找妈妈',p:'picture-books/',c:'绘本馆',e:'🐸'},
+    {t:'花木兰',p:'picture-books/',c:'绘本馆',e:'⚔️'},
+    {t:'神笔马良',p:'picture-books/',c:'绘本馆',e:'🖌️'},
+    {t:'西游记绘本',p:'picture-books/',c:'绘本馆',e:'🐒'},
+    {t:'小蓝和小黄',p:'picture-books/',c:'绘本馆',e:'🔵'},
+    // Guwen Guanzhi
+    {t:'出师表',p:'guwen-guanzhi/',c:'古文观止',e:'🎯'},
+    {t:'陈情表',p:'guwen-guanzhi/',c:'古文观止',e:'💧'},
+    {t:'兰亭集序',p:'guwen-guanzhi/',c:'古文观止',e:'🏔️'},
+    {t:'归去来兮辞',p:'guwen-guanzhi/',c:'古文观止',e:'🏡'},
+    {t:'桃花源记',p:'guwen-guanzhi/',c:'古文观止',e:'🌸'},
+    {t:'滕王阁序',p:'guwen-guanzhi/',c:'古文观止',e:'🏯'},
+    {t:'陋室铭',p:'guwen-guanzhi/',c:'古文观止',e:'🏠'},
+    {t:'马说',p:'guwen-guanzhi/',c:'古文观止',e:'🐴'},
+    {t:'师说',p:'guwen-guanzhi/',c:'古文观止',e:'📚'},
+    {t:'岳阳楼记',p:'guwen-guanzhi/',c:'古文观止',e:'🏯'},
+    {t:'醉翁亭记',p:'guwen-guanzhi/',c:'古文观止',e:'🍶'},
+    {t:'前赤壁赋',p:'guwen-guanzhi/',c:'古文观止',e:'🌙'},
+    {t:'项脊轩志',p:'guwen-guanzhi/',c:'古文观止',e:'🏡'},
+    {t:'逍遥游',p:'guwen-guanzhi/',c:'古文观止',e:'🦋'},
+    {t:'劝学',p:'guwen-guanzhi/',c:'古文观止',e:'📖'},
+    {t:'邹忌讽齐王纳谏',p:'guwen-guanzhi/',c:'古文观止',e:'🪞'},
+    {t:'过秦论',p:'guwen-guanzhi/',c:'古文观止',e:'🏰'},
+    {t:'李斯谏逐客书',p:'guwen-guanzhi/',c:'古文观止',e:'📝'},
+    {t:'报任安书',p:'guwen-guanzhi/',c:'古文观止',e:'✊'},
+    {t:'爱莲说',p:'guwen-guanzhi/',c:'古文观止',e:'🪷'},
+    {t:'伤仲永',p:'guwen-guanzhi/',c:'古文观止',e:'📉'},
+    {t:'记承天寺夜游',p:'guwen-guanzhi/',c:'古文观止',e:'🌙'},
+    {t:'湖心亭看雪',p:'guwen-guanzhi/',c:'古文观止',e:'❄️'},
+    {t:'愚公移山',p:'guwen-guanzhi/',c:'古文观止',e:'⛰️'},
+    // Poem Map
+    {t:'望庐山瀑布',p:'poem-map/',c:'诗词地图',e:'🏔️'},
+    {t:'早发白帝城',p:'poem-map/',c:'诗词地图',e:'🌅'},
+    {t:'登鹳雀楼',p:'poem-map/',c:'诗词地图',e:'🏰'},
+    {t:'黄鹤楼',p:'poem-map/',c:'诗词地图',e:'🏯'},
+    {t:'枫桥夜泊',p:'poem-map/',c:'诗词地图',e:'🌙'},
+    {t:'饮湖上初晴后雨',p:'poem-map/',c:'诗词地图',e:'🌧️'},
+    {t:'春晓',p:'poem-map/',c:'诗词地图',e:'🌸'},
+    {t:'念奴娇·赤壁怀古',p:'poem-map/',c:'诗词地图',e:'🔥'},
+    {t:'望岳',p:'poem-map/',c:'诗词地图',e:'⛰️'},
+    {t:'登高',p:'poem-map/',c:'诗词地图',e:'🍂'},
+    {t:'江雪',p:'poem-map/',c:'诗词地图',e:'❄️'},
+    {t:'游子吟',p:'poem-map/',c:'诗词地图',e:'🧵'},
+    {t:'过零丁洋',p:'poem-map/',c:'诗词地图',e:'💪'},
+    // Projects
+    {t:'四大名著小说',p:'four-classics-novel/',c:'四梦小说',e:'📖'},
+    {t:'四大名著图鉴',p:'four-classics-atlas/',c:'名著图鉴',e:'🗺️'},
+    {t:'文字阵法',p:'character-tactics/',c:'文字阵法',e:'⚔️'},
+    {t:'名著原声',p:'four-classics-soundtrack/',c:'名著原声',e:'🎵'},
+    {t:'世界名著',p:'world-classics/',c:'世界名著',e:'🌍'},
+    {t:'文学星图',p:'literary-constellation/',c:'文学星图',e:'⭐'},
+    {t:'文学咖啡馆',p:'literary-cafe/',c:'文学咖啡',e:'☕'},
+    {t:'空白之书',p:'the-blank-book/',c:'空白之书',e:'📓'},
+    {t:'喜剧经典',p:'comedy-classics/',c:'喜剧经典',e:'😂'},
+    {t:'文学时间轴',p:'literary-timeline/',c:'时间轴',e:'⏳'},
+    {t:'中华文学',p:'chinese-literature/',c:'中华文学',e:'🏮'},
+    {t:'文学问答',p:'literary-quiz/',c:'文学问答',e:'❓'},
+  ];
+
+  // Create modal
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)';
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:15%;left:50%;transform:translateX(-50%);width:520px;max-width:92vw;background:var(--surface,#fff);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);z-index:10000;overflow:hidden;transition:all .2s';
   var input=document.createElement('input');
-  input.placeholder='🔍 快速跳转...';
-  input.style.cssText='position:fixed;top:8px;right:70px;z-index:1000;width:180px;padding:6px 14px;border:1px solid #e8e8ed;border-radius:20px;font-size:13px;outline:none;opacity:0;transition:opacity .3s;background:#fff;font-family:inherit';
-  document.body.appendChild(input);
+  input.placeholder='🔍 全站搜索：绘本、古诗、名篇、项目...';
+  input.style.cssText='width:100%;padding:16px 20px;border:none;font-size:16px;outline:none;background:transparent;font-family:inherit';
+  var results=document.createElement('div');
+  results.style.cssText='max-height:50vh;overflow-y:auto;padding:0 12px 12px';
+  modal.appendChild(input);
+  modal.appendChild(results);
+  document.body.appendChild(overlay);
+  document.body.appendChild(modal);
+
+  function openSearch(){overlay.style.opacity='1';overlay.style.pointerEvents='auto';input.focus();input.value='';results.innerHTML=''}
+  function closeSearch(){overlay.style.opacity='0';overlay.style.pointerEvents='none';input.blur()}
+
+  overlay.addEventListener('click',closeSearch);
   document.addEventListener('keydown',function(e){
-    if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();input.style.opacity='1';input.focus()}
-    if(e.key==='Escape'){input.style.opacity='0';input.blur();input.value=''}
+    if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();openSearch()}
+    if(e.key==='Escape')closeSearch();
   });
-  input.addEventListener('blur',function(){input.style.opacity='0';input.value=''});
-  input.addEventListener('keydown',function(e){
-    if(e.key==='Enter'){
-      var v=input.value.toLowerCase().trim();
-      for(var k in names){if(v.indexOf(k)>=0||k.indexOf(v)>=0){document.querySelectorAll('.card')[names[k]].click();break}}
-      input.blur();
-    }
+
+  input.addEventListener('input',function(){
+    var q=this.value.toLowerCase().trim();
+    if(!q){results.innerHTML='';return}
+    var matches=index.filter(function(item){
+      return item.t.toLowerCase().indexOf(q)>=0||item.c.toLowerCase().indexOf(q)>=0;
+    }).slice(0,20);
+    if(!matches.length){results.innerHTML='<div style="padding:20px;text-align:center;color:#999">没有找到相关内容</div>';return}
+    var h='';
+    matches.forEach(function(m){
+      h+='<a href="'+m.p+'" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;color:inherit;transition:background .15s" onmouseover="this.style.background=\'#f5f5f7\'" onmouseout="this.style.background=\'transparent\'">';
+      h+='<span style="font-size:1.3em">'+m.e+'</span>';
+      h+='<div><div style="font-size:14px;font-weight:600">'+m.t+'</div><div style="font-size:11px;color:#999">'+m.c+'</div></div>';
+      h+='</a>';
+    });
+    results.innerHTML=h;
   });
 })();
 </script>
