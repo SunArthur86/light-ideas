@@ -9,135 +9,290 @@
 :root{--bg:#faf9f7;--surface:#fff;--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--accent:#c0392b;--accent2:#e74c3c;--warm:#fff8f0;--border:#e5e5ea;--shadow:0 2px 16px rgba(0,0,0,.06);--radius:16px;--radius-sm:12px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent}
-
+body.dark{--bg:#1a1a1a;--surface:#2c2c2e;--text:#f5f5f7;--text2:#a1a1a6;--text3:#636366;--accent:#e74c3c;--accent2:#c0392b;--warm:#2c2c2e;--border:#38383a;--shadow:0 2px 16px rgba(0,0,0,.3)}
 nav{position:sticky;top:0;z-index:500;height:48px;display:flex;align-items:center;padding:0 16px;gap:10px;background:rgba(250,249,247,.88);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);flex-shrink:0}
+body.dark nav{background:rgba(26,26,26,.88)}
 nav .back{color:var(--accent);text-decoration:none;font-size:14px;font-weight:500}
 nav .title{font-size:15px;font-weight:700;letter-spacing:-.3px;flex:1}
 nav .sub{font-size:10px;color:var(--text3)}
-
+nav .nav-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .2s}
+nav .nav-btn:hover{border-color:var(--accent);color:var(--accent)}
 .main{display:flex;flex:1;overflow:hidden}
 #map{flex:1;background:#f0eeeb}
-
+body.dark #map{background:#2c2c2e}
 .sidebar{width:340px;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--bg)}
 .sidebar-hdr{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
 .sidebar-hdr h2{font-size:18px;font-weight:700;letter-spacing:-.3px;font-family:"Noto Serif SC",Georgia,serif}
 .sidebar-hdr .count{font-size:11px;color:var(--text3);margin-top:2px}
-
-.filters{padding:8px 12px;display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--border)}
-.chip{padding:3px 10px;border-radius:14px;font-size:11px;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--text2);transition:all .2s;white-space:nowrap}
-.chip:hover{border-color:var(--accent);color:var(--accent)}
-.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-.search-row{padding:8px 12px;border-bottom:1px solid var(--border)}
-.search-row input{width:100%;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);outline:none;transition:border .2s}
+.filters{display:flex;gap:6px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.filters button{background:none;border:1px solid var(--border);border-radius:8px;padding:3px 10px;font-size:11px;cursor:pointer;color:var(--text2);transition:all .2s}
+.filters button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search-row{padding:10px 16px}
+.search-row input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border .2s}
 .search-row input:focus{border-color:var(--accent)}
-.search-row input::placeholder{color:var(--text3)}
-
-.poem-list{flex:1;overflow-y:auto;padding:8px}
-.poem-card{padding:12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-bottom:6px;border:1px solid transparent;position:relative}
-.poem-card:hover{background:var(--warm);border-color:var(--border)}
-.poem-card.active{background:var(--warm);border-color:var(--accent)}
-.poem-card .pc-title{font-size:14px;font-weight:600;font-family:"Noto Serif SC",Georgia,serif}
-.poem-card .pc-author{font-size:11px;color:var(--text2);margin-top:1px}
-.poem-card .pc-line{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5;font-style:italic}
-.poem-card .pc-loc{font-size:10px;color:var(--accent);margin-top:4px;display:flex;align-items:center;gap:3px}
-.poem-card .pc-dynasty{font-size:9px;padding:1px 6px;border-radius:8px;background:#f3e8ff;color:#7c3aed;font-weight:600;position:absolute;top:10px;right:10px}
-
-.no-result{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px}
-
-/* Poem detail modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-bg.show{display:flex}
-.modal{background:var(--surface);border-radius:20px;max-width:480px;width:92%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);position:relative}
-.modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.06);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:all .2s}
-.modal-close:hover{background:rgba(0,0,0,.12)}
-.modal-hero{padding:28px 24px 12px;text-align:center;position:relative}
-.modal-hero .mh-dynasty{font-size:11px;color:#7c3aed;font-weight:600;margin-bottom:6px}
-.modal-hero .mh-title{font-size:24px;font-weight:700;font-family:"Noto Serif SC",Georgia,serif;letter-spacing:-.3px}
-.modal-hero .mh-author{font-size:13px;color:var(--text2);margin-top:4px}
-.modal-body{padding:8px 24px 28px}
-.modal-body .mh-loc{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--warm);border-radius:var(--radius-sm);margin-bottom:16px;font-size:12px}
-.modal-body .mh-loc .loc-name{font-weight:600;color:var(--accent)}
-.modal-body .mh-text{font-size:16px;line-height:2;font-family:"Noto Serif SC",Georgia,serif;color:var(--text);padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;white-space:pre-line;letter-spacing:1px}
-.modal-body .mh-note{font-size:12px;color:var(--text2);line-height:1.7;margin-top:16px;padding:12px;background:var(--bg);border-radius:var(--radius-sm)}
-.modal-body .mh-actions{display:flex;gap:10px;margin-top:16px;justify-content:center;flex-wrap:wrap}
-.act-btn{padding:8px 20px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:4px}
-.act-btn:hover{transform:scale(1.04)}
-.act-btn:active{transform:scale(0.96)}
-.act-btn.primary{background:var(--accent);color:#fff}
-.act-btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
-
-/* Route panel */
+.poem-list{flex:1;overflow-y:auto;padding:8px 12px}
+.pl-card{padding:12px;border-radius:12px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all .2s;background:var(--surface)}
+.pl-card:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.pl-card .pl-emoji{font-size:1.3em;float:left;margin-right:8px;margin-top:2px}
+.pl-card .pl-title{font-size:14px;font-weight:600}
+.pl-card .pl-author{font-size:11px;color:var(--text2);margin-top:2px}
+.pl-card .pl-quote{font-size:11px;color:var(--text3);margin-top:4px;font-style:italic;line-height:1.4}
+.pl-card .pl-loc{font-size:10px;color:var(--accent);margin-top:4px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.modal-bg.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;right:0;top:0;bottom:0;width:400px;max-width:100%;background:var(--surface);z-index:601;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,.15)}
+.modal.show{transform:translateX(0)}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 16px 0;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.06);border:none;font-size:18px;cursor:pointer;z-index:10}
+.md-hero{height:200px;display:flex;align-items:center;justify-content:center;position:relative}
+.md-hero .md-emoji{font-size:4em;filter:drop-shadow(0 8px 16px rgba(0,0,0,.2))}
+.md-body{padding:0 24px 40px;max-width:360px;margin:0 auto}
+.md-body h2{font-size:1.4em;font-weight:700;font-family:"Noto Serif SC",Georgia,serif;margin-bottom:4px}
+.md-body .md-meta{font-size:.82em;color:var(--text2);margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap}
+.md-body .md-quote{font-size:1em;font-weight:500;line-height:1.8;padding:14px 18px;background:var(--warm);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;margin-bottom:14px;font-style:italic}
+.md-body .md-desc{font-size:.88em;line-height:1.7;color:var(--text2);margin-bottom:16px}
+.md-body .md-loc{font-size:.85em;color:var(--accent);cursor:pointer;padding:6px 0}
 .route-panel{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:16px;border:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 24px rgba(0,0,0,.08);white-space:nowrap}
+body.dark .route-panel{background:rgba(44,44,46,.92)}
 .route-panel .rp-label{font-size:11px;color:var(--text3)}
-.route-panel .rp-name{font-size:13px;font-weight:600;color:var(--accent)}
 .route-panel button{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 12px;font-size:11px;cursor:pointer;color:var(--text2);transition:all .2s}
 .route-panel button:hover{border-color:var(--accent);color:var(--accent)}
 .route-panel button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-/* Leaflet custom */
-.leaflet-popup-content-wrapper{background:var(--surface)!important;color:var(--text)!important;border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.12)!important}
-.leaflet-popup-tip{background:var(--surface)!important}
-.leaflet-popup-content{margin:10px 14px!important;font-size:12px!important;line-height:1.5}
-.custom-marker{background:none;border:none}
-.marker-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15);border:2px solid #fff;transition:transform .2s;cursor:pointer}
-.marker-dot:hover{transform:scale(1.3)}
-
-/* Stats bar */
-.stats-bar{position:absolute;top:60px;right:16px;z-index:400;display:flex;flex-direction:column;gap:6px}
-.stat-chip{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:10px;padding:6px 12px;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:4px;border:1px solid rgba(0,0,0,.04)}
-.stat-chip .sn{font-weight:700;color:var(--accent);font-size:14px}
-
-@media(max-width:768px){
-  .sidebar{display:none}
-  .modal{width:96%;max-height:90vh;border-radius:16px}
-  .modal-hero .mh-title{font-size:20px}
-  .route-panel{bottom:12px;left:12px;right:12px;transform:none;flex-wrap:wrap;justify-content:center}
-}
+.stats-bar{position:absolute;top:56px;right:16px;z-index:400;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-radius:10px;padding:6px 12px;font-size:11px;color:var(--text2);border:1px solid var(--border)}
+body.dark .stats-bar{background:rgba(44,44,46,.88)}
+.fav-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;transition:all .2s}
+.fav-btn.on{transform:scale(1.2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.sidebar{display:none}.modal{width:100%}.route-panel{bottom:12px;left:12px;right:12px;transform:none;flex-wrap:wrap;justify-content:center}}
 </style>
 </head>
 <body>
-
 <nav>
-  <a href="../index.html" class="back">← 首页</a>
-  <span class="title">🏔️ 诗词地图</span>
+  <a href="../index.html" class="back">&larr; 首页</a>
+  <span class="title">&#x1F3D4;&#xFE0F; 诗词地图</span>
   <span class="sub">跟着古诗游中国</span>
+  <button class="nav-btn" id="favBtn" onclick="toggleFavFilter()">&#x2B50; <span id="favCount"></span></button>
+  <button class="nav-btn" onclick="toggleDark()" id="darkBtn">&#x1F319;</button>
 </nav>
-
 <div class="main">
   <div id="map"></div>
-
   <div class="sidebar">
     <div class="sidebar-hdr">
-      <h2>📜 诗词长廊</h2>
+      <h2>&#x1F4DC; 诗词长廊</h2>
       <div class="count" id="poemCount"></div>
     </div>
     <div class="filters" id="filterBar"></div>
     <div class="search-row">
-      <input type="text" placeholder="🔍 搜索诗词、诗人、地名..." id="searchBox" oninput="applyFilter()">
+      <input type="text" placeholder="&#x1F50D; 搜索诗词、诗人、地名..." id="searchBox" oninput="applyFilter()">
     </div>
     <div class="poem-list" id="poemList"></div>
   </div>
 </div>
-
 <div class="modal-bg" id="modalBg" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+    <button class="modal-close" onclick="closeModal()">&#x2715;</button>
     <div id="modalContent"></div>
   </div>
 </div>
-
 <div class="route-panel" id="routePanel">
   <span class="rp-label">诗人足迹：</span>
-  <button class="on" onclick="setRoute('all',this)">全部</button>
-  <button onclick="setRoute('李白',this)">李白</button>
-  <button onclick="setRoute('杜甫',this)">杜甫</button>
-  <button onclick="setRoute('苏轼',this)">苏轼</button>
-  <button onclick="setRoute('王维',this)">王维</button>
-  <button onclick="setRoute('白居易',this)">白居易</button>
 </div>
-
 <div class="stats-bar" id="statsBar"></div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+// ===== DATA =====
+var P=[
+{t:"望庐山瀑布",a:"李白",dy:"唐",loc:"庐山",lat:29.56,lng:115.99,q:"飞流直下三千尺，疑是银河落九天。",d:"李白游览庐山时被壮观的瀑布震撼，以夸张浪漫的想象将瀑布比作银河从天而降。千古写瀑布第一名篇。",e:"🏔️",bg:"#4169E1"},
+{t:"早发白帝城",a:"李白",dy:"唐",loc:"白帝城",lat:31.04,lng:109.55,q:"朝辞白帝彩云间，千里江陵一日还。",d:"李白遇赦后从白帝城顺流而下，轻舟一日千里，喜悦之情溢于言表。三峡之水湍急、舟行之快的经典写照。",e:"🌅",bg:"#FF6347"},
+{t:"黄鹤楼送孟浩然之广陵",a:"李白",dy:"唐",loc:"黄鹤楼",lat:30.54,lng:114.30,q:"孤帆远影碧空尽，唯见长江天际流。",d:"李白在黄鹤楼送别好友孟浩然，目送孤帆消失在天际。以景写情，离愁别绪尽在不言中。",e:"⛵",bg:"#4682B4"},
+{t:"望天门山",a:"李白",dy:"唐",loc:"天门山",lat:31.20,lng:118.17,q:"天门中断楚江开，碧水东流至此回。",d:"李白描绘长江劈开天门山的壮丽景象，两岸青山相对，孤帆日边而来。气势磅礴的山水画卷。",e:"🌊",bg:"#2E8B57"},
+{t:"独坐敬亭山",a:"李白",dy:"唐",loc:"敬亭山",lat:30.89,lng:118.53,q:"相看两不厌，只有敬亭山。",d:"李白独坐敬亭山，与山相对，鸟飞云去，唯山与己互不厌倦。写尽了孤独中的旷达与自然之爱。",e:"🏔️",bg:"#556B2F"},
+{t:"登鹳雀楼",a:"王之涣",dy:"唐",loc:"鹳雀楼",lat:34.83,lng:110.28,q:"欲穷千里目，更上一层楼。",d:"登高望远，黄河入海。蕴含哲理：站得更高才能看得更远。全诗仅二十字，意境深远。",e:"🏰",bg:"#DAA520"},
+{t:"黄鹤楼",a:"崔颢",dy:"唐",loc:"黄鹤楼",lat:30.54,lng:114.30,q:"黄鹤一去不复返，白云千载空悠悠。",d:"崔颢登黄鹤楼怀古，感叹物是人非。据传李白读后搁笔叹道：眼前有景道不得，崔颢题诗在上头。",e:"🏯",bg:"#B8860B"},
+{t:"枫桥夜泊",a:"张继",dy:"唐",loc:"苏州",lat:31.30,lng:120.62,q:"姑苏城外寒山寺，夜半钟声到客船。",d:"张继夜泊枫桥，寒霜满天、渔火点点，寒山寺钟声悠远传来。写尽了旅人的乡愁与秋夜的清冷。",e:"🌙",bg:"#191970"},
+{t:"饮湖上初晴后雨",a:"苏轼",dy:"宋",loc:"杭州西湖",lat:30.25,lng:120.15,q:"欲把西湖比西子，淡妆浓抹总相宜。",d:"苏轼以美人西施喻西湖，无论晴雨都有不同风韵。从此西湖有了西子湖的美称。",e:"🌧️",bg:"#3CB371"},
+{t:"春晓",a:"孟浩然",dy:"唐",loc:"襄阳",lat:32.04,lng:112.14,q:"春眠不觉晓，处处闻啼鸟。",d:"春日清晨的慵懒美好，花开鸟鸣，一夜风雨后不知落了多少花瓣。最纯真自然的春天诗篇。",e:"🌸",bg:"#FF69B4"},
+{t:"送元二使安西",a:"王维",dy:"唐",loc:"渭城",lat:34.33,lng:108.71,q:"劝君更尽一杯酒，西出阳关无故人。",d:"王维在渭城送别友人出使安西，朝雨浥尘，柳色青新。最后一杯酒，饱含无尽离情。阳关三叠由此而来。",e:"🍷",bg:"#DAA520"},
+{t:"泊秦淮",a:"杜牧",dy:"唐",loc:"南京",lat:32.06,lng:118.79,q:"商女不知亡国恨，隔江犹唱后庭花。",d:"杜牧夜泊秦淮河畔，听到歌女唱着亡国之音。借古讽今，忧国忧民的深沉感慨。",e:"🏮",bg:"#800000"},
+{t:"忆江南",a:"白居易",dy:"唐",loc:"杭州",lat:30.25,lng:120.15,q:"日出江花红胜火，春来江水绿如蓝。",d:"白居易回忆江南之美，日出时江边花红如火，春天江水碧绿如蓝。以浓烈色彩写尽江南春色。",e:"🌺",bg:"#DC143C"},
+{t:"望岳",a:"杜甫",dy:"唐",loc:"泰山",lat:36.25,lng:117.10,q:"会当凌绝顶，一览众山小。",d:"杜甫远望泰山，雄心壮志凌云。要登到最高峰，俯瞰天下群山。青年杜甫的豪迈气概。",e:"⛰️",bg:"#8B4513"},
+{t:"登高",a:"杜甫",dy:"唐",loc:"白帝城",lat:31.04,lng:109.55,q:"无边落木萧萧下，不尽长江滚滚来。",d:"杜甫登高远眺，落叶萧萧，长江滚滚。全诗八句对仗工整，被誉为古今七律之冠。",e:"🍂",bg:"#B8860B"},
+{t:"春望",a:"杜甫",dy:"唐",loc:"长安",lat:34.26,lng:108.94,q:"国破山河在，城春草木深。",d:"安史之乱中杜甫被困长安，看到国都残破而山河依旧。花鸟虽美却令人垂泪，忧国忧民的千古名篇。",e:"💔",bg:"#556B2F"},
+{t:"绝句",a:"杜甫",dy:"唐",loc:"成都",lat:30.57,lng:104.07,q:"两个黄鹂鸣翠柳，一行白鹭上青天。",d:"杜甫在成都草堂看到的春日景象：黄鹂鸣翠柳、白鹭上青天、西岭千秋雪、东吴万里船。四句四景，如画。",e:"🐦",bg:"#228B22"},
+{t:"送杜少府之任蜀州",a:"王勃",dy:"唐",loc:"长安",lat:34.26,lng:108.94,q:"海内存知己，天涯若比邻。",d:"王勃送别友人，却不伤感：只要心中有知己，天涯海角也如近邻。送别诗中最豁达的一首。",e:"🤝",bg:"#4169E1"},
+{t:"念奴娇·赤壁怀古",a:"苏轼",dy:"宋",loc:"黄州赤壁",lat:30.45,lng:114.87,q:"大江东去，浪淘尽，千古风流人物。",d:"苏轼贬谪黄州，游览赤壁，追忆周瑜英姿。大江东去的气势与人生如梦的感慨交织。豪放词的巅峰。",e:"🔥",bg:"#B22222"},
+{t:"江雪",a:"柳宗元",dy:"唐",loc:"永州",lat:26.42,lng:111.61,q:"孤舟蓑笠翁，独钓寒江雪。",d:"千山鸟飞绝，万径人踪灭。天地间只有一叶孤舟、一个老翁在漫天大雪中垂钓。最孤独也最倔强的画面。",e:"❄️",bg:"#708090"},
+{t:"出塞",a:"王昌龄",dy:"唐",loc:"玉门关",lat:40.33,lng:93.73,q:"但使龙城飞将在，不教胡马度阴山。",d:"王昌龄感叹边关战火不断，若有李广那样的将军在，敌人怎敢越过阴山。唐代边塞诗的压卷之作。",e:"⚔️",bg:"#8B0000"},
+{t:"白雪歌送武判官归京",a:"岑参",dy:"唐",loc:"轮台",lat:44.00,lng:87.30,q:"忽如一夜春风来，千树万树梨花开。",d:"岑参在西北边塞，以春风梨花喻漫天大雪，将苦寒之地写得如此绚烂。边塞诗中最奇丽的想象。",e:"🌨️",bg:"#B0C4DE"},
+{t:"泊船瓜洲",a:"王安石",dy:"宋",loc:"瓜洲",lat:32.20,lng:119.42,q:"春风又绿江南岸，明月何时照我还。",d:"王安石泊船瓜洲渡口，隔江遥望钟山。一个绿字用活了春天，思念家乡之情溢于言表。",e:"🌿",bg:"#2E8B57"},
+{t:"游山西村",a:"陆游",dy:"宋",loc:"镜湖",lat:30.00,lng:120.58,q:"山重水复疑无路，柳暗花明又一村。",d:"陆游游历乡间，山回路转看似无路，却又豁然开朗。成为千古名句，比喻困境中总有希望。",e:"🏡",bg:"#6B8E23"},
+{t:"小池",a:"杨万里",dy:"宋",loc:"吉水",lat:27.22,lng:115.13,q:"小荷才露尖尖角，早有蜻蜓立上头。",d:"杨万里捕捉到初夏池塘最动人的一瞬：嫩荷才冒出尖角，蜻蜓已立于其上。清新自然的田园绝句。",e:"🪷",bg:"#3CB371"},
+{t:"夜雨寄北",a:"李商隐",dy:"唐",loc:"巴山",lat:31.60,lng:107.75,q:"何当共剪西窗烛，却话巴山夜雨时。",d:"李商隐在巴山夜雨中思念远方妻子，想象将来重逢时共剪烛花、回忆今夜的场景。时空交错的深情。",e:"🕯️",bg:"#483D8B"},
+{t:"游子吟",a:"孟郊",dy:"唐",loc:"溧阳",lat:31.43,lng:119.48,q:"谁言寸草心，报得三春晖。",d:"孟郊写母亲为即将远行的儿子缝衣。寸草之心怎能报答三春阳光般的母爱？最朴素也最深沉的母爱诗。",e:"🧵",bg:"#DAA520"},
+{t:"山居秋暝",a:"王维",dy:"唐",loc:"终南山",lat:33.80,lng:108.90,q:"明月松间照，清泉石上流。",d:"王维笔下的秋日山居：雨后新晴，明月照松林，清泉流石上。诗中有画，画中有诗的典范。",e:"🌙",bg:"#228B22"},
+{t:"望月怀远",a:"张九龄",dy:"唐",loc:"韶州",lat:24.80,lng:113.59,q:"海上生明月，天涯共此时。",d:"张九龄望月思远：海上明月升起，天涯之人共此时。以最宏大的空间感写最深沉的思念。",e:"🌕",bg:"#191970"},
+{t:"商山早行",a:"温庭筠",dy:"唐",loc:"商山",lat:33.73,lng:109.93,q:"鸡声茅店月，人迹板桥霜。",d:"温庭筠早起赶路，鸡鸣茅店、残月当空、板桥薄霜、人迹依稀。六个名词排列，写出最清冷的早行画面。",e:"🐓",bg:"#696969"},
+{t:"题西林壁",a:"苏轼",dy:"宋",loc:"庐山",lat:29.56,lng:115.99,q:"不识庐山真面目，只缘身在此山中。",d:"苏轼游庐山，发现从不同角度看山形各异。由此感悟：身在其中反而看不清事物的本质。哲理诗的典范。",e:"🗻",bg:"#4682B4"},
+{t:"六月二十七日望湖楼醉书",a:"苏轼",dy:"宋",loc:"杭州",lat:30.25,lng:120.15,q:"黑云翻墨未遮山，白雨跳珠乱入船。",d:"苏轼在望湖楼看一场突如其来的夏日暴雨，以翻墨黑云、跳珠白雨写出暴雨的迅猛与壮观。",e:"⛈️",bg:"#2C3E50"},
+{t:"秋词",a:"刘禹锡",dy:"唐",loc:"朗州",lat:29.03,lng:111.68,q:"自古逢秋悲寂寥，我言秋日胜春朝。",d:"刘禹锡一反常人悲秋的调子，大声宣告秋天比春天更美好。晴空一鹤排云上的豪迈气概。",e:"🍂",bg:"#B8860B"},
+{t:"过零丁洋",a:"文天祥",dy:"宋",loc:"零丁洋",lat:22.20,lng:113.90,q:"人生自古谁无死，留取丹心照汗青。",d:"文天祥兵败被俘，经过零丁洋时写下这首绝笔。以死明志，丹心照耀史册。中华民族气节的丰碑。",e:"💪",bg:"#8B0000"}
+];
+
+// ===== STATE =====
+var favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+var dark=localStorage.getItem('pm_dark')==='1';
+var showFavOnly=false;
+var activeDynasty='all';
+var routePoet='all';
+var map,markers=[],routeLine;
+
+// ===== DARK MODE =====
+if(dark)document.body.classList.add('dark');
+document.getElementById('darkBtn').textContent=dark?'☀️':'🌙';
+function toggleDark(){
+  dark=!dark;
+  document.body.classList.toggle('dark',dark);
+  localStorage.setItem('pm_dark',dark?'1':'0');
+  document.getElementById('darkBtn').textContent=dark?'☀️':'🌙';
+}
+
+// ===== FAVORITES =====
+function saveFavs(){localStorage.setItem('pm_favs',JSON.stringify(favs));updateFavBadge()}
+function toggleFav(idx){var i=favs.indexOf(idx);if(i>=0)favs.splice(i,1);else favs.push(idx);saveFavs();applyFilter();buildRoute()}
+function updateFavBadge(){var el=document.getElementById('favCount');if(el)el.textContent=favs.length?'('+favs.length+')':''}
+function toggleFavFilter(){showFavOnly=!showFavOnly;document.getElementById('favBtn').style.borderColor=showFavOnly?'var(--accent)':'';applyFilter()}
+
+// ===== INIT MAP =====
+map=L.map('map',{zoomControl:false}).setView([33,108],4);
+L.control.zoom({position:'bottomright'}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'&copy; OpenStreetMap',maxZoom:18
+}).addTo(map);
+
+// ===== MARKERS =====
+P.forEach(function(p,i){
+  var m=L.circleMarker([p.lat,p.lng],{
+    radius:9,fillColor:p.bg,color:'#fff',weight:2,fillOpacity:.85,opacity:.9
+  }).addTo(map);
+  m.bindPopup('<b>'+p.t+'</b><br>'+p.a+' · '+p.dy+'<br><i>'+p.q+'</i><br><small style="color:var(--accent);cursor:pointer" onclick="openDetail('+i+')">查看详情 →</small>');
+  m.on('click',function(){openDetail(i)});
+  markers.push(m);
+});
+
+// ===== FILTERS =====
+var dynasties=[];
+P.forEach(function(p){if(dynasties.indexOf(p.dy)<0)dynasties.push(p.dy)});
+var fb=document.getElementById('filterBar');
+fb.innerHTML='<button class="on" onclick="setDynasty(\'all\',this)">全部</button>';
+dynasties.forEach(function(d){
+  var c=P.filter(function(p){return p.dy===d}).length;
+  fb.innerHTML+='<button onclick="setDynasty(\''+d+'\',this)">'+d+'('+c+')</button>';
+});
+function setDynasty(d,btn){
+  activeDynasty=d;
+  fb.querySelectorAll('button').forEach(function(b){b.classList.remove('on')});
+  btn.classList.add('on');
+  applyFilter();
+}
+
+// ===== ROUTE PANEL =====
+var poets=['李白','杜甫','苏轼','王维'];
+var rp=document.getElementById('routePanel');
+rp.innerHTML='<span class="rp-label">诗人足迹：</span><button class="on" onclick="setRoute(\'all\',this)">全部</button>';
+poets.forEach(function(a){rp.innerHTML+='<button onclick="setRoute(\''+a+'\',this)">'+a+'</button>'});
+function setRoute(a,btn){
+  routePoet=a;
+  rp.querySelectorAll('button').forEach(function(b){b.classList.remove('on')});
+  btn.classList.add('on');
+  buildRoute();
+}
+function buildRoute(){
+  if(routeLine)map.removeLayer(routeLine);
+  var pts;
+  if(routePoet==='all'){
+    pts=P.map(function(p){return [p.lat,p.lng]});
+  }else{
+    pts=P.filter(function(p){return p.a===routePoet}).map(function(p){return [p.lat,p.lng]});
+  }
+  if(pts.length>1)routeLine=L.polyline(pts,{color:'#c0392b',weight:2,dashArray:'6,8',opacity:.6}).addTo(map);
+  if(routePoet!=='all'&&pts.length){
+    var bounds=L.latLngBounds(pts);
+    map.fitBounds(bounds,{padding:[60,60],maxZoom:8});
+  }
+}
+buildRoute();
+
+// ===== SIDEBAR =====
+function applyFilter(){
+  var q=(document.getElementById('searchBox').value||'').toLowerCase();
+  var list=P.filter(function(p,i){
+    if(activeDynasty!=='all'&&p.dy!==activeDynasty)return false;
+    if(showFavOnly&&favs.indexOf(i)<0)return false;
+    if(q){
+      var txt=(p.t+p.a+p.q+p.loc).toLowerCase();
+      if(txt.indexOf(q)<0)return false;
+    }
+    return true;
+  });
+  renderList(list);
+  // update marker visibility
+  var visibleIdx=list.map(function(p){return P.indexOf(p)});
+  markers.forEach(function(m,i){
+    var el=m.getElement();
+    if(el)el.style.opacity=visibleIdx.indexOf(i)>=0?'1':'0.15';
+  });
+  document.getElementById('poemCount').textContent='共 '+list.length+' 首';
+  document.getElementById('statsBar').textContent=P.length+' 首诗词 · '+dynasties.length+' 个朝代 · '+poets.length+' 位诗人足迹';
+}
+function renderList(list){
+  var el=document.getElementById('poemList');
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">没有找到匹配的诗词</div>';return}
+  var h='';
+  list.forEach(function(p,i){
+    var idx=P.indexOf(p);
+    var isFav=favs.indexOf(idx)>=0;
+    h+='<div class="pl-card" onclick="flyTo('+idx+');openDetail('+idx+')" style="animation:fadeUp .3s '+(i*0.03)+'s both">';
+    h+='<span class="pl-emoji">'+p.e+'</span>';
+    h+='<div class="pl-title">'+p.t+'</div>';
+    h+='<div class="pl-author">'+p.a+' · '+p.dy+'</div>';
+    h+='<div class="pl-quote">"'+p.q+'"</div>';
+    h+='<div class="pl-loc">📍 '+p.loc+'</div>';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ===== FLY TO =====
+function flyTo(idx){
+  var p=P[idx];
+  map.flyTo([p.lat,p.lng],10,{duration:1.2});
+  markers[idx].openPopup();
+}
+
+// ===== DETAIL MODAL =====
+function openDetail(idx){
+  var p=P[idx];
+  var isFav=favs.indexOf(idx)>=0;
+  var h='<div class="md-hero" style="background:linear-gradient(135deg,'+p.bg+','+p.bg+'88)"><div class="md-emoji">'+p.e+'</div></div>';
+  h+='<div class="md-body">';
+  h+='<h2>'+p.t+'</h2>';
+  h+='<div class="md-meta"><span>✍️ '+p.a+'</span><span>🏯 '+p.dy+'</span><span>📍 '+p.loc+'</span></div>';
+  h+='<div class="md-quote">"'+p.q+'"</div>';
+  h+='<div class="md-desc">'+p.d+'</div>';
+  h+='<div class="md-loc" onclick="flyTo('+idx+')">🗺️ 在地图上查看</div>';
+  h+='<div style="margin-top:12px"><button class="nav-btn" style="font-size:14px;padding:6px 16px" onclick="toggleFav('+idx+');openDetail('+idx+')">'+(isFav?'⭐ 已收藏':'☆ 收藏')+'</button></div>';
+  h+='</div>';
+  document.getElementById('modalContent').innerHTML=h;
+  document.getElementById('modalBg').classList.add('show');
+  document.querySelector('.modal').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('show');
+  document.querySelector('.modal').classList.remove('show');
+}
+
+// ===== INIT =====
+updateFavBadge();
+applyFilter();
+</script>
+</body>
+</html>

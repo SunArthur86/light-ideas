@@ -150,6 +150,7 @@ body.dark .fav-btn{background:rgba(0,0,0,.4)}
   <button class="view-btn" onclick="toggleDark()" title="暗黑模式" id="darkBtn">🌙</button>
   <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
   <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
+  <button class="view-btn" data-view="quotes" onclick="setView('quotes')">名句</button>
   <button class="view-btn" data-view="chart" onclick="setView('chart')">统计</button>
 </nav>
 
@@ -425,7 +426,24 @@ function applyFilters(){
   }
   if(currentView==='grid')renderGrid(books,el);
   else if(currentView==='timeline')renderTimeline(books,el);
+  else if(currentView==='quotes')renderQuotes(books,el);
   else renderChart(books,el);
+}
+
+function renderQuotes(books,el){
+  var h='<div style="columns:2;column-gap:16px;padding:0 4px">';
+  books.forEach(function(b,i){
+    var idx=B.indexOf(b);
+    h+='<div onclick="openDetail('+idx+')" style="break-inside:avoid;margin-bottom:14px;padding:18px;background:var(--surface);border-radius:14px;border:1px solid var(--border);cursor:pointer;transition:all .2s;animation:fadeUp .4s '+(i*0.03)+'s both">';
+    h+='<div style="font-size:1.08em;font-weight:600;line-height:1.7;color:var(--text);margin-bottom:10px;font-style:italic">\"'+b.q+'\"</div>';
+    h+='<div style="display:flex;align-items:center;gap:8px;justify-content:space-between">';
+    h+='<div><span style="font-size:.82em;color:var(--text2)">—— '+b.a+'《'+b.t+'》</span></div>';
+    h+='<span style="font-size:1.2em">'+b.e+'</span>';
+    h+='</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
 }
 
 function renderGrid(books,el){
@@ -516,6 +534,12 @@ function openDetail(idx){
   h+='</div>';
   h+='<div class="m-quote">"'+b.q+'"</div>';
   h+='<div class="m-desc">'+b.d+'</div>';
+  // TTS Read Aloud Button
+  h+='<div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">';
+  h+='<button onclick="readAloud('+idx+',\'txt\')" id="readBtn'+idx+'" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:.85em;display:flex;align-items:center;gap:6px;transition:all .2s">🔊 朗读原文</button>';
+  h+='<button onclick="readAloud('+idx+',\'q\')" id="readQBtn'+idx+'" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:.85em;display:flex;align-items:center;gap:6px;transition:all .2s">🔊 朗读名句</button>';
+  h+='<button onclick="stopReading()" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:.85em;display:flex;align-items:center;gap:6px;transition:all .2s">⏹️ 停止</button>';
+  h+='</div>';
   // Original text
   h+='<div class="m-section"><h3>📜 原文节选</h3><div class="classic-text">'+b.txt+'</div></div>';
   h+='<div class="m-tags">';
@@ -543,7 +567,26 @@ function openDetail(idx){
   document.getElementById('modal').classList.add('show');
 }
 
+function readAloud(idx,field){
+  if(!window.speechSynthesis)return;
+  stopReading();
+  var b=B[idx];
+  var text=b[field]||'';
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang='zh-CN';u.rate=0.85;u.pitch=1;
+  // Try to pick a Chinese voice
+  var voices=speechSynthesis.getVoices().filter(function(v){return v.lang.indexOf('zh')>=0});
+  if(voices.length)u.voice=voices[0];
+  window._currentUtterance=u;
+  speechSynthesis.speak(u);
+}
+function stopReading(){
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  window._currentUtterance=null;
+}
+
 function closeModal(){
+  stopReading();
   document.getElementById('modalOverlay').classList.remove('show');
   document.getElementById('modal').classList.remove('show');
 }
