@@ -160,6 +160,10 @@ nav .view-btn.active{background:var(--accent);color:#fff;border-color:var(--acce
     <div id="regionFilters"></div>
   </div>
   <div class="filter-row">
+    <span class="label">来源</span>
+    <div id="sourceFilters"></div>
+  </div>
+  <div class="filter-row">
     <span class="label">类型</span>
     <div id="genreFilters"></div>
   </div>
@@ -289,7 +293,157 @@ var B=[
 {t:"和风一起散步",o:"和风一起散步",a:"熊亮",co:"🇨🇳中国",y:2015,g:["自然","诗意"],e:"🍃",ag:"3-7",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"如果风在森林里散步，它会走过哪些地方？中国绘本大师熊亮用水墨风格讲述自然之美。",q:"风来了，树就跳舞；风走了，树就安静了。"},
 {t:"一粒种子的旅行",o:"The Travels of a Seed",a:"安妮·默勒",co:"🇩🇪德国",y:2007,g:["自然","科普"],e:"🌱",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#2b8a3e)",d:"种子怎么旅行？风带着它们飞，动物们帮忙搬运，有些会自己弹射出去——一粒种子的奇妙旅程。",q:"每一粒种子都是一个小小的旅行家，等待着属于自己的那片土地。"},
 {t:"我能自己做",o:"I Can Do It Myself!",a:"斯蒂芬·卡普斯蒂克",co:"🇺🇸美国",y:2015,g:["成长","自信"],e:"💪",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小小的我要自己穿衣服、系鞋带、倒牛奶……虽然有时候会弄得一团糟，但我正在学会独立。",q:"虽然还不完美，但我正在变得越来越棒！"},
-{t:"有一天",o:"Someday",a:"艾莉森·麦基",co:"🇺🇸美国",y:2007,g:["亲情","生命"],e:"🌟",ag:"3+",bg:"linear-gradient(135deg,#ffd43b,#e8590c)",d:"一位母亲看着熟睡的女儿，想象她从婴儿到长大再到成为母亲的旅程。全球畅销200万册的亲子绘本。",q:"有一天，你会站在那里，看着我的背影越来越远。但我知道，你永远在我的心里。"}
+{t:"有一天",o:"Someday",a:"艾莉森·麦基",co:"🇺🇸美国",y:2007,g:["亲情","生命"],e:"🌟",ag:"3+",bg:"linear-gradient(135deg,#ffd43b,#e8590c)",d:"一位母亲看着熟睡的女儿，想象她从婴儿到长大再到成为母亲的旅程。全球畅销200万册的亲子绘本。",q:"有一天，你会站在那里，看着我的背影越来越远。但我知道，你永远在我的心里。"},
+{t:"123到动物园",o:"1, 2, 3 to the Zoo",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1968,g:["数数","动物"],e:"🚂",ag:"2-5",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"一列火车载着动物们前往动物园，每页增加一种动物，让孩子在趣味中学习数数。",q:"一、二、三……越来越多的动物到动物园了！",lk:"https://www.youtube.com/results?search_query=123到动物园+绘本朗读"},
+{t:"画一个星星给我",o:"Draw Me a Star",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1992,g:["想象","艺术"],e:"⭐",ag:"3-7",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"画家从一颗星开始，画出了整个世界——太阳、花、鸟、彩虹，展现了创造力与生命的循环。",q:"画一个星星给我吧，它点亮了整个夜空。",lk:"https://www.youtube.com/results?search_query=画一个星星给我+绘本朗读"},
+{t:"海马先生",o:"Mister Seahorse",a:"艾瑞·卡尔",co:"🇺🇸美国",y:2004,g:["亲情","海洋"],e:"🐴",ag:"3-6",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"海马爸爸在海底温柔地守护着自己的卵宝宝，一路上遇到许多同样照顾孩子的鱼爸爸们。",q:"海马先生在水草间轻轻游动，怀里是即将出生的宝宝。",lk:"https://www.youtube.com/results?search_query=海马先生+绘本朗读"},
+{t:"小种子",o:"The Tiny Seed",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1970,g:["自然","成长"],e:"🌱",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"一颗小种子随风飘扬，历经四季变化，最终扎根发芽开出巨花，讲述生命的旅程与坚持。",q:"虽然我最小最慢，但我会开出最美的花。",lk:"https://www.youtube.com/results?search_query=小种子+绘本朗读"},
+{t:"好安静的蟋蟀",o:"The Very Quiet Cricket",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1990,g:["自然","社交"],e:"🦗",ag:"3-6",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"小蟋蟀想回应每一个遇见的昆虫，却发不出声。直到遇见另一只蟋蟀，终于摩擦翅膀唱出歌。",q:"他摩擦了一次翅膀……什么声音也没有。",lk:"https://www.youtube.com/results?search_query=好安静的蟋蟀+绘本朗读"},
+{t:"好忙的蜘蛛",o:"The Very Busy Spider",a:"艾瑞·卡尔",co:"🇺🇸美国",y:1984,g:["专注","动物"],e:"🕷️",ag:"2-5",bg:"linear-gradient(135deg,#868e96,#495057)",d:"蜘蛛专注地织网，不理会所有动物的邀请。网织好后，成功捕到了一只苍蝇——专注的力量。",q:"蜘蛛忙着织她的网，对谁也不理会。",lk:"https://www.youtube.com/results?search_query=好忙的蜘蛛+绘本朗读"},
+{t:"鱼就是鱼",o:"Fish Is Fish",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1970,g:["接纳","自我"],e:"🐟",ag:"4-8",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"池塘里的鱼羡慕青蛙见过的鸟、牛和人，想跳出水面去看世界，却发现水里才是自己的家。",q:"鱼就是鱼，水才是你的世界。",lk:"https://www.youtube.com/results?search_query=鱼就是鱼+绘本朗读"},
+{t:"亚历山大和发条老鼠",o:"Alexander and the Wind-Up Mouse",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1969,g:["友谊","自我认同"],e:"🐭",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"真老鼠亚历山大羡慕发条老鼠威利受人喜爱。蜥蜴帮他许愿，他却选择把魔法给了威利。",q:"你愿意变成别人喜欢的样子，还是做自由的自己？",lk:"https://www.youtube.com/results?search_query=亚历山大和发条老鼠+绘本朗读"},
+{t:"蒂莉和高墙",o:"Tillie and the Wall",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1989,g:["勇气","探索"],e:"🐭",ag:"4-7",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"老鼠们世世代代生活在石墙这边，只有小蒂莉想知道墙那边的世界。她终于找到办法翻过墙。",q:"高墙的那一边，也许住着和我们一样的朋友。",lk:"https://www.youtube.com/results?search_query=蒂莉和高墙+绘本朗读"},
+{t:"这是我的",o:"It's Mine!",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1985,g:["分享","合作"],e:"🐸",ag:"3-6",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"三只青蛙为岛上的一切争吵：这是我的！暴雨来临，他们学会分享和共处。",q:"这是我们的小岛，我们的，大家的！",lk:"https://www.youtube.com/results?search_query=这是我的+李奥尼+绘本朗读"},
+{t:"鳄鱼柯尼列斯",o:"Cornelius",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1983,g:["自信","独特"],e:"🐊",ag:"3-7",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"鳄鱼柯尼列斯生来就直立行走，但其他鳄鱼不以为然。他坚持做自己，最终影响了整个鳄鱼群。",q:"我能站着走路！我可以看到更远的世界！",lk:"https://www.youtube.com/results?search_query=鳄鱼柯尼列斯+绘本朗读"},
+{t:"戴高帽的猫",o:"The Cat in the Hat",a:"苏斯博士",co:"🇺🇸美国",y:1957,g:["幽默","想象"],e:"🎩",ag:"4-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"下雨天妈妈不在家，戴高帽的猫突然闯入，把家里搞得翻天覆地，又赶在妈妈回来前收拾好。",q:"我看着他们说，要不要告诉妈妈？不，也许不说。",lk:"https://www.youtube.com/results?search_query=戴高帽的猫+绘本朗读"},
+{t:"霍顿听见了呼呼声",o:"Horton Hears a Who!",a:"苏斯博士",co:"🇺🇸美国",y:1954,g:["正义","勇气"],e:"🐘",ag:"4-8",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"大象霍顿听到一粒灰尘上有微弱的呼救声，他坚信每个生命都重要，即使再小也值得被保护。",q:"一个人就是一个人，不管有多小！",lk:"https://www.youtube.com/results?search_query=霍顿听见了呼呼声+绘本朗读"},
+{t:"木头人",o:"Stick Man",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:2008,g:["冒险","家庭"],e:"🪵",ag:"3-7",bg:"linear-gradient(135deg,#868e96,#495057)",d:"树枝人被狗叼走、被扔进河里、被当成雪人的手臂，历尽千辛万苦终于回到家人身边。",q:"我是树枝人，我是树枝人，我要回到我的家庭树！",lk:"https://www.youtube.com/results?search_query=木头人+绘本朗读"},
+{t:"小猴子找妈妈",o:"Monkey Puzzle",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:2000,g:["亲子","动物"],e:"🐵",ag:"3-6",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小猴子在丛林中迷路找妈妈，蝴蝶热心帮忙却总认错——原来蝴蝶的孩子长得和自己不一样。",q:"她看起来像你吗？不像！不像！一点也不像！",lk:"https://www.youtube.com/results?search_query=小猴子找妈妈+绘本朗读"},
+{t:"女巫扫帚排排坐",o:"Room on the Broom",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:2001,g:["友谊","冒险"],e:"🧹",ag:"3-7",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"善良的女巫一路上让小动物们搭上扫帚，扫帚断了后大家团结起来从巨龙口中救出女巫。",q:"上来吧！扫帚上还有位置！",lk:"https://www.youtube.com/results?search_query=女巫扫帚排排坐+绘本朗读"},
+{t:"纸娃娃",o:"The Paper Dolls",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:2011,g:["想象","记忆"],e:"🎎",ag:"3-6",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"小女孩和妈妈一起做了一串纸娃娃，它们在想象中跳舞冒险。虽然被男孩剪碎了，但永远活在记忆里。",q:"我们不会消失，我们住在你的记忆里。",lk:"https://www.youtube.com/results?search_query=纸娃娃+绘本朗读"},
+{t:"小金鱼逃走了",o:"The Little Fish Runs Away",a:"五味太郎",co:"🇯🇵日本",y:1982,g:["观察","互动"],e:"🐟",ag:"1-4",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"小金鱼从鱼缸逃走了！它躲在窗帘上、花丛中、糖果罐里……让孩子在每页寻找躲藏的小金鱼。",q:"小金鱼逃走了，它去哪儿了呢？",lk:"https://www.youtube.com/results?search_query=小金鱼逃走了+绘本朗读"},
+{t:"鳄鱼怕怕牙医怕怕",o:"The Crocodile and the Dentist",a:"五味太郎",co:"🇯🇵日本",y:1984,g:["情绪","健康"],e:"🐊",ag:"2-6",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"鳄鱼害怕看牙医，牙医害怕看鳄鱼。两个角色说的话一模一样，幽默展现彼此的恐惧心理。",q:"我一定得去吗？我一定得去吗？",lk:"https://www.youtube.com/results?search_query=鳄鱼怕怕牙医怕怕+绘本朗读"},
+{t:"藏猫猫",o:"Hide and Seek",a:"五味太郎",co:"🇯🇵日本",y:1978,g:["观察","游戏"],e:"👀",ag:"1-5",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"五味太郎的视觉大发现绘本，动物们藏在各种意想不到的地方，培养孩子的观察力和专注力。",q:"你找到我了吗？我藏得可好了！",lk:"https://www.youtube.com/results?search_query=五味太郎+藏猫猫+绘本朗读"},
+{t:"春天来了",o:"Spring Is Here",a:"五味太郎",co:"🇯🇵日本",y:1985,g:["季节","自然"],e:"🌸",ag:"2-5",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"用简洁的画面展现季节更替，春天来了万物复苏，小牛长出了新花纹，世界充满生机。",q:"春天来了，一切都变成了新的样子。",lk:"https://www.youtube.com/results?search_query=春天来了+五味太郎+绘本朗读"},
+{t:"大猩猩",o:"Gorilla",a:"安东尼·布朗",co:"🇬🇧英国",y:1983,g:["亲情","想象"],e:"🦍",ag:"4-8",bg:"linear-gradient(135deg,#868e96,#495057)",d:"汉娜的爸爸太忙了，没时间陪她。生日那天，玩具大猩猩变成了真的大猩猩，带她度过奇妙夜晚。",q:"汉娜的爸爸总是说，现在不行，我很忙。",lk:"https://www.youtube.com/results?search_query=大猩猩+安东尼布朗+绘本朗读"},
+{t:"朱家故事",o:"Piggybook",a:"安东尼·布朗",co:"🇬🇧英国",y:1986,g:["家庭","性别平等"],e:"🐷",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"朱家爸爸和两个儿子什么家务都不做，妈妈承担了一切。有一天妈妈离家出走，男人们变成了猪。",q:"你们是猪吗？看看你们自己！",lk:"https://www.youtube.com/results?search_query=朱家故事+绘本朗读"},
+{t:"我哥哥",o:"My Brother",a:"安东尼·布朗",co:"🇬🇧英国",y:2007,g:["亲情","自信"],e:"👦",ag:"3-7",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"弟弟眼中的哥哥超级酷——他是蜘蛛侠、是摇滚明星、是最棒的朋友。一幅温暖的手足情画像。",q:"我哥哥真的很酷，他是世界上最酷的哥哥！",lk:"https://www.youtube.com/results?search_query=我哥哥+安东尼布朗+绘本朗读"},
+{t:"威利和朋友",o:"Willy and Hugh",a:"安东尼·布朗",co:"🇬🇧英国",y:1991,g:["友谊","勇气"],e:"🦍",ag:"3-7",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"胆小的猩猩威利被欺负时，大个子休出手相助，两人成为最好的朋友。友情让彼此都变得更勇敢。",q:"你是我的朋友，我不再害怕了。",lk:"https://www.youtube.com/results?search_query=威利和朋友+绘本朗读"},
+{t:"下雪天",o:"The Snowy Day",a:"艾兹拉·杰克·季兹",co:"🇺🇸美国",y:1962,g:["探索","自然"],e:"❄️",ag:"2-6",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"小彼得在雪地里留下脚印、堆雪人、打雪仗，用口袋装了一团雪想留到明天。纯真童年的雪天记忆。",q:"那天晚上彼得梦见太阳融化了所有的雪，但早上醒来，雪还在！",lk:"https://www.youtube.com/results?search_query=下雪天+绘本朗读"},
+{t:"彼得的椅子",o:"Peter's Chair",a:"艾兹拉·杰克·季兹",co:"🇺🇸美国",y:1967,g:["成长","适应"],e:"🪑",ag:"3-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"妈妈要把彼得的小椅子漆成粉色给妹妹用，彼得抱着椅子离家出走。但他发现自己已经坐不进去了。",q:"我太小了，坐不进这把椅子了。",lk:"https://www.youtube.com/results?search_query=彼得的椅子+绘本朗读"},
+{t:"母鸡萝丝去散步",o:"Rosie's Walk",a:"佩特·哈群斯",co:"🇬🇧英国",y:1968,g:["幽默","观察"],e:"🐔",ag:"2-6",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"母鸡萝丝悠闲地散步，身后跟着一只倒霉的狐狸——每一步都被各种机关惩罚。文字只说散步，画面全是喜剧。",q:"萝丝走过院子，绕过池塘，从干草堆下经过……",lk:"https://www.youtube.com/results?search_query=母鸡萝丝去散步+绘本朗读"},
+{t:"打瞌睡的房子",o:"The Napping House",a:"奥黛丽·伍德",co:"🇺🇸美国",y:1984,g:["节奏","幽默"],e:"🏠",ag:"2-6",bg:"linear-gradient(135deg,#868e96,#495057)",d:"下雨天，老奶奶在床上睡觉，小孩睡在奶奶身上，狗睡在小孩身上，猫睡在狗身上……直到一只跳蚤醒了。",q:"在这间打瞌睡的房子里，每个人都在睡觉。",lk:"https://www.youtube.com/results?search_query=打瞌睡的房子+绘本朗读"},
+{t:"手套",o:"The Mitten",a:"简·布雷特",co:"🇺🇸美国",y:1989,g:["动物","幽默"],e:"🧤",ag:"3-7",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"尼基丢了一只白色手套，森林里的动物们一个接一个钻进手套取暖——鼹鼠、兔子、刺猬、狐狸……手套越撑越大。",q:"手套里还能再挤进来一位吗？",lk:"https://www.youtube.com/results?search_query=手套+简布雷特+绘本朗读"},
+{t:"巫婆奶奶",o:"Strega Nona",a:"汤米·狄波拉",co:"🇺🇸美国",y:1975,g:["规则","责任"],e:"🧙‍♀️",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"巫婆奶奶有一个神奇的煮面锅。助手安东尼诺趁奶奶不在偷偷用了魔法，面条却停不下来淹没了整个小镇。",q:"巫婆奶奶说，永远不要碰我的面锅！",lk:"https://www.youtube.com/results?search_query=巫婆奶奶+绘本朗读"},
+{t:"青蛙和蟾蜍",o:"Frog and Toad Are Friends",a:"阿诺德·罗贝尔",co:"🇺🇸美国",y:1970,g:["友谊","日常"],e:"🐸",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"五个温暖小故事讲述青蛙和蟾蜍的日常友谊——等信、找纽扣、讲故事，简单却深刻动人。",q:"蟾蜍，现在是春天了！我们该去玩了！",lk:"https://www.youtube.com/results?search_query=青蛙和蟾蜍+绘本朗读"},
+{t:"驴小弟变石头",o:"Sylvester and the Magic Pebble",a:"威廉·史代格",co:"🇺🇸美国",y:1969,g:["亲情","魔法"],e:"🫏",ag:"4-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"驴小弟捡到一颗许愿石，遇到狮子时慌乱许愿变成石头。漫长的等待后，父母偶然的许愿让他变回原形。",q:"我多么希望能再见到我的小宝贝。",lk:"https://www.youtube.com/results?search_query=驴小弟变石头+绘本朗读"},
+{t:"野蛮游戏",o:"Jumanji",a:"克里斯·范·奥尔斯伯格",co:"🇺🇸美国",y:1981,g:["冒险","想象"],e:"🎲",ag:"5-10",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"两个孩子发现了一盒神奇的桌游，每走一步游戏中的动物和灾难就会出现在真实房间里。",q:"仔细阅读规则，一旦开始就不能停止。",lk:"https://www.youtube.com/results?search_query=野蛮游戏+绘本朗读"},
+{t:"阿罗有支彩色笔",o:"Harold and the Purple Crayon",a:"克罗克特·约翰逊",co:"🇺🇸美国",y:1955,g:["想象","创造"],e:"🖍️",ag:"3-7",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"小男孩阿罗用一支紫色蜡笔画出了自己的冒险世界——月亮、道路、海洋、城市，最后画了张床安然入睡。",q:"他画了一扇紫色的小门，推开门走进去。",lk:"https://www.youtube.com/results?search_query=阿罗有支彩色笔+绘本朗读"},
+{t:"你是我妈妈吗",o:"Are You My Mother?",a:"P.D.伊斯曼",co:"🇺🇸美国",y:1960,g:["亲子","动物"],e:"🐦",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小鸟从蛋里孵出来时妈妈不在，它四处寻找，问遍了猫、鸡、狗、车、船，最终找到了自己的妈妈。",q:"你是我妈妈吗？不是，我是一只母鸡。",lk:"https://www.youtube.com/results?search_query=你是我妈妈吗+绘本朗读"},
+{t:"狼大叔的猪",o:"The Wolf's Chicken Stew",a:"庆子·卡萨",co:"🇯🇵日本",y:1987,g:["温暖","意外"],e:"🐺",ag:"3-7",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"大灰狼想吃母鸡，每天偷偷给她送美食把她养肥。结果母鸡把美食分给了小鸡们，狼反而成了英雄。",q:"谢谢你，狼先生！你是世界上最好的叔叔！",lk:"https://www.youtube.com/results?search_query=狼大叔的猪+绘本朗读"},
+{t:"我的幸运日",o:"My Lucky Day",a:"庆子·卡萨",co:"🇯🇵日本",y:2003,g:["智慧","幽默"],e:"🐷",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"小猪误敲狐狸的门，狐狸觉得今天是自己的幸运日。但聪明的小猪一步步让狐狸累瘫，自己逃走了。",q:"这一定是全世界最幸运的一天！",lk:"https://www.youtube.com/results?search_query=我的幸运日+绘本朗读"},
+{t:"奥莉薇",o:"Olivia",a:"伊恩·福尔科纳",co:"🇺🇸美国",y:2000,g:["个性","日常"],e:"🐷",ag:"3-7",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"小猪奥莉薇精力旺盛，她喜欢艺术、讨厌午睡、会试遍所有衣服。她耗尽了妈妈的精力却赢得了所有人的心。",q:"奥莉薇很擅长把人累坏，但她也擅长把人逗乐。",lk:"https://www.youtube.com/results?search_query=奥莉薇+绘本朗读"},
+{t:"好奇的乔治",o:"Curious George",a:"H.A.雷",co:"🇩🇪德国",y:1941,g:["好奇","冒险"],e:"🐵",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小猴子乔治好奇心无限，每次都闯祸——打电话、飞上天、坐火箭——但最后总能化险为夷。",q:"乔治很好奇，他想看看会发生什么。",lk:"https://www.youtube.com/results?search_query=好奇的乔治+绘本朗读"},
+{t:"要是给老鼠吃饼干",o:"If You Give a Mouse a Cookie",a:"劳拉·努梅罗夫",co:"🇺🇸美国",y:1985,g:["因果","幽默"],e:"🍪",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"给老鼠一块饼干，它会要一杯牛奶，然后要一根吸管、一面镜子、一把剪刀……连锁反应停不下来。",q:"如果你给老鼠一块饼干，他一定会要一杯牛奶。",lk:"https://www.youtube.com/results?search_query=要是给老鼠吃饼干+绘本朗读"},
+{t:"感觉书",o:"The Feelings Book",a:"托德·帕尔",co:"🇺🇸美国",y:2005,g:["情绪","认知"],e:"😊",ag:"2-5",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"用明亮的色彩和简单的文字帮助孩子认识和表达情绪——有时候你很开心，有时候你有点难过，这都没关系。",q:"有时候我感到勇敢，有时候我需要拥抱。",lk:"https://www.youtube.com/results?search_query=感觉书+托德帕尔+绘本朗读"},
+{t:"家人书",o:"The Family Book",a:"托德·帕尔",co:"🇺🇸美国",y:2003,g:["家庭","多元"],e:"👨‍👩‍👧",ag:"2-5",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"有的家庭大，有的家庭小；有的家庭颜色一样，有的不一样。所有的家庭都是特别的，都充满了爱。",q:"不管你的家庭是什么样的，它都是独一无二的。",lk:"https://www.youtube.com/results?search_query=家人书+托德帕尔+绘本朗读"},
+{t:"这不是我的帽子",o:"This Is Not My Hat",a:"乔恩·克拉森",co:"🇨🇦加拿大",y:2012,g:["幽默","悬念"],e:"🎩",ag:"3-7",bg:"linear-gradient(135deg,#868e96,#495057)",d:"小鱼偷了大鱼的帽子，觉得大鱼不会发现，也不会追来。但画面告诉我们另一个故事——大鱼就在后面。",q:"这不是我的帽子，是我偷来的。",lk:"https://www.youtube.com/results?search_query=这不是我的帽子+绘本朗读"},
+{t:"我想要回我的帽子",o:"I Want My Hat Back",a:"乔恩·克拉森",co:"🇨🇦加拿大",y:2011,g:["幽默","推理"],e:"🐻",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"熊的帽子不见了，他挨个问森林里的动物。没有人见过——直到他突然想起兔子戴着的那顶红色帽子。",q:"我看见了我的帽子。你偷了我的帽子。",lk:"https://www.youtube.com/results?search_query=我想要回我的帽子+绘本朗读"},
+{t:"蚯蚓日记",o:"Diary of a Worm",a:"朵琳·克罗宁",co:"🇺🇸美国",y:2003,g:["幽默","自然"],e:"🪱",ag:"4-8",bg:"linear-gradient(135deg,#868e96,#495057)",d:"小蚯蚓的日记记录了它的日常生活——上学、和蜘蛛朋友吵架、怕钓鱼季、永远不用洗澡。",q:"3月20日：妈妈说我永远不用刷牙。做蚯蚓真好！",lk:"https://www.youtube.com/results?search_query=蚯蚓日记+绘本朗读"},
+{t:"纸袋公主",o:"The Paper Bag Princess",a:"罗伯特·蒙施",co:"🇨🇦加拿大",y:1980,g:["勇气","独立"],e:"👸",ag:"4-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"龙烧毁了公主的城堡和衣服，掳走了王子。公主穿上纸袋追上去智斗恶龙，最后发现王子不值得。",q:"你的衣服真难看，你根本不像个王子！",lk:"https://www.youtube.com/results?search_query=纸袋公主+绘本朗读"},
+{t:"爱你永远",o:"Love You Forever",a:"罗伯特·蒙施",co:"🇨🇦加拿大",y:1986,g:["亲情","生命"],e:"💕",ag:"3+",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"从婴儿到成人，妈妈每晚偷偷走进儿子的房间抱住他唱同一首歌。轮回报偿——儿子最终抱住年迈的母亲。",q:"我永远爱你，我永远喜欢你，只要你活着你就是我的宝贝。",lk:"https://www.youtube.com/results?search_query=爱你永远+绘本朗读"},
+{t:"大家来大便",o:"Everyone Poops",a:"五味太郎",co:"🇯🇵日本",y:1977,g:["身体","认知"],e:"💩",ag:"1-4",bg:"linear-gradient(135deg,#868e96,#495057)",d:"大象的大便很大，老鼠的大便很小，每个人的大便都不一样。用幽默帮助孩子认识身体，不再害怕上厕所。",q:"每个人都要大便，这就是生活！",lk:"https://www.youtube.com/results?search_query=大家来大便+绘本朗读"},
+{t:"小蓝和小黄",o:"Little Blue and Little Yellow",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1959,g:["友谊","色彩"],e:"🔵",ag:"2-5",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"蓝色和黄色是好朋友，拥抱在一起变成了绿色，各自的父母都认不出他们了。简单色块讲述深刻的友谊故事。",q:"小蓝和小黄紧紧抱在一起，变成了小绿！",lk:"https://www.youtube.com/results?search_query=小蓝和小黄+绘本朗读"},
+{t:"猜猜看——谁找到了泰迪熊",o:"Whose Teddy Bear Is This?",a:"五味太郎",co:"🇯🇵日本",y:1988,g:["观察","互动"],e:"🧸",ag:"1-5",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"每一页都有不同的场景和隐藏的泰迪熊，引导孩子用眼睛寻找。五味太郎标志性的互动设计。",q:"你猜泰迪熊藏在哪儿了？",lk:"https://www.youtube.com/results?search_query=猜猜看+五味太郎+绘本朗读"},
+{t:"别让鸽子开巴士",o:"Don't Let the Pigeon Drive the Bus!",a:"莫·威廉斯",co:"🇺🇸美国",y:2003,g:["互动","规则"],e:"🐦",ag:"2-6",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"司机离开前叮嘱读者别让鸽子开巴士。鸽子使出浑身解数恳求、耍赖、撒娇，读者要坚定说不。",q:"求求你了，就让我开一下吧？",lk:"https://www.youtube.com/results?search_query=别让鸽子开巴士+绘本朗读"},
+{t:"咕噜牛宝宝",o:"The Gruffalo's Child",a:"朱莉娅·唐纳森",co:"🇬🇧英国",y:2004,g:["冒险","勇气"],e:"👶",ag:"3-7",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"咕噜牛的女儿不顾爸爸警告，雪夜外出寻找传说中的大坏老鼠。她发现老鼠虽小却非常聪明。",q:"爸爸说森林里有一只大坏老鼠，我才不怕！",lk:"https://www.youtube.com/results?search_query=咕噜牛宝宝+绘本朗读"},
+{t:"鸭子骑车记",o:"Duck on a Bike",a:"大卫·夏农",co:"🇺🇸美国",y:2002,g:["勇气","尝试"],e:"🚲",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"鸭子看到一辆自行车，决定骑一骑。其他动物觉得他疯了，但每个动物心里都偷偷想试试。",q:"你好，牛！鸭子骑着自行车经过。",lk:"https://www.youtube.com/results?search_query=鸭子骑车记+绘本朗读"},
+{t:"我想吃一个小孩",o:"I'd Really Like to Eat a Child",a:"西尔维·多尼",co:"🇫🇷法国",y:2007,g:["幽默","成长"],e:"🐊",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"小鳄鱼不想吃香蕉了，他想吃一个小孩！但他太小了，小孩把他当玩具提起来说他好可爱。",q:"我要吃一个小孩！你太小了，吃不了。",lk:"https://www.youtube.com/results?search_query=我想吃一个小孩+绘本朗读"},
+{t:"猜猜我等谁",o:"Who's Waiting for Me?",a:"庆子·卡萨",co:"🇯🇵日本",y:1994,g:["友谊","惊喜"],e:"🐰",ag:"3-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"兔子兴高采烈地去赴约，一路上遇到各种朋友问她要去哪里。最后一个大惊喜等着她——朋友们为她准备了生日派对。",q:"今天是个特别的日子，有人在等我！",lk:"https://www.youtube.com/results?search_query=猜猜我等谁+绘本朗读"},
+{t:"我的连衣裙",o:"My Dress",a:"五味太郎",co:"🇯🇵日本",y:1975,g:["想象","变化"],e:"👗",ag:"1-5",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"小兔子的白连衣裙走过花田变成花朵裙，走过雨滴变成雨点裙。简洁重复中展现变化的魔法。",q:"啦啦啦，啦啦啦，我的连衣裙真漂亮！",lk:"https://www.youtube.com/results?search_query=我的连衣裙+五味太郎+绘本朗读"},
+{t:"逃学的小狐狸",o:"Fox Goes Out at Night",a:"五味太郎",co:"🇯🇵日本",y:1980,g:["独立","成长"],e:"🦊",ag:"2-5",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小狐狸趁妈妈不注意溜出去冒险，经历了有趣的事情后安心回家。鼓励孩子探索世界又给予安全感。",q:"外面真好玩，但家是最温暖的。",lk:"https://www.youtube.com/results?search_query=小狐狸+五味太郎+绘本朗读"},
+{t:"小种子的小旅行",o:"The Travels of a Tiny Seed",a:"安妮·默勒",co:"🇩🇪德国",y:2007,g:["自然","科学"],e:"🌾",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"凤仙子的种子弹射出去，蒲公英的种子乘风飞行，苍耳的种子搭动物的便车——种子的旅行方式千奇百怪。",q:"每一粒种子都有一段奇妙的旅程。",lk:"https://www.youtube.com/results?search_query=种子的旅行+绘本朗读"},
+{t:"各种各样的害怕",o:"The Scared Book",a:"嘉玛·梅兰诺",co:"🇦🇺澳大利亚",y:2017,g:["情绪","互动"],e:"😱",ag:"3-7",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"这本书自己也很害怕！它怕虫子、怕黑、怕怪兽。邀请读者帮忙赶走恐惧，和孩子一起面对害怕。",q:"我很害怕，你能帮帮我吗？",lk:"https://www.youtube.com/results?search_query=各种各样的害怕+绘本朗读"},
+{t:"三只小猪的真实故事",o:"The True Story of the 3 Little Pigs",a:"乔恩·谢斯卡",co:"🇺🇸美国",y:1989,g:["反转","批判思维"],e:"🐺",ag:"5-10",bg:"linear-gradient(135deg,#868e96,#495057)",d:"大灰狼说一切都是误会——他只是想借一杯糖给奶奶做蛋糕，打喷嚏不小心吹倒了房子。到底该信谁？",q:"我只是想给奶奶做蛋糕，这一切都是意外！",lk:"https://www.youtube.com/results?search_query=三只小猪的真实故事+绘本朗读"},
+{t:"最强大的勇士",o:"The Strongest Warrior",a:"庆子·卡萨",co:"🇯🇵日本",y:1998,g:["力量","母爱"],e:"👑",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"狮子、大象和巨人都认为自己是最强大的勇士。他们比赛拔河、搬石头，但答案出人意料——母爱最强。",q:"世界上最强大的力量，是一个母亲的爱。",lk:"https://www.youtube.com/results?search_query=最强大的勇士+绘本朗读"},
+{t:"我不怕打针",o:"I Am Not Scared of Injections",a:"五味太郎",co:"🇯🇵日本",y:1986,g:["勇气","健康"],e:"💉",ag:"2-6",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"孩子要去打针了，五味太郎用幽默的画面化解恐惧。原来打针只是一小下，勇敢的孩子都不怕。",q:"打针一点都不疼，就像蚊子叮了一下！",lk:"https://www.youtube.com/results?search_query=我不怕打针+五味太郎+绘本朗读"},
+{t:"搬过来搬过去",o:"Move Over, Move Over",a:"达妮拉·库洛特",co:"🇩🇪德国",y:2001,g:["爱情","包容"],e:"🐊",ag:"4-8",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"鳄鱼爱上长颈鹿，但身高差让他们住在一起好困难。他们一起设计了一间对两个人都舒适的新房子。",q:"爱就是找到一个大家都舒服的方式在一起。",lk:"https://www.youtube.com/results?search_query=搬过来搬过去+绘本朗读"},
+{t:"你睡不着吗",o:"Can't You Sleep, Little Bear?",a:"马丁·韦德尔",co:"🇬🇧英国",y:1988,g:["安全","亲子"],e:"🐻",ag:"2-6",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"小熊怕黑睡不着，大熊不断拿更大的灯笼来安慰他。最后大熊带小熊到外面看月亮，小熊安心入睡。",q:"别怕黑，我就在你身边。",lk:"https://www.youtube.com/results?search_query=你睡不着吗+绘本朗读"},
+{t:"隧道",o:"The Tunnel",a:"安东尼·布朗",co:"🇬🇧英国",y:1989,g:["勇气","手足"],e:"🕳️",ag:"5-9",bg:"linear-gradient(135deg,#868e96,#495057)",d:"哥哥和妹妹性格完全不同，经常争吵。哥哥钻进隧道探险再没出来，妹妹鼓起勇气跟进去救了他。",q:"她抱住了那个一动不动的石头雕像，它开始变暖了。",lk:"https://www.youtube.com/results?search_query=隧道+安东尼布朗+绘本朗读"},
+{t:"小鲸鱼回家",o:"Little Whale's Journey Home",a:"汤米·温格尔",co:"🇫🇷法国",y:1970,g:["冒险","归属"],e:"🐋",ag:"4-8",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"小鲸鱼迷路了，在寻找回家的路上遇到了各种各样的海洋生物，最终听到了同伴的歌声找到了家人。",q:"海很大，但家的方向永远在心里。",lk:"https://www.youtube.com/results?search_query=小鲸鱼回家+绘本朗读"},
+{t:"月亮先生",o:"Moon Man",a:"汤米·温格尔",co:"🇫🇷法国",y:1967,g:["接纳","归属"],e:"🌙",ag:"4-8",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"月亮先生从天上来到地球，却被关进了监狱。他最终回到了天上，但再也不会忘记地球的孩子们。",q:"地球上的人真奇怪，他们害怕不一样的东西。",lk:"https://www.youtube.com/results?search_query=月亮先生+绘本朗读"},
+{t:"花格子大象艾玛",o:"Elmer",a:"大卫·麦基",co:"🇬🇧英国",y:1968,g:["个性","幽默"],e:"🐘",ag:"3-7",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"艾玛是一只彩色花格子大象，和其他灰色大象不同。他试图把自己染成灰色，却发现大家更喜欢彩色的他。",q:"我就是我，彩色的我才最特别！",lk:"https://www.youtube.com/results?search_query=花格子大象艾玛+绘本朗读"},
+{t:"三只小狼和大坏猪",o:"The Three Little Wolves and the Big Bad Pig",a:"尤金·崔维查",co:"🇬🇷希腊",y:1993,g:["反转","和平"],e:"🐺",ag:"4-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"经典童话的反转版：三只小狼造房子，大坏猪来破坏。最终小狼用花建了一座美丽的房子，猪被感动放下了锤子。",q:"鲜花的力量比暴力更强大。",lk:"https://www.youtube.com/results?search_query=三只小狼和大坏猪+绘本朗读"},
+{t:"你最喜欢什么动物",o:"What's Your Favorite Animal?",a:"艾瑞·卡尔",co:"🇺🇸美国",y:2014,g:["互动","动物"],e:"🐱",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"十四位世界顶级绘本画家各展所长画出自己最喜欢的动物，让孩子看到艺术表达的无限可能。",q:"你最喜欢什么动物？每个人的答案都不一样！",lk:"https://www.youtube.com/results?search_query=你最喜欢什么动物+绘本朗读"},
+{t:"神奇飞书",o:"The Fantastic Flying Books",a:"威廉·乔伊斯",co:"🇺🇸美国",y:2012,g:["阅读","想象"],e:"📖",ag:"4-8",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"飓风过后，莫里斯发现了一间神奇的图书馆，书会飞、会说话。他在这里度过了阅读的一生。",q:"每个人的故事都很重要，每本书都在等着被人打开。",lk:"https://www.youtube.com/results?search_query=神奇飞书+绘本朗读"},
+{t:"图书馆狮子",o:"Library Lion",a:"米歇尔·努森",co:"🇺🇸美国",y:2006,g:["规则","温暖"],e:"🦁",ag:"4-8",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"狮子走进图书馆，安静地听故事。它遵守规则——图书馆里不能大声。但有一天它必须大吼才能救人。",q:"有时候，打破规则是正确的事。",lk:"https://www.youtube.com/results?search_query=图书馆狮子+绘本朗读"},
+{t:"咔嗒咔嗒哞",o:"Click, Clack, Moo: Cows That Type",a:"朵琳·克罗宁",co:"🇺🇸美国",y:2000,g:["幽默","谈判"],e:"🐄",ag:"4-8",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"农场里的奶牛学会用打字机了！它们给农夫写请愿书要求电热毯，母鸡也加入罢工。一场有趣的劳资谈判。",q:"亲爱的农夫布朗，我们需要电热毯。——奶牛",lk:"https://www.youtube.com/results?search_query=咔嗒咔嗒哞+绘本朗读"},
+{t:"逃家小兔再相遇",o:"The Runaway Bunny Sequel Tales",a:"玛格丽特·怀兹·布朗",co:"🇺🇸美国",y:1942,g:["亲子","想象"],e:"🐰",ag:"2-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"小兔子说要变成鱼、鸟、帆船逃走，妈妈总是温柔地说会变成钓鱼人、树、风来找到他。无条件的爱。",q:"如果你变成登山者，我就变成山上的小石头等你。",lk:"https://www.youtube.com/results?search_query=逃家小兔+绘本朗读"},
+{t:"鲸鱼",o:"The Whale",a:"五味太郎",co:"🇯🇵日本",y:1990,g:["悬念","观察"],e:"🐋",ag:"3-7",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"候鸟在海上看到了一条大鲸鱼，但渔夫们谁也没见过。它们各自出发去找，但视角不同看到的完全不一样。",q:"鲸鱼就在那里，但你得换个角度看。",lk:"https://www.youtube.com/results?search_query=鲸鱼+五味太郎+绘本朗读"},
+{t:"窗户",o:"Windows",a:"五味太郎",co:"🇯🇵日本",y:1979,g:["观察","日常"],e:"🪟",ag:"2-5",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"从窗户看到的世界是什么样的？每扇窗户后面都藏着不同的故事。五味太郎的观察力绘本经典之作。",q:"打开窗户，看看外面有什么在等你。",lk:"https://www.youtube.com/results?search_query=窗户+五味太郎+绘本朗读"},
+{t:"一寸虫",o:"Inch by Inch",a:"李欧·李奥尼",co:"🇮🇹意大利",y:1960,g:["智慧","自然"],e:"🐛",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"一寸虫能量出任何东西——知更鸟的尾巴、火烈鸟的脖子、巨嘴鸟的嘴。当夜莺要它量歌声时，它量着量着飞走了。",q:"量歌声？好吧，让我试试看……",lk:"https://www.youtube.com/results?search_query=一寸虫+绘本朗读"},
+{t:"失落的一角",o:"The Missing Piece",a:"谢尔·希尔弗斯坦",co:"🇺🇸美国",y:1976,g:["哲学","自我"],e:"🔵",ag:"5+",bg:"linear-gradient(135deg,#868e96,#495057)",d:"缺了一角的圆寻找自己失落的一角，一路上边滚边唱歌。找到后它发现自己反而唱不了歌了。不完美才是最好的。",q:"它放下那一角，轻轻滚走了，又开始唱歌。",lk:"https://www.youtube.com/results?search_query=失落的一角+绘本朗读"},
+{t:"失落的一角遇见大圆满",o:"The Missing Piece Meets the Big O",a:"谢尔·希尔弗斯坦",co:"🇺🇸美国",y:1981,g:["成长","独立"],e:"⭕",ag:"5+",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"失落的一角等着别人来带走它，但大圆满告诉它：你可以自己滚动起来。它开始尝试，慢慢磨圆了自己。",q:"你不需要别人来完整你，你可以自己滚动。",lk:"https://www.youtube.com/results?search_query=失落的一角遇见大圆满+绘本朗读"},
+{t:"黑色的狮子",o:"The Black Lion",a:"五味太郎",co:"🇯🇵日本",y:1983,g:["想象","冒险"],e:"🦁",ag:"3-6",bg:"linear-gradient(135deg,#868e96,#495057)",d:"小男孩想象自己变成黑色的狮子在草原奔跑，画面在现实和幻想间切换。鼓励孩子勇敢面对内心的想象。",q:"我变成了一头黑色的狮子，没有人能追上我。",lk:"https://www.youtube.com/results?search_query=黑色的狮子+绘本朗读"},
+{t:"不一样的卡梅拉——我想去看海",o:"Chicken Little: I Want to See the Sea",a:"克利斯提昂·约里波瓦",co:"🇫🇷法国",y:2000,g:["勇气","梦想"],e:"🐔",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"小鸡卡梅拉不想像别的鸡一样下蛋，她想去看看大海。她勇敢出发，经历冒险，看到了梦想中的蔚蓝。",q:"下蛋、下蛋，总是下蛋！我想去看海！",lk:"https://www.youtube.com/results?search_query=不一样的卡梅拉+绘本朗读"},
+{t:"你醒了吗",o:"Are You Awake?",a:"五味太郎",co:"🇯🇵日本",y:1981,g:["亲子","日常"],e:"🌅",ag:"1-5",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"清晨，小鸟问妈妈你醒了吗？妈妈说还没呢。一问一答间天亮了，新的一天开始了。温柔又真实的亲子日常。",q:"妈妈你醒了吗？还没有呢，再睡一会儿。",lk:"https://www.youtube.com/results?search_query=你醒了吗+五味太郎+绘本朗读"},
+{t:"小房子",o:"The Little House",a:"维吉尼亚·李·伯顿",co:"🇺🇸美国",y:1942,g:["变化","怀旧"],e:"🏠",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"小房子在乡下安静地看着四季变化。城市扩张包围了它，高楼大厦遮住了阳光。最终它被搬回了乡下。",q:"小房子再也看不到星星和月亮了，城市太亮了。",lk:"https://www.youtube.com/results?search_query=小房子+绘本朗读"},
+{t:"小赛儿采蓝莓",o:"Blueberries for Sal",a:"罗伯特·麦克洛斯基",co:"🇺🇸美国",y:1948,g:["自然","亲子"],e:"🫐",ag:"3-7",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"小女孩和妈妈上山采蓝莓，小熊和熊妈妈也来吃蓝莓。两个小家伙都跟错了妈妈，逗趣又温暖。",q:"小赛儿的铁桶发出ku-plink ku-plank ku-plunk的声音。",lk:"https://www.youtube.com/results?search_query=小赛儿采蓝莓+绘本朗读"},
+{t:"麦先生的旅行",o:"Mr. McGill's Journey",a:"吉莉安·霍布斯",co:"🇬🇧英国",y:1995,g:["旅行","发现"],e:"🚂",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"麦先生决定去旅行，他坐火车、骑骆驼、乘热气球，在旅途中遇到了各种奇妙的人和事，发现世界之大。",q:"旅行的意义不在于去了多远，而在于看到了什么。",lk:"https://www.youtube.com/results?search_query=麦先生的旅行+绘本朗读"},
+{t:"卖帽子",o:"Caps for Sale",a:"艾丝菲·斯洛博德卡",co:"🇺🇸美国",y:1940,g:["幽默","模仿"],e:"🧢",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"卖帽子的男人在树下打盹，猴子们偷走了所有帽子。他怎么生气也没用，直到他气得把帽子摔在地上。",q:"你这猴子！把帽子还给我！ monkeys: 叽叽叽！",lk:"https://www.youtube.com/results?search_query=卖帽子+绘本朗读"},
+{t:"神奇的黑猫",o:"The Black Cat Mystery",a:"五味太郎",co:"🇯🇵日本",y:1977,g:["悬疑","观察"],e:"🐈‍⬛",ag:"3-6",bg:"linear-gradient(135deg,#868e96,#495057)",d:"一只神秘的黑猫出现在小镇，每个人的说法都不一样。它到底是什么颜色的？视角不同答案不同。",q:"有人说它是黑的，有人说它不是。",lk:"https://www.youtube.com/results?search_query=神奇的黑猫+五味太郎+绘本朗读"},
+{t:"铁丝网上的小花",o:"Rose Blanche",a:"罗伯特·英诺森提",co:"🇮🇹意大利",y:1985,g:["战争","人性"],e:"🌹",ag:"6+",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"二战期间，小女孩罗斯发现铁丝网后面关着犹太孩子。她偷偷给他们送食物，直到铁丝网被拆除。",q:"那朵开在铁丝网上的白花，是最纯洁的善良。",lk:"https://www.youtube.com/results?search_query=铁丝网上的小花+绘本朗读"},
+{t:"一片披萨一块钱",o:"One Pizza, One Coin",a:"郝广才",co:"🇮🇹意大利",y:1996,g:["分享","经济"],e:"🍕",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"大熊阿比做披萨，鳄鱼阿宝做蛋糕。一个披萨一块钱，一个蛋糕一块钱，他们互相买来买去，友谊增值。",q:"好吃的东西和好朋友分享，味道加倍！",lk:"https://www.youtube.com/results?search_query=一片披萨一块钱+绘本朗读"},
+{t:"我永远爱你",o:"I'll Always Love You",a:"汉思·威尔罕",co:"🇺🇸美国",y:1985,g:["宠物","告别"],e:"🐕",ag:"4-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"男孩每天都对狗狗说我爱你。狗狗慢慢变老离开了。男孩虽然伤心，但他庆幸自己每天都说了我爱你。",q:"我每天都告诉他我爱你，这让我好过一些。",lk:"https://www.youtube.com/results?search_query=我永远爱你+绘本朗读"},
+{t:"天空在脚下",o:"Mirette on the High Wire",a:"艾米丽·阿诺德·麦卡利",co:"🇺🇸美国",y:1992,g:["勇气","梦想"],e:"🎪",ag:"4-8",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"小女孩米瑞特看到走钢丝的贝利尼，决心要学会。她不断练习，最终帮贝利尼重新找回了勇气。",q:"只要你相信，你就能做到任何事。",lk:"https://www.youtube.com/results?search_query=天空在脚下+绘本朗读"},
+{t:"再见鹈鹕",o:"Farewell Pelican",a:"五味太郎",co:"🇯🇵日本",y:1976,g:["友谊","告别"],e:"pelican",ag:"3-6",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"小男孩和鹈鹕成为朋友，一起在海边玩耍。秋天来了鹈鹕要飞走，他们约定明年再见。温暖的离别故事。",q:"明年夏天再见，我会在这里等你。",lk:"https://www.youtube.com/results?search_query=再见鹈鹕+绘本朗读"},
+{t:"了不起的狐狸爸爸",o:"Fantastic Mr. Fox",a:"罗尔德·达尔",co:"🇬🇧英国",y:1970,g:["智慧","家庭"],e:"🦊",ag:"5-10",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"三个农场主想抓住偷食物的狐狸爸爸，但聪明的狐狸挖了地下通道通往每个农场，养活了所有动物家庭。",q:"没有人能阻止一只了不起的狐狸！",lk:"https://www.youtube.com/results?search_query=了不起的狐狸爸爸+绘本朗读"},
+{t:"我的兔子朋友",o:"My Friend Rabbit",a:"埃里克·罗曼",co:"🇺🇸美国",y:2002,g:["友谊","包容"],e:"🐇",ag:"3-7",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"兔子好心帮忙却总闯祸——他把动物叠起来够飞机结果全摔了。但朋友说：他是我的朋友，这就是朋友。",q:"我的兔子朋友总是好心办坏事，但他是我最好的朋友。",lk:"https://www.youtube.com/results?search_query=我的兔子朋友+绘本朗读"},
+{t:"红色魔法",o:"Red Magic",a:"五味太郎",co:"🇯🇵日本",y:1985,g:["色彩","想象"],e:"🔴",ag:"2-5",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"红色的世界是什么样的？红色的苹果、红色的蝴蝶、红色的月亮……五味太郎用一种颜色打开想象大门。",q:"红色真好看，红色真是好看！",lk:"https://www.youtube.com/results?search_query=红色魔法+五味太郎+绘本朗读"},
+{t:"存起来的吻",o:"The Kiss Box",a:"邦妮·拉克",co:"🇺🇸美国",y:2011,g:["分离","安全"],e:"💋",ag:"2-6",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"小熊第一次离开妈妈去参加夏令营，妈妈在他口袋里装了一盒吻。想妈妈的时候拿一个出来贴在脸颊上。",q:"想我的时候，就拿一个吻出来贴在脸上。",lk:"https://www.youtube.com/results?search_query=存起来的吻+绘本朗读"},
+{t:"小阿力的大学校",o:"Little Ark's Big School",a:"安琪拉·冯戴尔",co:"🇬🇧英国",y:1988,g:["成长","适应"],e:"🏫",ag:"3-6",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"小阿力要上学了，他很紧张。但学校里有图书角、有好朋友、有温柔的老师。原来学校是一个有趣的地方。",q:"别担心，学校里有好多有趣的事情等着你。",lk:"https://www.youtube.com/results?search_query=小阿力的大学校+绘本朗读"},
+{t:"奥利薇拯救马戏团",o:"Olivia Saves the Circus",a:"伊恩·福尔科纳",co:"🇺🇸美国",y:2001,g:["想象","自信"],e:"🐷",ag:"3-7",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"老师问奥莉薇假期做了什么。她说拯救了马戏团——驯狮、走钢丝、骑大象。老师说她讲得真好。",q:"一切都是真的，我做的。全部都是。",lk:"https://www.youtube.com/results?search_query=奥利薇拯救马戏团+绘本朗读"},
+{t:"灶王爷",o:"灶王爷",a:"熊亮",co:"🇨🇳中国",y:2007,g:["传统","民俗"],e:"🏮",ag:"3-8",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"灶王爷贴在灶台上方，一双大眼睛看着全家人的一举一动。年关将至他上天汇报，全家用糖瓜甜住他的嘴。",q:"灶王爷看着我们家一年到头，什么都瞒不过他。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小石狮",o:"小石狮",a:"熊亮",co:"🇨🇳中国",y:2007,g:["乡愁","记忆"],e:"🦁",ag:"3-7",bg:"linear-gradient(135deg,#868e96,#495057)",d:"我是小镇的石狮子，守护着这里很久很久。人们从我身边走过，从孩童走到白发。我是他们的记忆。",q:"我是小镇唯一的守护者，我看着他们长大，他们把我记在心里。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"年",o:"年",a:"熊亮",co:"🇨🇳中国",y:2007,g:["传统","情绪"],e:"🎆",ag:"3-7",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"过年就是打败一个叫年的怪兽，但其实年只是太孤独了。如果你忘了它，它就更凶。给它一个拥抱吧。",q:"年不是怪兽，它只是一个想被记得的老朋友。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"兔儿爷",o:"兔儿爷",a:"熊亮",co:"🇨🇳中国",y:2008,g:["传统","归属"],e:"🐰",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"兔儿爷是中秋节送给孩子的小泥人。它从天上飘下来找自己的主人，一路问一路找，终于找到了那个孩子。",q:"每个兔儿爷都在等一个孩子，每个孩子都有一只兔儿爷。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"安的种子",o:"安的种子",a:"王早早",co:"🇨🇳中国",y:2008,g:["等待","智慧"],e:"🌱",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"老和尚给三个小和尚各一颗千年莲花种子。本急于求成，静过度保护，安耐心等待——春天来了莲花自然开。",q:"时候到了，种子自然会发芽。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"一园青菜成了精",o:"一园青菜成了精",a:"周翔",co:"🇨🇳中国",y:2011,g:["童谣","想象"],e:"🥬",ag:"2-6",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"出了城门往正东，一园青菜绿葱葱。它们打了起来！葱使棒、蒜拍掌、韭菜耍双刀。北方童谣的欢乐变身。",q:"一园青菜成了精，打得豆腐喊救命！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"荷花镇的早市",o:"荷花镇的早市",a:"周翔",co:"🇨🇳中国",y:2006,g:["生活","市井"],e:"🌸",ag:"3-7",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"阳阳跟着姑姑去荷花镇的早市买菜，热闹的集市、水乡的拱桥、飘香的小吃。一幅中国水乡的清明上河图。",q:"荷花镇的早晨，连空气都是甜的。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"九色鹿",o:"九色鹿",a:"保冬妮",co:"🇨🇳中国",y:2013,g:["善良","信义"],e:"🦌",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"九色鹿救了溺水的人，那人却出卖了它。国王的军队围住了九色鹿，但鹿讲述了真相，国王被感动放了它。",q:"我救了你的命，你却为金银出卖了我。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小青花",o:"小青花",a:"保冬妮",co:"🇨🇳中国",y:2014,g:["传统","工艺"],e:"🏺",ag:"3-7",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"小花猫小青花跟着师傅学烧瓷，从揉泥到入窑，见证了青花瓷的诞生。传统文化在小小猫爪中传承。",q:"每一件青花瓷器里，都住着一个耐心等待的灵魂。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"跟着姥姥去遛弯儿",o:"跟着姥姥去遛弯儿",a:"保冬妮",co:"🇨🇳中国",y:2010,g:["生活","亲情"],e:"👵",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"跟着姥姥穿过胡同，买糖葫芦、看下棋、听大鼓书。北京胡同里的温暖童年记忆，市井生活的美好画卷。",q:"姥姥的手牵着我，走过一条条弯弯曲曲的胡同。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"灶台上的年糕",o:"灶台上的年糕",a:"保冬妮",co:"🇨🇳中国",y:2015,g:["传统","美食"],e:"🍚",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"过年了，全家一起蒸年糕、包饺子。年糕黏黏的就像一家人的感情，年年高年年甜。",q:"年糕年糕年年高，团团圆圆过好年！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"鲤鱼跳龙门",o:"鲤鱼跳龙门",a:"蔡皋",co:"🇨🇳中国",y:2003,g:["勇气","传统"],e:"🐟",ag:"4-8",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"黄河的鲤鱼们逆流而上要跳过龙门。大浪翻涌，只有最勇敢的鲤鱼跃过龙门变成了龙。",q:"只要你不放弃，终会跃过龙门看到不一样的天空。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"宝儿",o:"宝儿",a:"蔡皋",co:"🇨🇳中国",y:2005,g:["智慧","民间"],e:"👦",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"聪明的少年宝儿用智慧帮助被冤枉的人们，机智对抗贪官恶霸。传统民间故事的水墨再现。",q:"聪明人不是拳头硬，而是脑袋快。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"花木兰",o:"花木兰",a:"蔡皋",co:"🇨🇳中国",y:2004,g:["勇气","巾帼"],e:"⚔️",ag:"5-10",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"花木兰替父从军十二年，英勇征战无人知她是女儿身。功成归来恢复女儿装，战友们目瞪口呆。",q:"雄兔脚扑朔，雌兔眼迷离。双兔傍地走，安能辨我是雄雌！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"盘古开天",o:"盘古开天",a:"杨永青",co:"🇨🇳中国",y:2010,g:["神话","创世"],e:"🌍",ag:"4-8",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"天地混沌如鸡蛋，盘古在里面沉睡了一万八千年。醒来后他劈开天地，身体化作了日月山川。",q:"盘古倒下了，但他的身体变成了整个世界。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"女娲补天",o:"女娲补天",a:"杨永青",co:"🇨🇳中国",y:2010,g:["神话","大爱"],e:"🌈",ag:"4-8",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"天柱折断，洪水滔天。女娲炼五色石补天，斩龟足撑四极，杀黑龙救苍生。伟大的创世女神。",q:"五色石补好了天空，彩虹就是女娲留下的印记。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"精卫填海",o:"精卫填海",a:"杨永青",co:"🇨🇳中国",y:2011,g:["坚持","信念"],e:"🐦",ag:"4-8",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"炎帝的女儿女娃在东海溺水，化为小鸟精卫。她每天衔石子投海，发誓要填平大海。永不放弃的精神。",q:"大海啊，你夺走了我的生命，我就用石子把你填平！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"夸父追日",o:"夸父追日",a:"杨永青",co:"🇨🇳中国",y:2010,g:["执着","勇气"],e:"☀️",ag:"4-8",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"夸父追赶太阳，口渴喝干了黄河和渭水，最终倒在半路上。他的手杖化成了桃林，为后人遮阴。",q:"即使追不到太阳，我的手杖也会变成桃林。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"后羿射日",o:"后羿射日",a:"杨永青",co:"🇨🇳中国",y:2010,g:["英雄","自然"],e:"🏹",ag:"4-8",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"天上出现了十个太阳，大地被烤焦。后羿拉弓射下九个太阳，只留一个照亮大地。英雄救世的传说。",q:"九个太阳落下了，大地终于可以喘一口气。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"嫦娥奔月",o:"嫦娥奔月",a:"杨永青",co:"🇨🇳中国",y:2011,g:["神话","爱情"],e:"🌙",ag:"4-8",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"后羿射日后得到了长生药，妻子嫦娥为保护仙药不落入坏人之手，吞下仙药飞上了月宫。",q:"月亮上住着一个美丽的女子，她的名字叫嫦娥。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"哪吒闹海",o:"哪吒闹海",a:"杨永青",co:"🇨🇳中国",y:2011,g:["勇敢","正义"],e:"🔥",ag:"4-8",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"小哪吒在海边玩耍，打死欺压百姓的龙王三太子。龙王兴师问罪，哪吒削肉还母剔骨还父以示担当。",q:"我的骨头是爹的，我的肉是妈的，都还给你们！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"大闹天宫",o:"大闹天宫",a:"良叔",co:"🇨🇳中国",y:2012,g:["反抗","自由"],e:"🐵",ag:"5-10",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"石猴孙悟空从花果山出发，大闹龙宫取得金箍棒，偷吃蟠桃和仙丹，十万天兵天将也奈何不了他。",q:"皇帝轮流做，明年到我家！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"神笔马良",o:"神笔马良",a:"洪汛涛",co:"🇨🇳中国",y:1955,g:["善良","正义"],e:"🖌️",ag:"4-8",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"穷苦少年马良得到一支神笔，画什么就变成真的。他画犁给农夫、画牛给穷人，用神笔帮助了很多人。",q:"马良画的每一笔，都变成了真的。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小马过河",o:"小马过河",a:"彭文席",co:"🇨🇳中国",y:1957,g:["独立","实践"],e:"🐴",ag:"2-6",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"小马要帮妈妈送麦子，却被小河挡住了。老牛说水很浅，松鼠说水很深。小马自己去试——原来水不深也不浅。",q:"河水既不像老牛说的那样浅，也不像松鼠说的那样深。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"三毛流浪记",o:"三毛流浪记",a:"张乐平",co:"🇨🇳中国",y:1935,g:["社会","同情"],e:"👦",ag:"6+",bg:"linear-gradient(135deg,#868e96,#495057)",d:"三根头发的三毛在旧上海流浪，挨饿受冻受人欺负，却始终善良乐观。中国漫画史上的经典形象。",q:"虽然我什么都没有，但我有一颗善良的心。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小猫钓鱼",o:"小猫钓鱼",a:"金近",co:"🇨🇳中国",y:1951,g:["专注","耐心"],e:"🐱",ag:"2-6",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"猫妈妈带小猫去钓鱼。小猫一会儿追蝴蝶一会儿捉蜻蜓，一条鱼也钓不到。静下心来后终于钓到了大鱼。",q:"做事不能三心二意，一心一意才能成功。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小年兽",o:"小年兽",a:"熊亮",co:"🇨🇳中国",y:2014,g:["传统","情绪"],e:"👹",ag:"3-7",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"过年贴红色、放鞭炮，是为了赶走孤独的年兽。但如果你愿意和它做朋友，它就不会再吓人了。",q:"别怕，年兽只是太孤独了，给它一个红色的拥抱。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"二十四节气",o:"二十四节气",a:"熊亮",co:"🇨🇳中国",y:2016,g:["自然","传统"],e:"🍃",ag:"4-8",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"立春雨水惊蛰春分，每个节气都是大自然写给我们的信。跟着节气生活，感受四季最细微的变化。",q:"惊蛰一声雷，万物都醒了过来。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"长城",o:"长城",a:"熊亮",co:"🇨🇳中国",y:2015,g:["历史","壮志"],e:"🏯",ag:"5-10",bg:"linear-gradient(135deg,#868e96,#495057)",d:"小男孩沿着长城走，穿越两千年的风霜。他看到了烽火台上的狼烟，听到了边关的号角。长城不只是一堵墙。",q:"长城是写在大地上最长的一首诗。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"泥巴人",o:"泥巴人",a:"熊亮",co:"🇨🇳中国",y:2009,g:["民间","创造"],e:"🎭",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"用泥巴捏一个小人，它就有了灵魂。民间泥塑大师的手中，一团泥巴变成了会笑、会哭、会讲故事的小人。",q:"泥巴在手心里变暖了，它就有了生命。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"团圆",o:"团圆",a:"余丽琼",co:"🇨🇳中国",y:2008,g:["亲情","春节"],e:"🥟",ag:"3-8",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"爸爸在外面工作一年才回家过年。包汤圆时我吃到了好运硬币。爸爸又要走了，我把硬币塞进爸爸手里。",q:"好运是爸爸给我的，我要把好运还给爸爸。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小蝌蚪找妈妈",o:"小蝌蚪找妈妈",a:"鲁兵",co:"🇨🇳中国",y:1959,g:["认知","自然"],e:"🐸",ag:"2-5",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"小蝌蚪们一路找妈妈，问了金鱼、螃蟹、乌龟和鲶鱼。它们在成长中慢慢变样，终于找到了青蛙妈妈。",q:"我头大嘴宽，穿绿衣服，我就是你们的妈妈！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"过年啦",o:"过年啦",a:"孙肇志",co:"🇨🇳中国",y:2012,g:["传统","互动"],e:"🧨",ag:"2-6",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"翻翻页里有红包、对联和年夜饭。贴门神、穿新衣、放鞭炮——立体互动绘本让孩子亲身体验中国年。",q:"新年到！穿新衣，戴新帽，大家都来凑热闹！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"牛郎织女",o:"牛郎织女",a:"杨永青",co:"🇨🇳中国",y:2011,g:["爱情","星空"],e:"⭐",ag:"5-10",bg:"linear-gradient(135deg,#e599f7,#845ef7)",d:"牛郎和织女在银河两岸隔河相望，每年七夕喜鹊搭桥让他们相会。天上人间最浪漫的爱情传说。",q:"七月初七的夜晚，银河上会出现一座鹊桥。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"猪八戒吃西瓜",o:"猪八戒吃西瓜",a:"包蕾",co:"🇨🇳中国",y:1958,g:["幽默","寓言"],e:"🍉",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"猪八戒偷吃西瓜，吃完一块又一块，西瓜皮到处乱扔。结果自己踩到西瓜皮摔了四脚朝天。",q:"贪吃的猪八戒，最后被自己扔的西瓜皮绊倒了！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"曹冲称象",o:"曹冲称象",a:"杨永青",co:"🇨🇳中国",y:2010,g:["智慧","历史"],e:"🐘",ag:"4-8",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"曹操得了一头大象，没人能称出它的重量。七岁的曹冲说：把象牵上船，看水位线，再装石头到同样的线。",q:"七岁小童的智慧，比满朝文武都管用。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"司马光砸缸",o:"司马光砸缸",a:"杨永青",co:"🇨🇳中国",y:2010,g:["勇气","智慧"],e:"💧",ag:"3-7",bg:"linear-gradient(135deg,#66d9e8,#15aabf)",d:"小朋友掉进了大水缸里，别的孩子吓跑了。只有司马光拿起石头砸破水缸，水流出来小朋友得救了。",q:"不是最聪明的人才能救人，而是最冷静的人。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"文成公主入藏",o:"文成公主入藏",a:"杨永青",co:"🇨🇳中国",y:2012,g:["历史","和平"],e:"🏔️",ag:"5-10",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"唐朝文成公主远嫁吐蕃，带着种子、书籍和工匠。她把汉地的文化带到高原，架起了民族团结的桥梁。",q:"翻过千山万水，公主把和平的种子撒在了雪域高原。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"西游记绘本",o:"西游记绘本",a:"吴承恩/改编",co:"🇨🇳中国",y:2015,g:["冒险","经典"],e:"🐵",ag:"4-10",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"唐僧师徒四人西天取经的冒险旅程。三打白骨精、火焰山借扇、通天河遇险——每个故事都是成长的试炼。",q:"敢问路在何方？路在脚下。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"水墨宝宝视觉启蒙",o:"水墨宝宝视觉启蒙",a:"宝华",co:"🇨🇳中国",y:2014,g:["启蒙","水墨"],e:"🎨",ag:"0-3",bg:"linear-gradient(135deg,#868e96,#495057)",d:"用中国水墨画为0-3岁宝宝做视觉启蒙。点点、线线、圆圆，简单的墨迹中蕴含东方美学的第一课。",q:"一滴墨就是一整个宇宙。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"北京游游",o:"北京游游",a:"保冬妮",co:"🇨🇳中国",y:2011,g:["旅行","城市"],e:"🏛️",ag:"3-7",bg:"linear-gradient(135deg,#ff8787,#e64980)",d:"跟着小猫游北京——天安门、故宫、胡同、天坛。用孩子的视角发现这座古老城市的美丽和故事。",q:"北京城大极了，藏着好多好多好玩的故事！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"端午节",o:"端午节",a:"巨英",co:"🇨🇳中国",y:2013,g:["传统","节日"],e:"🐲",ag:"3-7",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"五月初五赛龙舟、包粽子、挂艾草。小男孩跟着爷爷学习端午习俗，听屈原投江的故事。",q:"粽子飘香艾草绿，龙舟鼓响屈原念。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"小艾的端午节",o:"小艾的端午节",a:"王轶美",co:"🇨🇳中国",y:2014,g:["家庭","传统"],e:"🌿",ag:"3-7",bg:"linear-gradient(135deg,#69db7c,#20c997)",d:"小艾和妈妈一起去外婆家过端午。包粽子、挂香囊、看龙舟，在外婆的怀抱里感受传统节日的温度。",q:"外婆包的粽子是甜的，因为里面包了满满的爱。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"中秋节",o:"中秋节",a:"许萍萍",co:"🇨🇳中国",y:2015,g:["家庭","团圆"],e:"🌕",ag:"3-7",bg:"linear-gradient(135deg,#ffd43b,#f59f00)",d:"月圆人团圆，一家人围坐在一起赏月吃月饼。爷爷讲嫦娥的故事，月光下是最温暖的家庭时光。",q:"月到中秋分外圆，人到中秋盼团圆。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"井底之蛙",o:"井底之蛙",a:"中国成语绘本",co:"🇨🇳中国",y:2010,g:["智慧","视野"],e:"🐸",ag:"3-7",bg:"linear-gradient(135deg,#74c0fc,#4263eb)",d:"青蛙住在井底以为天空只有井口那么大。直到海龟告诉它大海的广阔，它才知道世界比想象中大得多。",q:"天只有井口那么大——这是你坐在井底看到的。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"守株待兔",o:"守株待兔",a:"中国成语绘本",co:"🇨🇳中国",y:2010,g:["勤奋","教训"],e:"🐰",ag:"3-7",bg:"linear-gradient(135deg,#b2f2bb,#40c057)",d:"农夫偶然捡到撞树桩而死的兔子，从此丢下锄头天天守在树桩旁等。田地荒芜了，再也没等到第二只。",q:"幸运不会天天来，勤劳才是靠得住的本事。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"狐假虎威",o:"狐假虎威",a:"中国成语绘本",co:"🇨🇳中国",y:2010,g:["智慧","寓言"],e:"🦊",ag:"3-7",bg:"linear-gradient(135deg,#ffa94d,#fd7e14)",d:"老虎抓住了狐狸，狐狸说：我是天帝派来的百兽之王，你不信就跟我走一趟。百兽见了老虎吓得跑光了。",q:"百兽怕的不是狐狸，而是跟在狐狸身后的老虎。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"孟姜女哭长城",o:"孟姜女哭长城",a:"蔡皋",co:"🇨🇳中国",y:2006,g:["传说","坚韧"],e:"💔",ag:"6+",bg:"linear-gradient(135deg,#868e96,#495057)",d:"孟姜女千里寻夫来到长城，丈夫已死。她哭了三天三夜，城墙崩塌露出丈夫的骸骨。爱与坚持的力量。",q:"她的眼泪冲塌了城墙，却没有冲走她的思念。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"桃花源记",o:"桃花源记",a:"蔡皋",co:"🇨🇳中国",y:2015,g:["理想","和平"],e:"🌸",ag:"5-10",bg:"linear-gradient(135deg,#f783ac,#c2255c)",d:"渔人沿溪而行，穿过桃花林发现一个与世隔绝的村庄。那里没有战争、没有税赋，人人安乐。",q:"忽逢桃花林，芳草鲜美，落英缤纷。",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"三借芭蕉扇",o:"三借芭蕉扇",a:"杨永青",co:"🇨🇳中国",y:2012,g:["智慧","经典"],e:"🍃",ag:"5-10",bg:"linear-gradient(135deg,#51cf66,#2f9e44)",d:"火焰山挡住了取经路，孙悟空三次智取铁扇公主的芭蕉扇。第一次被扇飞，第二次变小虫，第三次变身骗扇。",q:"铁扇公主的扇子啊，一扇灭了八百里火焰！",lk:"https://storybook.nlpi.edu.tw/"},
+{t:"水墨中国——千里江山",o:"千里江山图绘本",a:"中国美术绘本",co:"🇨🇳中国",y:2018,g:["艺术","传统"],e:"🏔️",ag:"5-10",bg:"linear-gradient(135deg,#748ffc,#4263eb)",d:"以北宋王希孟的千里江山图为蓝本，用水墨绘本带孩子走进画中的山水世界。一堂生动的中国传统美术课。",q:"千里江山入画卷，少年天才绘河山。",lk:"https://storybook.nlpi.edu.tw/"}
 ];
 
 // ===== ENGINE =====
@@ -317,7 +471,7 @@ function buildStats(){
 }
 
 // Filter buttons
-var activeAge='all',activeRegion='all',activeGenre='all';
+var activeAge='all',activeRegion='all',activeGenre='all',activeSource='all';
 function buildFilters(){
   var ages=['0-3','3-5','5-7','7+'];
   var regions=['美国','英国','法国','日本','中国','北欧','德国','其他'];
@@ -333,11 +487,17 @@ function buildFilters(){
   var gh='<button class="f-btn active" onclick="setFilter(\'genre\',\'all\',this)">全部</button>';
   genres.forEach(function(g){gh+='<button class="f-btn" onclick="setFilter(\'genre\',\''+g+'\',this)">'+g+'</button>'});
   document.getElementById('genreFilters').innerHTML=gh;
+  var sh='<button class="f-btn active" onclick="setFilter(\'source\',\'all\',this)">全部</button>';
+  sh+='<button class="f-btn" onclick="setFilter(\'source\',\'online\',this)">🌐 可在线阅读</button>';
+  sh+='<button class="f-btn" onclick="setFilter(\'source\',\'cn\',this)">🇨🇳 中国原创</button>';
+  sh+='<button class="f-btn" onclick="setFilter(\'source\',\'trans\',this)">🌍 翻译经典</button>';
+  document.getElementById('sourceFilters').innerHTML=sh;
 }
 
 function setFilter(type,val,btn){
   if(type==='age')activeAge=val;
   else if(type==='region')activeRegion=val;
+  else if(type==='source')activeSource=val;
   else activeGenre=val;
   var row=btn.parentNode;
   var btns=row.querySelectorAll('.f-btn');
@@ -376,6 +536,9 @@ function getFiltered(){
     if(!matchAge(b,activeAge))return false;
     if(!matchRegion(b,activeRegion))return false;
     if(activeGenre!=='all'&&b.g.indexOf(activeGenre)<0)return false;
+    if(activeSource==='online'&&!b.lk)return false;
+    if(activeSource==='cn'&&b.co.indexOf('中国')<0)return false;
+    if(activeSource==='trans'&&b.co.indexOf('中国')>=0)return false;
     if(q){
       var txt=(b.t+b.a+b.co+b.o+b.g.join(' ')).toLowerCase();
       if(txt.indexOf(q)<0)return false;
@@ -412,7 +575,7 @@ function renderGrid(books,el){
     b.g.slice(0,2).forEach(function(t){tags+='<span class="book-tag">'+t+'</span>'});
     tags+='<span class="book-age">'+b.ag+'岁</span>';
     h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+B.indexOf(b)+')">';
-    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div></div>';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-country">'+b.co+'</div>'+(b.lk?'<div style="position:absolute;bottom:8px;left:8px;background:rgba(81,207,102,.9);color:#fff;border-radius:10px;padding:2px 8px;font-size:.6em;font-weight:700;backdrop-filter:blur(4px)">🌐可阅读</div>':'')+'</div>';
     h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
     h+='</div>';
   });
@@ -513,7 +676,12 @@ function openDetail(idx){
     });
     h+='</div></div>';
   }
-  h+='<div style="text-align:center;margin-top:24px"><button onclick="startReading('+idx+')" style="background:'+b.bg+';color:#fff;border:none;padding:12px 32px;border-radius:24px;font-size:1em;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15)">📖 开始阅读</button></div>';
+  h+='<div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">';
+  if(b.lk){
+    h+='<a href="'+b.lk+'" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#51cf66,#20c997);color:#fff;border:none;padding:12px 28px;border-radius:24px;font-size:1em;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15);text-decoration:none;display:inline-flex;align-items:center;gap:6px">🌐 在线阅读</a>';
+  }
+  h+='<button onclick="startReading('+idx+')" style="background:'+b.bg+';color:#fff;border:none;padding:12px 28px;border-radius:24px;font-size:1em;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15)">📖 导读模式</button>';
+  h+='</div>';
   h+='</div>';
   document.getElementById('modalContent').innerHTML=h;
   document.getElementById('modalOverlay').classList.add('show');
