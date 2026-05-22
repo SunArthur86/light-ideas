@@ -23,5 +23,5 @@
 | 📚 **中文文学库** | 200部作品·3000年·11时代·三视图 | `chinese-literature/index.html` |
 | 🧠 **文学问答** | 337部·6题型·4模式·体感操控·暗黑12徽章 | `literary-quiz/index.html` |
 | 📖 **世界绘本馆** | 269本·20国·101本亲子教育·阅读进度追踪·收藏夹·暗黑 | `picture-books/index.html` |
-| 📜 **古文观止** | 102篇·11朝代·TTS朗读·名句卡片·三重筛选 | `guwen-guanzhi/index.html` |
+| 📜 **古文观止** | 102篇·11朝代·TTS朗读·名句卡片·阅读进度·三重筛选 | `guwen-guanzhi/index.html` |
 | 🗺️ **诗词地图** | 34首·5朝代·Leaflet地图·路线·暗黑·收藏 | `poem-map/index.html` |

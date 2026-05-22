@@ -147,6 +147,8 @@ body.dark .fav-btn{background:rgba(0,0,0,.4)}
   <a href="../index.html" class="back">← 首页</a>
   <span class="title">📜 古文观止</span>
   <button class="view-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="收藏夹">⭐<span id="favCount"></span></button>
+  <button class="view-btn read-filter-btn" data-status="reading" onclick="toggleReadFilter('reading')" title="筛选在读">📖</button>
+  <button class="view-btn read-filter-btn" data-status="read" onclick="toggleReadFilter('read')" title="筛选已读">✅</button>
   <button class="view-btn" onclick="toggleDark()" title="暗黑模式" id="darkBtn">🌙</button>
   <button class="view-btn active" data-view="grid" onclick="setView('grid')">卡片</button>
   <button class="view-btn" data-view="timeline" onclick="setView('timeline')">时间线</button>
@@ -327,6 +329,15 @@ function toggleFav(idx){var i=favs.indexOf(idx);if(i>=0)favs.splice(i,1);else fa
 function updateFavBadge(){var el=document.getElementById('favCount');if(el)el.textContent=favs.length?'('+favs.length+')':''}
 function toggleFavFilter(){showFavOnly=!showFavOnly;document.getElementById('favFilterBtn').classList.toggle('active',showFavOnly);applyFilters()}
 
+// Read status tracking (localStorage gw_status)
+var readStatusMap={};
+try{readStatusMap=JSON.parse(localStorage.getItem('gw_status')||'{}')}catch(e){readStatusMap={}}
+function getReadStatus(idx){return readStatusMap[idx]||''}
+function setReadStatus(idx,s){if(s){readStatusMap[idx]=s}else{delete readStatusMap[idx]}localStorage.setItem('gw_status',JSON.stringify(readStatusMap));applyFilters()}
+function cycleReadStatus(idx){var cur=getReadStatus(idx);var next=cur===''?'reading':cur==='reading'?'read':'';setReadStatus(idx,next)}
+var activeReadFilter='';
+function toggleReadFilter(st){if(activeReadFilter===st){activeReadFilter='';document.querySelectorAll('.read-filter-btn').forEach(function(b){b.classList.remove('active')})}else{activeReadFilter=st;document.querySelectorAll('.read-filter-btn').forEach(function(b){b.classList.toggle('active',b.dataset.status===st)})}applyFilters()}
+
 // Dark mode
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -400,6 +411,7 @@ function getFiltered(){
     if(activeDiff!=='all'&&String(b.diff)!==activeDiff)return false;
     if(activeGenre!=='all'&&b.g.indexOf(activeGenre)<0)return false;
     if(showFavOnly&&favs.indexOf(idx)<0)return false;
+    if(activeReadFilter&&getReadStatus(idx)!==activeReadFilter)return false;
     if(q){
       var txt=(b.t+b.a+b.dy+b.q+b.d+b.g.join(' ')).toLowerCase();
       if(txt.indexOf(q)<0)return false;
@@ -455,7 +467,7 @@ function renderGrid(books,el){
     b.g.forEach(function(t){tags+='<span class="book-tag">'+t+'</span>'});
     tags+='<span class="diff-tag diff-'+b.diff+'">'+(['','🌱入门','📚进阶','🔬精研'])[b.diff]+'</span>';
     h+='<div class="book-card" style="animation-delay:'+(i*0.04)+'s" onclick="openDetail('+idx+')">';
-    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-dynasty">'+b.dy+'</div><button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button></div>';
+    h+='<div class="book-cover" style="background:'+b.bg+'"><div class="cover-emoji">'+b.e+'</div><div class="book-dynasty">'+b.dy+'</div><button class="fav-btn'+(isFav?' on':'')+'" onclick="event.stopPropagation();toggleFav('+idx+')" title="'+(isFav?'取消收藏':'收藏')+'">'+(isFav?'⭐':'☆')+'</button>'+(getReadStatus(idx)?'<span style="position:absolute;top:6px;left:6px;font-size:12px;background:rgba(0,0,0,.45);color:#fff;border-radius:8px;padding:1px 5px">'+(getReadStatus(idx)==='read'?'✅已读':'📖在读')+'</span>':'')+'</div>';
     h+='<div class="book-info"><div class="title">'+b.t+'</div><div class="author">'+b.a+'</div><div class="book-tags">'+tags+'</div></div>';
     h+='</div>';
   });
@@ -546,6 +558,8 @@ function openDetail(idx){
   b.g.forEach(function(t){h+='<span class="m-tag genre">'+t+'</span>'});
   var isFav=favs.indexOf(idx)>=0;
   h+='<span class="m-tag" style="background:'+(isFav?'#fff4e6':'#f1f3f5')+';color:'+(isFav?'#8B4513':'#6e6e73')+';cursor:pointer" onclick="toggleFav('+idx+');openDetail('+idx+')">'+(isFav?'⭐ 已收藏':'☆ 收藏')+'</span>';
+  var rs=getReadStatus(idx);
+  h+='<span class="m-tag" style="background:'+(rs==='read'?'#e6f9e6':rs==='reading'?'#e6f0ff':'#f1f3f5')+';color:'+(rs==='read'?'#1a7a1a':rs==='reading'?'#1a5faa':'#6e6e73')+';cursor:pointer" onclick="cycleReadStatus('+idx+');openDetail('+idx+')">'+(rs==='read'?'✅ 已读':rs==='reading'?'📖 在读':'📑 标记状态')+'</span>';
   h+='</div>';
   // Related
   var related=B.filter(function(ob,i){
